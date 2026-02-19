@@ -1,0 +1,223 @@
+/**
+ * Global Styles
+ *
+ * Base styles for the application including RTL support,
+ * Arabic font, navigation, forms, events, bookings, and modals.
+ *
+ * TODO: Implement full styles (Phase 3.1)
+ */
+
+@import url("https://fonts.googleapis.com/css?family=Cairo");
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Cairo", sans-serif !important;
+  direction: rtl;
+}
+
+.main-content {
+  margin: 0.7rem 0.7rem;
+}
+
+/* ─── Navigation ─────────────────────────────────────────────────────────── */
+
+.main-navigation {
+  background: #cc6600;
+  padding: 0rem 2rem !important;
+  font-size: 1.2rem;
+}
+
+h1,
+h2 {
+  font-weight: bold !important;
+  line-height: 2 !important;
+}
+
+h2 {
+  font-size: 1.5em !important;
+}
+
+.navbar-brand h1 {
+  font-size: 1.5rem !important;
+  color: #dfcefc !important;
+}
+
+.main-navigation-items {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+}
+
+.main-navigation-items ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.main-navigation-items li {
+  margin: 0 1rem;
+}
+
+.main-navigation-items a,
+.main-navigation-items button,
+.main-navigation button {
+  text-decoration: none;
+  color: white;
+  border: none;
+  font: inherit;
+  background: transparent;
+  cursor: pointer;
+  vertical-align: middle;
+  margin: 0;
+}
+
+.main-navigation-items a:hover,
+.main-navigation-items a:active,
+.main-navigation-items a.active {
+  color: #dfcefc;
+  font-size: 1.3rem;
+}
+
+.main-navigation-items button:hover,
+.main-navigation-items button:active,
+.main-navigation button:hover,
+.main-navigation button:active {
+  background: #ffffff;
+  color: #cc6600;
+  border-radius: 5px;
+}
+
+/* ─── Auth Form ──────────────────────────────────────────────────────────── */
+
+.auth-form {
+  width: 25rem;
+  max-width: 80%;
+  margin: 5rem auto;
+  border-style: solid;
+  border-color: #cc6600;
+  border-radius: 2px;
+  padding: 3%;
+  padding-top: 2%;
+}
+
+/* ─── Events ─────────────────────────────────────────────────────────────── */
+
+.events-control {
+  border: 1px solid #cc6600;
+  margin: 2rem auto;
+  margin-bottom: 0;
+  width: 30rem;
+  max-width: 80%;
+}
+
+.form-control label,
+.form-control input,
+.form-control textarea {
+  width: 98%;
+  font-size: 18px;
+}
+
+[type="email"],
+[type="number"],
+[type="date"] {
+  direction: rtl !important;
+}
+
+.cancel {
+  margin-right: 10px !important;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+
+.form-actions button,
+.btn {
+  background: #cc6600 !important;
+  color: white !important;
+}
+
+button[disabled],
+button[disabled]:hover {
+  background-color: #999999 !important;
+  border-color: #999999 !important;
+  cursor: not-allowed !important;
+}
+
+button > a {
+  text-decoration: none;
+  color: white;
+}
+
+div > h2 {
+  text-align: center;
+  padding-top: 1.5%;
+  color: #7c7c7c;
+}
+
+.form-actions button:hover,
+.form-actions button:active,
+.btn:hover,
+.btn:active {
+  background: #ff8000 !important;
+  border-color: #ff8000 !important;
+}
+
+/* ─── Bookings ───────────────────────────────────────────────────────────── */
+
+.bookings-item {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border: 1px solid #cc6600;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ─── Event Cards ────────────────────────────────────────────────────────── */
+
+.events-list-item {
+  width: 17rem !important;
+  height: 15rem !important;
+  padding-top: 1rem !important;
+  border-radius: 5px !important;
+  border: 1px solid #cc6600;
+  margin: 0 2rem 2rem 0;
+  flex-direction: column !important;
+  overflow: auto !important;
+}
+
+.events-list-item h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #cc6600;
+}
+
+.events-list-item h2 {
+  margin: 0;
+  font-size: 1rem !important;
+  color: #7c7c7c;
+}
+
+/* ─── Modal ──────────────────────────────────────────────────────────────── */
+
+.custom-modal {
+  position: fixed;
+  top: 5%;
+  left: 0;
+  z-index: 2000;
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+}
+
+.custom-modal-header {
+  height: 50px !important;
+  background: #cc6600;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
