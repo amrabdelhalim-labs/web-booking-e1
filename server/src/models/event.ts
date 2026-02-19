@@ -3,8 +3,6 @@
  *
  * Defines the Event schema and model for MongoDB.
  * Events are created by users and can be booked by other users.
- *
- * TODO: Implement full model with validation (Phase 1.4)
  */
 
 import mongoose, { Schema } from "mongoose";

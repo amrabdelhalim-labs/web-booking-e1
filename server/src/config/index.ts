@@ -3,8 +3,6 @@
  *
  * Centralizes all environment variables and configuration settings.
  * Uses dotenv to load variables from .env file.
- *
- * TODO: Implement full configuration with validation (Phase 1.1)
  */
 
 import dotenv from "dotenv";

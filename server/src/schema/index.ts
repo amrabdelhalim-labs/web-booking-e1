@@ -3,8 +3,6 @@
  *
  * Defines the complete GraphQL schema using SDL (Schema Definition Language).
  * Includes all types, inputs, queries, mutations, and subscriptions.
- *
- * TODO: Implement full schema definition (Phase 1.3)
  */
 
 import gql from "graphql-tag";

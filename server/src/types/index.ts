@@ -3,8 +3,6 @@
  *
  * Contains all shared interfaces and types used across the server application.
  * Includes Mongoose document interfaces, GraphQL context types, and resolver types.
- *
- * TODO: Implement full type definitions (Phase 1.5)
  */
 
 import { Document, Types } from "mongoose";
@@ -12,16 +10,19 @@ import { Document, Types } from "mongoose";
 // ─── Mongoose Document Interfaces ────────────────────────────────────────────
 
 /**
- * User document interface for Mongoose
+ * User document interface for Mongoose.
+ * Users can create events, book events, and authenticate.
  */
 export interface IUser extends Document {
+  _doc?: any;
   username: string;
   email: string;
   password: string;
 }
 
 /**
- * Event document interface for Mongoose
+ * Event document interface for Mongoose.
+ * Events are created by users and can be booked by other users.
  */
 export interface IEvent extends Document {
   _doc?: any;
@@ -33,7 +34,9 @@ export interface IEvent extends Document {
 }
 
 /**
- * Booking document interface for Mongoose
+ * Booking document interface for Mongoose.
+ * Bookings link users to events they have reserved.
+ * Timestamps (createdAt, updatedAt) are auto-managed by Mongoose.
  */
 export interface IBooking extends Document {
   _doc?: any;
@@ -46,7 +49,17 @@ export interface IBooking extends Document {
 // ─── GraphQL Context ─────────────────────────────────────────────────────────
 
 /**
- * GraphQL resolver context - available in all resolvers
+ * JWT token payload structure after decoding.
+ */
+export interface JwtPayload {
+  id: string;
+  iat?: number;
+  exp?: number;
+}
+
+/**
+ * GraphQL resolver context - available in all resolvers.
+ * Contains the authenticated user (if any) extracted from JWT.
  */
 export interface GraphQLContext {
   user?: IUser | null;
@@ -55,7 +68,7 @@ export interface GraphQLContext {
 // ─── Auth Types ──────────────────────────────────────────────────────────────
 
 /**
- * Authentication response data returned after login/signup
+ * Authentication response data returned after login/signup.
  */
 export interface AuthData {
   userId: string;
@@ -66,7 +79,7 @@ export interface AuthData {
 // ─── Input Types ─────────────────────────────────────────────────────────────
 
 /**
- * Input for creating a new user
+ * Input for creating a new user.
  */
 export interface UserInput {
   username: string;
@@ -75,7 +88,7 @@ export interface UserInput {
 }
 
 /**
- * Input for creating a new event
+ * Input for creating a new event.
  */
 export interface EventInput {
   title: string;

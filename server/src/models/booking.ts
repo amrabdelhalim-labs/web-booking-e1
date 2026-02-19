@@ -4,8 +4,6 @@
  * Defines the Booking schema and model for MongoDB.
  * Bookings link users to events they have reserved.
  * Timestamps are automatically managed by Mongoose.
- *
- * TODO: Implement full model with validation (Phase 1.4)
  */
 
 import mongoose, { Schema } from "mongoose";

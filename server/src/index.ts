@@ -4,13 +4,12 @@
  * Initializes and starts the Apollo Server 4 with Express,
  * sets up WebSocket server for GraphQL subscriptions,
  * configures JWT authentication context, and connects to MongoDB.
- *
- * TODO: Implement full server setup (Phase 1.2)
  */
 
 import express from "express";
 import { createServer } from "http";
 import cors from "cors";
+import jwt from "jsonwebtoken";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -22,7 +21,8 @@ import mongoose from "mongoose";
 import { config } from "./config";
 import { typeDefs } from "./schema";
 import { resolvers } from "./resolvers";
-import { GraphQLContext } from "./types";
+import { GraphQLContext, JwtPayload } from "./types";
+import User from "./models/user";
 
 /**
  * Starts the Apollo Server with Express and WebSocket support.
@@ -47,6 +47,16 @@ async function startServer(): Promise<void> {
   const server = new ApolloServer<GraphQLContext>({
     schema,
     plugins: [
+      {
+        async requestDidStart(requestContext) {
+          const { operationName, query } = requestContext.request;
+          // Skip introspection queries to reduce console noise
+          if (query && operationName !== "IntrospectionQuery") {
+            const opLabel = operationName ? ` (${operationName})` : "";
+            console.log(`📨 GraphQL${opLabel}:\n${query}`);
+          }
+        },
+      },
       // Graceful shutdown for HTTP server
       ApolloServerPluginDrainHttpServer({ httpServer }),
       // Graceful shutdown for WebSocket server
@@ -70,21 +80,29 @@ async function startServer(): Promise<void> {
     "/graphql",
     cors<cors.CorsRequest>({ origin: config.appUrl }),
     express.json(),
-    // @ts-ignore - Type mismatch between @apollo/server and express types
+    // @ts-ignore - Type mismatch between @apollo/server and @types/express versions
     expressMiddleware(server, {
       context: async ({ req }): Promise<GraphQLContext> => {
-        // TODO: Implement JWT authentication context (Phase 2.1)
-        // Extract and verify JWT token from Authorization header
+        // Extract JWT token from Authorization header (format: "jwt <token>")
+        const auth = req?.headers?.authorization;
+        if (auth) {
+          try {
+            const decodedToken = jwt.verify(
+              auth.slice(4), // Remove "jwt " prefix
+              config.jwtSecret
+            ) as JwtPayload;
+
+            const user = await User.findById(decodedToken.id);
+            return { user };
+          } catch {
+            // Invalid or expired token - continue as unauthenticated
+            return { user: null };
+          }
+        }
         return { user: null };
       },
     })
   );
-
-  // Start listening
-  await new Promise<void>((resolve) =>
-    httpServer.listen({ port: config.port }, resolve)
-  );
-  console.log(`🚀 Server ready at http://localhost:${config.port}/graphql`);
 
   // Connect to MongoDB
   try {
@@ -93,6 +111,12 @@ async function startServer(): Promise<void> {
   } catch (err) {
     console.error("❌ Database connection error:", err);
   }
+
+  // Start listening
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: config.port }, resolve)
+  );
+  console.log(`🚀 Server ready at http://localhost:${config.port}/graphql`);
 }
 
 startServer();

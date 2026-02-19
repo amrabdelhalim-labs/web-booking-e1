@@ -11,35 +11,35 @@
 
 ### 1.1 تهيئة مشروع الخادم (Server)
 - [x] إنشاء هيكل المجلدات الأساسي للخادم (`server/src/`)
-- [ ] إعداد `package.json` مع الاعتماديات (dependencies) بنسخ TypeScript الحديثة
-- [ ] إعداد `tsconfig.json` للخادم
-- [ ] إعداد ملف `.env` مع المتغيرات البيئية (PORT, DB_URL, JWT_SECRET)
-- [ ] إنشاء ملف الإعدادات `server/src/config/index.ts` لتجميع المتغيرات البيئية
+- [x] إعداد `package.json` مع الاعتماديات (dependencies) بنسخ TypeScript الحديثة
+- [x] إعداد `tsconfig.json` للخادم
+- [x] إعداد ملف `.env` مع المتغيرات البيئية (PORT, DB_URL, JWT_SECRET)
+- [x] إنشاء ملف الإعدادات `server/src/config/index.ts` لتجميع المتغيرات البيئية
 
 ### 1.2 تهيئة Apollo Server (الدرس 02)
-- [ ] إنشاء نقطة الدخول الرئيسية `server/src/index.ts` مع Apollo Server 4 + Express
-- [ ] إعداد HTTP Server و WebSocket Server
-- [ ] إعداد السياق (Context) مع فك رمز JWT
-- [ ] إعداد الإضافات (Plugins) لإدارة دورة حياة الخادم
+- [x] إنشاء نقطة الدخول الرئيسية `server/src/index.ts` مع Apollo Server 4 + Express
+- [x] إعداد HTTP Server و WebSocket Server
+- [x] إعداد السياق (Context) مع فك رمز JWT
+- [x] إعداد الإضافات (Plugins) لإدارة دورة حياة الخادم
 
 ### 1.3 إعداد تخطيط التطبيق - Schema (الدرس 03)
-- [ ] تعريف الأنواع (Types): `User`, `Event`, `Booking`, `AuthData`
-- [ ] تعريف المدخلات (Inputs): `UserInput`, `EventInput`
-- [ ] تعريف الاستعلامات (Queries): `events`, `bookings`, `getUserEvents`
-- [ ] تعريف التحويلات (Mutations): `createUser`, `login`, `createEvent`, `bookEvent`, `cancelBooking`, `deleteEvent`
-- [ ] تعريف الاشتراكات (Subscriptions): `eventAdded`
+- [x] تعريف الأنواع (Types): `User`, `Event`, `Booking`, `AuthData`
+- [x] تعريف المدخلات (Inputs): `UserInput`, `EventInput`
+- [x] تعريف الاستعلامات (Queries): `events`, `bookings`, `getUserEvents`
+- [x] تعريف التحويلات (Mutations): `createUser`, `login`, `createEvent`, `bookEvent`, `cancelBooking`, `deleteEvent`
+- [x] تعريف الاشتراكات (Subscriptions): `eventAdded`
 
 ### 1.4 تهيئة قاعدة البيانات (الدرس 04)
-- [ ] إنشاء نماذج Mongoose بـ TypeScript:
-  - [ ] نموذج المستخدم `User` مع الواجهة (Interface)
-  - [ ] نموذج المناسبة `Event` مع الواجهة
-  - [ ] نموذج الحجز `Booking` مع الواجهة
-- [ ] الاتصال بقاعدة بيانات MongoDB
+- [x] إنشاء نماذج Mongoose بـ TypeScript:
+  - [x] نموذج المستخدم `User` مع الواجهة (Interface)
+  - [x] نموذج المناسبة `Event` مع الواجهة
+  - [x] نموذج الحجز `Booking` مع الواجهة
+- [x] الاتصال بقاعدة بيانات MongoDB
 
 ### 1.5 إعداد الأنواع المشتركة (TypeScript Types)
-- [ ] تعريف أنواع السياق (Context Types)
-- [ ] تعريف أنواع المُحوِّلات (Resolver Types)
-- [ ] تعريف أنواع المصادقة (Auth Types)
+- [x] تعريف أنواع السياق (Context Types)
+- [x] تعريف أنواع المُحوِّلات (Resolver Types)
+- [x] تعريف أنواع المصادقة (Auth Types)
 
 ---
 

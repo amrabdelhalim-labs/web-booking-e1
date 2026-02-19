@@ -3,8 +3,6 @@
  *
  * Defines the User schema and model for MongoDB.
  * Users can create events, book events, and authenticate.
- *
- * TODO: Implement full model with validation (Phase 1.4)
  */
 
 import mongoose, { Schema } from "mongoose";
