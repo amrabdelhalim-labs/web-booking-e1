@@ -2,22 +2,36 @@
  * Simple Modal Component
  *
  * A reusable modal dialog using React Bootstrap.
- * Used for event creation forms and event detail/booking views.
+ * Used for event creation, event detail/booking, and profile editing.
  *
- * TODO: Implement full modal with proper typing (Phase 5.3)
+ * Features:
+ * - Configurable title, confirm text, and confirm button variant
+ * - Optional extra footer actions (e.g., delete account button)
+ * - Disabled state for confirm button
+ * - RTL-aware layout
  */
 
-import React from "react";
+import type { ReactNode } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 interface SimpleModalProps {
+  /** Modal header title */
   title: string;
-  children: React.ReactNode;
+  /** Modal body content */
+  children: ReactNode;
+  /** Callback when confirm button is clicked */
   onConfirm: () => void;
+  /** Callback when cancel/close button is clicked */
   onCancel: () => void;
-  confirmText: React.ReactNode;
+  /** Text or element shown on the confirm button */
+  confirmText: ReactNode;
+  /** Bootstrap variant for the confirm button */
+  confirmVariant?: string;
+  /** Whether the confirm button is disabled */
   isDisabled?: boolean;
+  /** Optional extra actions rendered at the start of the footer */
+  footerExtra?: ReactNode;
 }
 
 export default function SimpleModal({
@@ -26,28 +40,29 @@ export default function SimpleModal({
   onConfirm,
   onCancel,
   confirmText,
+  confirmVariant = "primary",
   isDisabled = false,
+  footerExtra,
 }: SimpleModalProps) {
   return (
-    <div>
-      <Modal show={true} onHide={onCancel} className="custom-modal">
-        <Modal.Header closeButton className="custom-modal-header">
-          <Modal.Title>{title}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{children}</Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="primary"
-            onClick={onConfirm}
-            disabled={isDisabled}
-          >
-            {confirmText}
-          </Button>
-          <Button variant="secondary" onClick={onCancel}>
-            إغلاق
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+    <Modal show onHide={onCancel} className="custom-modal" centered>
+      <Modal.Header closeButton className="custom-modal-header">
+        <Modal.Title>{title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>{children}</Modal.Body>
+      <Modal.Footer>
+        {footerExtra}
+        <Button
+          variant={confirmVariant}
+          onClick={onConfirm}
+          disabled={isDisabled}
+        >
+          {confirmText}
+        </Button>
+        <Button variant="secondary" onClick={onCancel}>
+          إغلاق
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }

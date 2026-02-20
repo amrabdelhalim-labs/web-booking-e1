@@ -83,38 +83,46 @@
 ## المرحلة الثالثة: تهيئة تطبيق العميل (الدروس 09-11)
 
 ### 3.1 إعداد تطبيق React مع TypeScript (الدرس 09)
-- [ ] تهيئة مشروع React بـ Vite + TypeScript
-- [ ] إعداد `package.json` مع الاعتماديات
-- [ ] إعداد `tsconfig.json` للعميل
-- [ ] إعداد ملفات CSS الأساسية (`index.css`, `App.css`)
-- [ ] إعداد ملف `index.html` مع دعم RTL والخط العربي
+- [x] تهيئة مشروع React بـ Vite + TypeScript
+- [x] إعداد `package.json` مع الاعتماديات
+- [x] إعداد `tsconfig.json` للعميل
+- [x] إعداد ملفات CSS الأساسية (`index.css`, `App.css`)
+- [x] إعداد ملف `index.html` مع دعم RTL والخط العربي
 
 ### 3.2 إعداد الترويسة - Navbar (الدرس 10)
-- [ ] إنشاء مكون شريط التنقل `components/Navbar.tsx`
-- [ ] دعم عرض/إخفاء الروابط بحسب حالة المصادقة
-- [ ] تصميم متجاوب باستخدام Bootstrap
+- [x] إنشاء مكون شريط التنقل `components/Navbar.tsx`
+- [x] دعم عرض/إخفاء الروابط بحسب حالة المصادقة
+- [x] تصميم متجاوب باستخدام Bootstrap
 
 ### 3.3 إعداد Apollo Client وربطه بـ React (الدرس 11)
-- [ ] إعداد Apollo Client مع HTTP Link
-- [ ] إعداد WebSocket Link للاشتراكات
-- [ ] إعداد Auth Link لإرفاق رمز JWT
-- [ ] إعداد Split Link (HTTP vs WebSocket)
-- [ ] تغليف التطبيق بـ `ApolloProvider`
+- [x] إعداد Apollo Client مع HTTP Link
+- [x] إعداد WebSocket Link للاشتراكات
+- [x] إعداد Auth Link لإرفاق رمز JWT
+- [x] إعداد Split Link (HTTP vs WebSocket)
+- [x] تغليف التطبيق بـ `ApolloProvider`
 
 ---
 
 ## المرحلة الرابعة: المصادقة في العميل (الدروس 12-13)
 
 ### 4.1 المصادقة من جانب العميل (الدرس 12)
-- [ ] إنشاء سياق المصادقة `context/auth-context.ts` بـ TypeScript
-- [ ] إدارة الحالة (token, userId, username) مع localStorage
-- [ ] دوال تسجيل الدخول والخروج
+- [x] إنشاء سياق المصادقة `context/auth-context.ts` بـ TypeScript
+- [x] إدارة الحالة (token, userId, username) مع localStorage
+- [x] دوال تسجيل الدخول والخروج
 
 ### 4.2 استخدام رمز الوصول (الدرس 13)
-- [ ] إنشاء صفحة تسجيل الدخول `pages/Login.tsx`
-- [ ] إنشاء صفحة إنشاء الحساب `pages/SignUp.tsx`
-- [ ] إنشاء مكون `PrivateRoute.tsx` لحماية المسارات
-- [ ] تعريف استعلامات GraphQL: `LOGIN`, `CREATE_USER`
+- [x] إنشاء صفحة تسجيل الدخول `pages/Login.tsx`
+- [x] إنشاء صفحة إنشاء الحساب `pages/SignUp.tsx`
+- [x] إنشاء مكون `PrivateRoute.tsx` لحماية المسارات
+- [x] تعريف استعلامات GraphQL: `LOGIN`, `CREATE_USER`
+
+### 4.3 إضافات على المرحلة (تحسينات)
+- [x] إنشاء مكون القائمة المنسدلة `components/UserDropdown.tsx` — يظهر عند التحويم على اسم المستخدم في الترويسة
+- [x] إنشاء مكون تعديل البيانات `components/ProfileEditor.tsx` — نموذج لتعديل اسم المستخدم وكلمة المرور مع زر حذف الحساب
+- [x] تحديث مكون النموذج `components/SimpleModal.tsx` — دعم `footerExtra` و `confirmVariant` و `centered`
+- [x] تعريف استعلامات GraphQL: `UPDATE_USER`, `DELETE_USER`
+- [x] تحديث `components/Navbar.tsx` — استبدال زر الخروج بـ `UserDropdown`
+- [x] إضافة أنماط CSS للقائمة المنسدلة (hover + animation)
 
 ---
 
@@ -244,3 +252,63 @@ web-booking-e1/
 ├── TASKS.md                   # هذا الملف
 └── LICENSE
 ```
+
+---
+
+## تعليمات التطوير للمراحل القادمة
+
+> هذه التعليمات مرجع مُوحَّد لأي نموذج ذكاء اصطناعي يعمل على المراحل التالية من المشروع.
+
+### السياق العام
+- المشروع عبارة عن تطبيق حجز مناسبات مبني بـ TypeScript بالكامل (خادم + عميل)
+- المرجع الأساسي: مجلد `graphql/frontend` (JavaScript + CRA + React 17)
+- المشروع الحالي: `web-booking-e1` (TypeScript + Vite + React 18 + Apollo Server 4)
+- الاسم العام للتطبيق الظاهر للمستخدم: **مناسبات عمرو** (وليس مناسبات حسوب)
+
+### خطوات العمل على أي مرحلة جديدة
+1. **مراجعة ملف المهام** (`TASKS.md`): حدّد المهام المطلوبة في المرحلة المستهدفة
+2. **مراجعة المرجع** (`graphql/frontend`): ادرس الشيفرة المرجعية بـ JavaScript لفهم المنطق الأصلي
+3. **مراجعة الخادم** (`web-booking-e1/server/src`): افهم السكيما (`schema/index.ts`)، المحوِّلات (`resolvers/`)، والأنواع (`types/`) لمعرفة شكل البيانات القادمة من الخادم
+4. **مراجعة ملفات العميل الحالية** (`web-booking-e1/client/src`): راجع الملفات الموجودة وعدِّل عليها مباشرة بدلاً من إنشاء ملفات جديدة
+5. **التنفيذ**: نفِّذ المهام بشكل احترافي وفق أحدث الممارسات حتى وإن اختلفت عن المرجع
+6. **التحقق**: تأكّد من خلو الشيفرة من أي أخطاء (TypeScript، تنسيق، بنية) عبر `npx tsc --noEmit` و `npx vite build`
+7. **التحديث**: ضع علامة ✅ على المهام المُنجزة في هذا الملف
+
+### قواعد التنفيذ الإلزامية
+- **TypeScript صارم**: استخدم واجهات (Interfaces) وأنواع (Types) محددة، تجنب `any`
+- **أحدث الممارسات**: استخدم React 18 APIs (`createRoot`)، Apollo Client 3.x الحديثة (`@apollo/client/link/context` بدلاً من `apollo-link-context`)، و `useCallback`/`useMemo` عند الحاجة
+- **CSS Custom Properties**: الألوان الأساسية معرَّفة كمتغيرات CSS في `:root` داخل `index.css` — استخدم `var(--color-primary)` بدلاً من قيم مباشرة
+- **بدون TODO في الشيفرة المُنجزة**: عند إتمام مهمة، أزِل تعليقات TODO المتعلقة بها
+- **بيانات تجريبية للمكونات المستقبلية**: إذا صادفت مكوناً أو دالة لم تُبنَ بعد، ضع فيها بيانات تجريبية (Placeholder) تعمل بدون أخطاء
+- **التعليقات**: اكتب تعليقات JSDoc واضحة بالإنجليزية أعلى كل ملف ودالة رئيسية
+- **الواجهة**: جميع النصوص المعروضة للمستخدم بالعربية، اتجاه RTL
+
+### البنية التقنية المُعتمدة
+| العنصر | التقنية |
+|--------|---------|
+| إطار العميل | React 18 + Vite + TypeScript |
+| إدارة البيانات | Apollo Client 3.x (`@apollo/client`) |
+| التنسيق | Bootstrap 5 RTL + CSS Custom Properties |
+| التوجيه | React Router DOM v6 |
+| المصادقة | JWT عبر `localStorage` + `AuthContext` |
+| الاشتراكات | `graphql-ws` + `GraphQLWsLink` |
+| الخادم | Apollo Server 4 + Express + MongoDB |
+
+### الملفات الأساسية (مُنجزة)
+- `client/index.html` — نقطة الدخول HTML مع RTL + Arabic font + meta tags
+- `client/src/main.tsx` — نقطة دخول React مع Apollo Client (HTTP + WS + Auth + Split Links)
+- `client/src/App.tsx` — المكون الجذري مع التوجيه و `AuthContext.Provider` (يستخدم `useCallback`)
+- `client/src/index.css` — الأنماط العامة مع CSS Custom Properties + أنماط القائمة المنسدلة
+- `client/src/App.css` — أنماط التخطيط الرئيسي
+- `client/src/context/auth-context.ts` — سياق المصادقة مع TypeScript interfaces
+- `client/src/graphql/fragments.ts` — أجزاء GraphQL القابلة لإعادة الاستخدام (`EVENT_FIELDS`)
+- `client/src/graphql/queries.ts` — جميع استعلامات وتحويلات واشتراكات GraphQL (بما فيها `UPDATE_USER`, `DELETE_USER`)
+- `client/src/components/Navbar.tsx` — شريط التنقل المتجاوب مع `UserDropdown` للمستخدم المُسجّل
+- `client/src/components/UserDropdown.tsx` — قائمة منسدلة عند التحويم: تعديل البيانات + تسجيل الخروج
+- `client/src/components/ProfileEditor.tsx` — نموذج تعديل بيانات المستخدم (اسم + كلمة مرور) مع حذف الحساب
+- `client/src/components/SimpleModal.tsx` — نموذج منبثق قابل لإعادة الاستخدام مع `footerExtra` و `confirmVariant`
+- `client/src/components/PrivateRoute.tsx` — حارس المسارات المحمية
+- `client/src/components/Error.tsx` — مكون عرض التنبيهات والأخطاء
+- `client/src/components/Spinner.tsx` — مكون التحميل (react-loader-spinner)
+- `client/src/pages/Login.tsx` — صفحة تسجيل الدخول مع التحقق + التوجيه التلقائي بعد النجاح
+- `client/src/pages/SignUp.tsx` — صفحة إنشاء الحساب مع التحقق + التوجيه التلقائي بعد النجاح

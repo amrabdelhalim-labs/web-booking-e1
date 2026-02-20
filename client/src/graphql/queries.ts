@@ -3,8 +3,6 @@
  *
  * Centralizes all GraphQL operations used by the client application.
  * Uses fragments for shared field selections.
- *
- * TODO: Implement full queries (Phases 4.2, 5.1, 5.3, 5.4, 6.1)
  */
 
 import { gql } from "@apollo/client";
@@ -114,6 +112,25 @@ export const CANCEL_BOOKING = gql`
       _id
       title
     }
+  }
+`;
+
+// ─── User Management ──────────────────────────────────────────────────────────
+
+/** Updates the authenticated user's profile (username and/or password) */
+export const UPDATE_USER = gql`
+  mutation UpdateUser($username: String, $password: String) {
+    updateUser(updateUserInput: { username: $username, password: $password }) {
+      _id
+      username
+    }
+  }
+`;
+
+/** Deletes the authenticated user's account (cascade: events + bookings) */
+export const DELETE_USER = gql`
+  mutation DeleteUser {
+    deleteUser
   }
 `;
 

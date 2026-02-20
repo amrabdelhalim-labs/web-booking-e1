@@ -3,8 +3,6 @@
  *
  * A route guard that redirects unauthenticated users to the login page.
  * Wraps protected routes to enforce authentication.
- *
- * TODO: Implement full route protection (Phase 4.2)
  */
 
 import { useContext } from "react";

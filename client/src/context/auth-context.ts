@@ -3,8 +3,7 @@
  *
  * Provides authentication state (token, userId, username) and
  * auth actions (login, logout) to the entire component tree.
- *
- * TODO: Implement full context with proper typing (Phase 4.1)
+ * Used by Navbar, PrivateRoute, and auth pages.
  */
 
 import { createContext } from "react";

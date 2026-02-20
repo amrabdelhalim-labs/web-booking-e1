@@ -1,9 +1,6 @@
 /**
  * Main Application Styles
  *
- * TODO: Implement full styles (Phase 3.1)
+ * Responsive layout is handled in index.css.
+ * Anything layout-specific to the App shell goes here.
  */
-
-.main-content {
-  margin: 0.7rem 2rem;
-}

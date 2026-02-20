@@ -3,8 +3,6 @@
  *
  * Reusable GraphQL fragments for shared field selections.
  * Fragments avoid duplication across queries and mutations.
- *
- * TODO: Implement full fragments (Phase 5.1)
  */
 
 import { gql } from "@apollo/client";

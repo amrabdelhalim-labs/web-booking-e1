@@ -1,10 +1,8 @@
 /**
  * Error Alert Component
  *
- * Displays an alert message when an error string is provided.
- * Returns nothing if the error string is empty/null.
- *
- * TODO: Implement full error display (Phase 5.2)
+ * Displays a dismissible alert message when an error string is provided.
+ * Returns nothing if the error string is empty/falsy.
  */
 
 import { Alert } from "react-bootstrap";

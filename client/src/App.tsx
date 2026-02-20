@@ -4,10 +4,15 @@
  * Sets up routing, authentication context provider,
  * and the main layout structure of the application.
  *
- * TODO: Implement full routing and auth context (Phase 3.1, 4.1)
+ * Features:
+ * - BrowserRouter with RTL-aware navigation
+ * - AuthContext provider for global auth state
+ * - Public routes: /events, /login, /signup
+ * - Protected routes: /bookings (requires auth)
+ * - Auto-redirect for authenticated users on auth pages
  */
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
@@ -32,34 +37,33 @@ export default function App() {
   /**
    * Stores authentication data in state and localStorage.
    */
-  const login = (
-    userToken: string,
-    loginUserId: string,
-    loginUsername: string
-  ) => {
-    if (userToken) {
-      setToken(userToken);
-      localStorage.setItem("token", userToken);
-    }
-    if (loginUserId) {
-      setUserId(loginUserId);
-      localStorage.setItem("userId", loginUserId);
-    }
-    if (loginUsername) {
-      setUsername(loginUsername);
-      localStorage.setItem("username", loginUsername);
-    }
-  };
+  const login = useCallback(
+    (userToken: string, loginUserId: string, loginUsername: string) => {
+      if (userToken) {
+        setToken(userToken);
+        localStorage.setItem("token", userToken);
+      }
+      if (loginUserId) {
+        setUserId(loginUserId);
+        localStorage.setItem("userId", loginUserId);
+      }
+      if (loginUsername) {
+        setUsername(loginUsername);
+        localStorage.setItem("username", loginUsername);
+      }
+    },
+    []
+  );
 
   /**
    * Clears authentication data from state and localStorage.
    */
-  const logout = () => {
+  const logout = useCallback(() => {
     setToken(null);
     setUserId(null);
     setUsername(null);
     localStorage.clear();
-  };
+  }, []);
 
   return (
     <BrowserRouter>
@@ -67,7 +71,7 @@ export default function App() {
         <Navbar />
         <main className="main-content">
           <Routes>
-            {/* Redirect authenticated users away from login/signup */}
+            {/* Redirect authenticated users away from auth pages */}
             {token && (
               <Route
                 path="/login"

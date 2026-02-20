@@ -1,11 +1,12 @@
 /**
  * Application Entry Point
  *
- * Initializes the React application with Apollo Client provider.
- * Sets up Apollo Client with HTTP link, WebSocket link for subscriptions,
- * and authentication link for JWT token injection.
- *
- * TODO: Implement full Apollo Client setup (Phase 3.3)
+ * Initializes the React 18 application with Apollo Client provider.
+ * Configures Apollo Client with:
+ * - HTTP Link for queries/mutations
+ * - WebSocket Link for subscriptions (graphql-ws)
+ * - Auth Link for JWT token injection
+ * - Split Link to route operations to the correct transport
  */
 
 import React from "react";
@@ -26,21 +27,26 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 
+// ─── Configuration ────────────────────────────────────────────────────────────
+
+const GRAPHQL_HTTP_URI = "http://localhost:3000/graphql";
+const GRAPHQL_WS_URI = "ws://localhost:3000/graphql";
+
 // ─── HTTP Link ────────────────────────────────────────────────────────────────
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri: GRAPHQL_HTTP_URI,
   credentials: "same-origin",
 });
 
-// ─── WebSocket Link (for Subscriptions) ───────────────────────────────────────
+// ─── WebSocket Link (Subscriptions) ───────────────────────────────────────────
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:4000/graphql",
-    connectionParams: {
+    url: GRAPHQL_WS_URI,
+    connectionParams: () => ({
       authToken: localStorage.getItem("token"),
-    },
+    }),
   })
 );
 
@@ -56,7 +62,7 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// ─── Split Link (Route to HTTP or WebSocket) ─────────────────────────────────
+// ─── Split Link (Route HTTP vs WebSocket) ─────────────────────────────────────
 
 const splitLink = split(
   ({ query }) => {
@@ -73,8 +79,9 @@ const splitLink = split(
 // ─── Apollo Client Instance ──────────────────────────────────────────────────
 
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
   link: splitLink,
+  cache: new InMemoryCache(),
+  connectToDevTools: import.meta.env.DEV,
 });
 
 // ─── Render Application ──────────────────────────────────────────────────────

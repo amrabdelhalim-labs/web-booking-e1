@@ -2,9 +2,7 @@
  * Loading Spinner Component
  *
  * Displays a centered loading animation using react-loader-spinner.
- * Used during async operations like data fetching.
- *
- * TODO: Implement full spinner (Phase 5.2)
+ * Used during async operations like data fetching and mutations.
  */
 
 import { Puff } from "react-loader-spinner";
