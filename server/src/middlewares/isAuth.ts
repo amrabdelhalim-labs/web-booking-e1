@@ -3,8 +3,6 @@
  *
  * Provides an authentication guard for protected GraphQL resolvers.
  * Used with graphql-resolvers' combineResolvers to protect mutations/queries.
- *
- * TODO: Implement full auth guard (Phase 2.1)
  */
 
 import { GraphQLError } from "graphql";

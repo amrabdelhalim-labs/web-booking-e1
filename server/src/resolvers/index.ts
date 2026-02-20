@@ -3,8 +3,6 @@
  *
  * Merges all resolver modules into a single resolver map.
  * Uses lodash merge for deep merging of resolver objects.
- *
- * TODO: Verify resolver merging works correctly (Phase 2.4)
  */
 
 import { merge } from "lodash";

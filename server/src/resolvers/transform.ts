@@ -4,8 +4,6 @@
  * Helper functions to transform Mongoose documents into the shape
  * expected by GraphQL responses. Handles date formatting and
  * document-to-plain-object conversion.
- *
- * TODO: Implement full transform functions (Phase 2.4)
  */
 
 import { IEvent, IBooking } from "../types";

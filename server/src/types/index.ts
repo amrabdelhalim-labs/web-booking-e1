@@ -88,6 +88,14 @@ export interface UserInput {
 }
 
 /**
+ * Input for updating user data (email cannot be changed).
+ */
+export interface UpdateUserInput {
+  username?: string;
+  password?: string;
+}
+
+/**
  * Input for creating a new event.
  */
 export interface EventInput {
