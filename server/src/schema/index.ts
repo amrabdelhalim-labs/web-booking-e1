@@ -93,5 +93,6 @@ export const typeDefs = gql`
 
   type Subscription {
     eventAdded: Event!
+    bookingAdded: Booking!
   }
 `;

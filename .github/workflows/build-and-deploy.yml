@@ -1,0 +1,211 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # ✅ Manual run button in GitHub Actions
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "What to deploy?"
+        type: choice
+        required: true
+        default: both
+        options:
+          - both
+          - server
+          - client
+
+# Allow pushing to branches (server/web)
+permissions:
+  contents: write
+
+# Avoid concurrent deployments stomping each other (force-push)
+concurrency:
+  group: build-and-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 1: Deploy Server
+  # - Runs on:
+  #   - push to main
+  #   - manual dispatch when target is server or both
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-server:
+    name: Deploy Server
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'server' || inputs.target == 'both'))
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Build server
+        working-directory: server
+        run: npm run build
+
+      - name: Prepare deployment folder
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/server-deploy
+          mkdir -p /tmp/server-deploy
+
+          # Compiled JavaScript output
+          cp -r server/dist /tmp/server-deploy/dist
+
+          # Runtime config — no src/, no node_modules/, no .cache
+          cp server/package.json      /tmp/server-deploy/package.json
+          cp server/package-lock.json /tmp/server-deploy/package-lock.json
+
+          # Procfile for Railway / Render / Heroku
+          cat > /tmp/server-deploy/Procfile << 'EOF'
+          web: node dist/index.js
+          EOF
+
+          echo "✅ Server deploy folder:"
+          ls -la /tmp/server-deploy/
+
+      - name: Publish to server branch (create if missing)
+        env:
+          TARGET_BRANCH: server
+        run: |
+          set -euo pipefail
+
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name  "github-actions[bot]"
+
+          # Make sure we have up-to-date refs
+          git fetch origin --prune
+
+          # Create branch if it doesn't exist, otherwise reset local branch to remote
+          if git ls-remote --exit-code --heads origin "${TARGET_BRANCH}" >/dev/null 2>&1; then
+            echo "Remote branch ${TARGET_BRANCH} exists."
+            git checkout -B "${TARGET_BRANCH}" "origin/${TARGET_BRANCH}"
+          else
+            echo "Remote branch ${TARGET_BRANCH} does not exist. Creating it."
+            git checkout --orphan "${TARGET_BRANCH}"
+            git rm -rf . --quiet 2>/dev/null || true
+            echo "# ${TARGET_BRANCH}" > README.md
+            git add README.md
+            git commit -m "chore: initialize ${TARGET_BRANCH} branch"
+            git push origin "${TARGET_BRANCH}"
+            # Re-checkout cleanly
+            git fetch origin --prune
+            git checkout -B "${TARGET_BRANCH}" "origin/${TARGET_BRANCH}"
+          fi
+
+          # Replace branch contents with deploy artifacts
+          git rm -rf . --quiet 2>/dev/null || true
+          cp -r /tmp/server-deploy/. .
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "⏭️  No changes to deploy (server)"
+            exit 0
+          fi
+
+          git commit -m "deploy(server): $(date -u +'%Y-%m-%d %H:%M UTC') [skip ci]"
+          git push origin "${TARGET_BRANCH}" --force-with-lease
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 2: Deploy Client
+  # - Runs on:
+  #   - push to main
+  #   - manual dispatch when target is client or both
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-client:
+    name: Deploy Client
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'client' || inputs.target == 'both'))
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Build client
+        working-directory: client
+        run: npm run build
+        env:
+          # Add these secrets in: GitHub repo → Settings → Secrets → Actions
+          VITE_GRAPHQL_HTTP_URL: ${{ secrets.VITE_GRAPHQL_HTTP_URL }}
+          VITE_GRAPHQL_WS_URL:   ${{ secrets.VITE_GRAPHQL_WS_URL }}
+
+      - name: Verify dist folder
+        run: |
+          set -euo pipefail
+          if [ ! -d "client/dist" ]; then
+            echo "❌ Build failed: client/dist not found"
+            exit 1
+          fi
+          echo "✅ Client build successful:"
+          du -sh client/dist
+          find client/dist -type f | wc -l
+
+      - name: Publish to web branch (create if missing)
+        env:
+          TARGET_BRANCH: web
+        run: |
+          set -euo pipefail
+
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name  "github-actions[bot]"
+
+          git fetch origin --prune
+
+          # Create branch if it doesn't exist, otherwise reset local branch to remote
+          if git ls-remote --exit-code --heads origin "${TARGET_BRANCH}" >/dev/null 2>&1; then
+            echo "Remote branch ${TARGET_BRANCH} exists."
+            git checkout -B "${TARGET_BRANCH}" "origin/${TARGET_BRANCH}"
+          else
+            echo "Remote branch ${TARGET_BRANCH} does not exist. Creating it."
+            git checkout --orphan "${TARGET_BRANCH}"
+            git rm -rf . --quiet 2>/dev/null || true
+            echo "# ${TARGET_BRANCH}" > README.md
+            git add README.md
+            git commit -m "chore: initialize ${TARGET_BRANCH} branch"
+            git push origin "${TARGET_BRANCH}"
+            git fetch origin --prune
+            git checkout -B "${TARGET_BRANCH}" "origin/${TARGET_BRANCH}"
+          fi
+
+          # Replace branch contents with built dist
+          git rm -rf . --quiet 2>/dev/null || true
+          cp -r client/dist/. .
+
+          git add -A
+          if git diff --cached --quiet; then
+            echo "⏭️  No changes to deploy (client)"
+            exit 0
+          fi
+
+          git commit -m "deploy(client): $(date -u +'%Y-%m-%d %H:%M UTC') [skip ci]"
+          git push origin "${TARGET_BRANCH}" --force-with-lease

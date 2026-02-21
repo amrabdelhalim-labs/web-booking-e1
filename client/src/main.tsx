@@ -29,8 +29,10 @@ import { createClient } from "graphql-ws";
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
-const GRAPHQL_HTTP_URI = "http://localhost:3000/graphql";
-const GRAPHQL_WS_URI = "ws://localhost:3000/graphql";
+const GRAPHQL_HTTP_URI =
+  import.meta.env.VITE_GRAPHQL_HTTP_URL || "http://localhost:4000/graphql";
+const GRAPHQL_WS_URI =
+  import.meta.env.VITE_GRAPHQL_WS_URL || "ws://localhost:4000/graphql";
 
 // ─── HTTP Link ────────────────────────────────────────────────────────────────
 

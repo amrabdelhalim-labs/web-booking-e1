@@ -9,12 +9,15 @@
 
 import { GraphQLError } from "graphql";
 import { combineResolvers } from "graphql-resolvers";
+import { PubSub } from "graphql-subscriptions";
 
 import Event from "../models/event";
 import Booking from "../models/booking";
 import { isAuthenticated } from "../middlewares/isAuth";
 import { transformBooking, transformEvent } from "./transform";
 import { GraphQLContext } from "../types";
+
+const pubsub = new PubSub();
 
 export const bookingResolver = {
   Query: {
@@ -72,7 +75,12 @@ export const bookingResolver = {
           { path: "event", populate: { path: "creator" } },
           { path: "user" },
         ]);
-        return transformBooking(populatedResult);
+        const transformedBooking = transformBooking(populatedResult);
+        
+        // Publish booking added event
+        pubsub.publish("BOOKING_ADDED", { bookingAdded: transformedBooking });
+        
+        return transformedBooking;
       }
     ),
 
@@ -110,5 +118,11 @@ export const bookingResolver = {
         return event;
       }
     ),
+  },
+
+  Subscription: {
+    bookingAdded: {
+      subscribe: () => pubsub.asyncIterator(["BOOKING_ADDED"]),
+    },
   },
 };
