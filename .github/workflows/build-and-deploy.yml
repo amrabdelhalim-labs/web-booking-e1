@@ -60,68 +60,41 @@ jobs:
         working-directory: server
         run: npm run build
 
-      - name: Prepare deployment folder
+      - name: Push to server branch
         run: |
           set -euo pipefail
-          rm -rf /tmp/server-deploy
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name  "github-actions[bot]"
+
+          # 1️⃣ Save production files to temp
           mkdir -p /tmp/server-deploy
-
-          # Compiled JavaScript output
-          cp -r server/dist /tmp/server-deploy/dist
-
-          # Runtime config — no src/, no node_modules/, no .cache
-          cp server/package.json      /tmp/server-deploy/package.json
-          cp server/package-lock.json /tmp/server-deploy/package-lock.json
-
-          # Procfile for Railway / Render / Heroku
+          cp -r server/dist/* /tmp/server-deploy/
+          cp server/package.json /tmp/server-deploy/
+          cp server/package-lock.json /tmp/server-deploy/
           cat > /tmp/server-deploy/Procfile << 'EOF'
           web: node dist/index.js
           EOF
 
-          echo "✅ Server deploy folder:"
-          ls -la /tmp/server-deploy/
+          # 2️⃣ Create clean orphan branch
+          git checkout --orphan server-new-clean
+          git rm -rf . --cached 2>/dev/null || true
 
-      - name: Publish to server branch (create if missing)
-        env:
-          TARGET_BRANCH: server
-        run: |
-          set -euo pipefail
+          # 3️⃣ DELETE everything from disk (BUT KEEP .git)
+          find . -maxdepth 1 ! -name '.' ! -name '.git' -exec rm -rf {} + 2>/dev/null || true
 
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name  "github-actions[bot]"
+          # 4️⃣ Restore ONLY production files
+          cp -r /tmp/server-deploy/* .
 
-          # Make sure we have up-to-date refs
-          git fetch origin --prune
-
-          # Create branch if it doesn't exist, otherwise reset local branch to remote
-          if git ls-remote --exit-code --heads origin "${TARGET_BRANCH}" >/dev/null 2>&1; then
-            echo "Remote branch ${TARGET_BRANCH} exists."
-            git checkout -B "${TARGET_BRANCH}" "origin/${TARGET_BRANCH}"
-          else
-            echo "Remote branch ${TARGET_BRANCH} does not exist. Creating it."
-            git checkout --orphan "${TARGET_BRANCH}"
-            git rm -rf . --quiet 2>/dev/null || true
-            echo "# ${TARGET_BRANCH}" > README.md
-            git add README.md
-            git commit -m "chore: initialize ${TARGET_BRANCH} branch"
-            git push origin "${TARGET_BRANCH}"
-            # Re-checkout cleanly
-            git fetch origin --prune
-            git checkout -B "${TARGET_BRANCH}" "origin/${TARGET_BRANCH}"
-          fi
-
-          # Replace branch contents with deploy artifacts
-          git rm -rf . --quiet 2>/dev/null || true
-          cp -r /tmp/server-deploy/. .
-
+          # 5️⃣ Commit and merge
           git add -A
-          if git diff --cached --quiet; then
+          if [ -z "$(git diff --cached --name-only)" ]; then
             echo "⏭️  No changes to deploy (server)"
             exit 0
           fi
 
           git commit -m "deploy(server): $(date -u +'%Y-%m-%d %H:%M UTC') [skip ci]"
-          git push origin "${TARGET_BRANCH}" --force-with-lease
+          git branch -M server-new-clean server
+          git push origin server --force
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 2: Deploy Client
@@ -170,42 +143,33 @@ jobs:
           du -sh client/dist
           find client/dist -type f | wc -l
 
-      - name: Publish to web branch (create if missing)
-        env:
-          TARGET_BRANCH: web
+      - name: Publish to web branch (clean orphan)
         run: |
           set -euo pipefail
-
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name  "github-actions[bot]"
 
-          git fetch origin --prune
+          # 1️⃣ Save dist files to temp
+          mkdir -p /tmp/client-deploy
+          cp -r client/dist/* /tmp/client-deploy/
 
-          # Create branch if it doesn't exist, otherwise reset local branch to remote
-          if git ls-remote --exit-code --heads origin "${TARGET_BRANCH}" >/dev/null 2>&1; then
-            echo "Remote branch ${TARGET_BRANCH} exists."
-            git checkout -B "${TARGET_BRANCH}" "origin/${TARGET_BRANCH}"
-          else
-            echo "Remote branch ${TARGET_BRANCH} does not exist. Creating it."
-            git checkout --orphan "${TARGET_BRANCH}"
-            git rm -rf . --quiet 2>/dev/null || true
-            echo "# ${TARGET_BRANCH}" > README.md
-            git add README.md
-            git commit -m "chore: initialize ${TARGET_BRANCH} branch"
-            git push origin "${TARGET_BRANCH}"
-            git fetch origin --prune
-            git checkout -B "${TARGET_BRANCH}" "origin/${TARGET_BRANCH}"
-          fi
+          # 2️⃣ Create clean orphan branch
+          git checkout --orphan web-new-clean
+          git rm -rf . --cached 2>/dev/null || true
 
-          # Replace branch contents with built dist
-          git rm -rf . --quiet 2>/dev/null || true
-          cp -r client/dist/. .
+          # 3️⃣ DELETE everything from disk (BUT KEEP .git)
+          find . -maxdepth 1 ! -name '.' ! -name '.git' -exec rm -rf {} + 2>/dev/null || true
 
+          # 4️⃣ Restore ONLY dist files
+          cp -r /tmp/client-deploy/* .
+
+          # 5️⃣ Commit and merge
           git add -A
-          if git diff --cached --quiet; then
+          if [ -z "$(git diff --cached --name-only)" ]; then
             echo "⏭️  No changes to deploy (client)"
             exit 0
           fi
 
           git commit -m "deploy(client): $(date -u +'%Y-%m-%d %H:%M UTC') [skip ci]"
-          git push origin "${TARGET_BRANCH}" --force-with-lease
+          git branch -M web-new-clean web
+          git push origin web --force
