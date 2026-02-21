@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGIN } from "../graphql/queries";
 import AuthContext from "../context/auth-context";
-import Error from "../components/Error";
+import Alert from "../components/Alert";
 import Spinner from "../components/Spinner";
 
 export default function LoginPage() {
@@ -52,7 +52,7 @@ export default function LoginPage() {
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
-      <Error error={alert} />
+      <Alert message={alert} />
 
       <div className="mb-3 mt-2">
         <label className="form-label" htmlFor="login-email">

@@ -2,74 +2,60 @@
  * Bookings Page
  *
  * Displays the authenticated user's event bookings.
- * Allows cancelling existing bookings.
+ * Allows cancelling existing bookings with automatic list refresh.
  *
- * TODO: Implement full bookings page (Phase 5.4)
+ * Features:
+ * - Lists all bookings with event details and creator info
+ * - Cancel booking with refetch
+ * - Empty state messaging
+ * - Error and loading state handling
  */
 
 import { useState } from "react";
-import { useQuery, useMutation, useApolloClient } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { BOOKINGS, CANCEL_BOOKING } from "../graphql/queries";
 import BookingItem from "../components/BookingItem";
-import Error from "../components/Error";
+import Alert from "../components/Alert";
 import Spinner from "../components/Spinner";
-
-/** Shape of a single booking from the GraphQL response */
-interface BookingData {
-  _id: string;
-  createdAt: string;
-  event: { _id: string; title: string; description: string; price: number; date: string };
-  user: { username: string; email: string };
-}
+import type { BookingData } from "../types";
 
 export default function BookingsPage() {
   const [alert, setAlert] = useState("");
-  const client = useApolloClient();
 
-  // ─── Bookings list sub-component ────────────────────────────────────────
-  function BookingsList() {
-    const { loading, error, data } = useQuery(BOOKINGS);
+  const { loading, error, data } = useQuery(BOOKINGS);
 
-    if (loading) return <Spinner />;
-    if (error) {
-      setAlert(error.message);
-      return null;
-    }
-
-    client.refetchQueries({ include: ["Bookings"] });
-
-    return (
-      <div>
-        <Error error={alert} />
-        <div className="row">
-          <div className="col-md-8 offset-md-2">
-            {data.bookings.map((booking: BookingData) => (
-              <BookingItem
-                key={booking._id}
-                {...booking}
-                onCancelBooking={() => {
-                  cancelBooking({
-                    variables: { bookingId: booking._id },
-                  });
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ─── Cancel booking mutation ────────────────────────────────────────────
   const [cancelBooking] = useMutation(CANCEL_BOOKING, {
-    onError: (error) => setAlert(error.message),
-    onCompleted: () => setAlert("تم إلغاء حجزك"),
+    onError: (err) => setAlert(err.message),
+    onCompleted: () => setAlert("تم إلغاء حجزك بنجاح"),
+    refetchQueries: ["Bookings"],
   });
+
+  if (loading) return <Spinner />;
 
   return (
     <div className="container-fluid">
       <h2>المناسبات التي حجزتها</h2>
-      <BookingsList />
+      <Alert message={alert} variant="success" />
+      {error && <Alert message={error.message} variant="danger" />}
+
+      <div className="row">
+        <div className="col-md-8 offset-md-2">
+          {data?.bookings?.length === 0 && (
+            <p className="text-center text-muted mt-3">
+              لا توجد حجوزات حالياً
+            </p>
+          )}
+          {data?.bookings?.map((booking: BookingData) => (
+            <BookingItem
+              key={booking._id}
+              {...booking}
+              onCancelBooking={() =>
+                cancelBooking({ variables: { bookingId: booking._id } })
+              }
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

@@ -2,21 +2,21 @@
  * Event Item Component
  *
  * Displays a single event card with title, price, date,
- * and a detail/action button.
+ * creator name (clickable link), and a detail/action button.
  *
- * TODO: Implement full event card (Phase 5.1)
+ * Features:
+ * - Shows creator name as a link to their events page
+ * - Different button text based on event ownership
+ * - Responsive grid sizing: 4 per row (lg), 3 per row (md), 2 per row (sm)
  */
 
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 import AuthContext from "../context/auth-context";
+import type { EventData } from "../types";
 
-interface EventItemProps {
-  _id: string;
-  title: string;
-  price: number;
-  date: string;
-  description: string;
-  creator: { _id: string; email: string };
+interface EventItemProps extends EventData {
+  /** Callback to show event details in a modal */
   onDetail: (eventId: string) => void;
 }
 
@@ -29,25 +29,37 @@ export default function EventItem({
   onDetail,
 }: EventItemProps) {
   const { userId } = useContext(AuthContext);
+  const isOwner = userId === creator._id;
 
   return (
-    <div className="events-list-item col-md-4 col-lg-3 col-6">
-      <div className="text-center align-items-center flex-column d-grid gap-3">
-        <div className="p2">
-          <h1>{title}</h1>
-        </div>
-        <div className="p-3">
-          <h2>
-            ${price} -{" "}
-            {date.split(".")[0].split(" ")[0].replace(/-/g, "/")}
-          </h2>
-        </div>
-        <div className="p-2">
-          <button className="btn" onClick={() => onDetail(_id)}>
-            {userId === creator._id
-              ? "أنت صاحب هذه المناسبة"
-              : "عرض التفاصيل"}
-          </button>
+    <div className="col-6 col-sm-6 col-md-4 col-lg-3">
+      <div className="events-list-item">
+        <div className="event-card-inner">
+          <div className="event-title">
+            <h1>{title}</h1>
+          </div>
+          <div className="event-meta">
+            <h2>
+              ${price} -{" "}
+              {date.split(".")[0].split(" ")[0].replace(/-/g, "/")}
+            </h2>
+          </div>
+          <div className="event-creator">
+            <Link
+              to={`/events/user/${creator._id}`}
+              className="event-creator-link"
+            >
+              {creator.username}
+            </Link>
+          </div>
+          <div className="event-action">
+            <button
+              className={`btn btn-detail ${isOwner ? "btn-owned" : ""}`}
+              onClick={() => onDetail(_id)}
+            >
+              {isOwner ? "مناسبتك" : "التفاصيل"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

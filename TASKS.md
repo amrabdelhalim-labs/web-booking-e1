@@ -129,41 +129,60 @@
 ## المرحلة الخامسة: صفحات التطبيق (الدروس 14-17)
 
 ### 5.1 إعداد صفحة المناسبات (الدرس 14)
-- [ ] إنشاء صفحة المناسبات `pages/Events.tsx`
-- [ ] إنشاء مكون عنصر المناسبة `components/EventItem.tsx`
-- [ ] عرض قائمة المناسبات مع التصفح والتفاصيل
-- [ ] تعريف استعلام `EVENTS`
+- [x] إنشاء صفحة المناسبات `pages/Events.tsx`
+- [x] إنشاء مكون عنصر المناسبة `components/EventItem.tsx`
+- [x] عرض قائمة المناسبات مع التصفح والتفاصيل
+- [x] تعريف استعلام `EVENTS`
 
 ### 5.2 تنظيم عرض التنبيهات والأخطاء (الدرس 15)
-- [ ] إنشاء مكون عرض الأخطاء `components/Error.tsx`
-- [ ] إنشاء مكون التحميل `components/Spinner.tsx`
-- [ ] دمج إدارة الأخطاء في جميع الصفحات
+- [x] إنشاء مكون عرض الأخطاء `components/Error.tsx`
+- [x] إنشاء مكون التحميل `components/Spinner.tsx`
+- [x] دمج إدارة الأخطاء في جميع الصفحات
 
 ### 5.3 تفعيل إضافة مناسبة عبر Modal (الدرس 16)
-- [ ] إنشاء مكون النافذة المنبثقة `components/SimpleModal.tsx`
-- [ ] نموذج إنشاء مناسبة جديدة
-- [ ] نموذج عرض تفاصيل المناسبة وحجزها
-- [ ] تعريف استعلامات `CREATE_EVENT`, `BOOK_EVENT`
+- [x] إنشاء مكون النافذة المنبثقة `components/SimpleModal.tsx`
+- [x] نموذج إنشاء مناسبة جديدة
+- [x] نموذج عرض تفاصيل المناسبة وحجزها
+- [x] تعريف استعلامات `CREATE_EVENT`, `BOOK_EVENT`
 
 ### 5.4 إعداد صفحة الحجوزات (الدرس 17)
-- [ ] إنشاء صفحة الحجوزات `pages/Bookings.tsx`
-- [ ] إنشاء مكون عنصر الحجز `components/BookingItem.tsx`
-- [ ] عرض حجوزات المستخدم مع إمكانية الإلغاء
-- [ ] تعريف استعلامات `BOOKINGS`, `CANCEL_BOOKING`
+- [x] إنشاء صفحة الحجوزات `pages/Bookings.tsx`
+- [x] إنشاء مكون عنصر الحجز `components/BookingItem.tsx`
+- [x] عرض حجوزات المستخدم مع إمكانية الإلغاء
+- [x] تعريف استعلامات `BOOKINGS`, `CANCEL_BOOKING`
+
+### 5.5 إضافات على المرحلة (تحسينات)
+- [x] إنشاء صفحة مناسبات المستخدم `pages/UserEvents.tsx` — تخدم `/my-events` و `/events/user/:userId`
+- [x] إمكانية تعديل المناسبة عبر نموذج منبثق (صاحب المناسبة فقط)
+- [x] إمكانية حذف المناسبة مع تأكيد مضمَّن داخل البطاقة
+- [x] إضافة حقل بحث مُرشَّح من الخادم (debounced) في صفحة المناسبات
+- [x] عرض اسم ناشئ المناسبة في بطاقة المناسبة كرابط قابل للضغط
+- [x] تحديث `EventFields` fragment ليتضمن بيانات الناشئ (`creator`)
+- [x] تعريف استعلامات `GET_USER_EVENTS`, `UPDATE_EVENT`, `DELETE_EVENT`
+- [x] إنشاء ملف أنواع مشتركة `client/src/types.ts` (`EventData`, `BookingData`, `Creator`)
+- [x] إضافة رابط "مناسباتي" في الترويسة + مسارات جديدة في `App.tsx`
+- [x] تحسين مكون عنصر الحجز `BookingItem.tsx` — عرض الناشئ وتاريخ الحجز
+- [x] تحديث أنماط CSS: شريط البحث، رابط الناشئ، الحجوزات المتجاوبة
+
+### 5.6 تعديلات الخادم
+- [x] إضافة `UpdateEventInput` إلى السكيما
+- [x] إضافة `searchTerm` اختياري لاستعلام `events`
+- [x] إضافة محوِّل `updateEvent` مع التحقق من الملكية
+- [x] إضافة واجهة `UpdateEventInput` في أنواع الخادم
 
 ---
 
 ## المرحلة السادسة: الميزات المتقدمة (الدروس 18-19)
 
 ### 6.1 استخدام الاشتراكات لتنبيه المستخدمين (الدرس 18)
-- [ ] إعداد اشتراك `eventAdded` في الخادم
-- [ ] استقبال الإشعارات في العميل عند إضافة مناسبة جديدة
-- [ ] عرض تنبيه للمستخدم مع تحديث القائمة تلقائياً
+- [x] إعداد اشتراك `eventAdded` في الخادم
+- [x] استقبال الإشعارات في العميل عند إضافة مناسبة جديدة
+- [x] عرض تنبيه للمستخدم مع تحديث القائمة تلقائياً
 
 ### 6.2 تحسينات ومزايا (الدرس 19)
-- [ ] تحسين تجربة المستخدم
-- [ ] تحسين أداء الاستعلامات
-- [ ] مراجعة وتنظيف الشيفرة النهائية
+- [x] تحسين تجربة المستخدم
+- [x] تحسين أداء الاستعلامات
+- [x] مراجعة وتنظيف الشيفرة النهائية
 
 ---
 
@@ -298,17 +317,23 @@ web-booking-e1/
 - `client/index.html` — نقطة الدخول HTML مع RTL + Arabic font + meta tags
 - `client/src/main.tsx` — نقطة دخول React مع Apollo Client (HTTP + WS + Auth + Split Links)
 - `client/src/App.tsx` — المكون الجذري مع التوجيه و `AuthContext.Provider` (يستخدم `useCallback`)
-- `client/src/index.css` — الأنماط العامة مع CSS Custom Properties + أنماط القائمة المنسدلة
+- `client/src/index.css` — الأنماط العامة مع CSS Custom Properties + شريط البحث + القائمة المنسدلة + التجاوبية
 - `client/src/App.css` — أنماط التخطيط الرئيسي
+- `client/src/types.ts` — أنواع TypeScript المشتركة (`EventData`, `BookingData`, `Creator`)
 - `client/src/context/auth-context.ts` — سياق المصادقة مع TypeScript interfaces
-- `client/src/graphql/fragments.ts` — أجزاء GraphQL القابلة لإعادة الاستخدام (`EVENT_FIELDS`)
-- `client/src/graphql/queries.ts` — جميع استعلامات وتحويلات واشتراكات GraphQL (بما فيها `UPDATE_USER`, `DELETE_USER`)
-- `client/src/components/Navbar.tsx` — شريط التنقل المتجاوب مع `UserDropdown` للمستخدم المُسجّل
+- `client/src/graphql/fragments.ts` — أجزاء GraphQL (`EVENT_FIELDS` مع بيانات الناشئ)
+- `client/src/graphql/queries.ts` — جميع استعلامات وتحويلات واشتراكات GraphQL
+- `client/src/components/Navbar.tsx` — شريط التنقل المتجاوب مع `UserDropdown` + رابط مناسباتي
 - `client/src/components/UserDropdown.tsx` — قائمة منسدلة عند التحويم: تعديل البيانات + تسجيل الخروج
 - `client/src/components/ProfileEditor.tsx` — نموذج تعديل بيانات المستخدم (اسم + كلمة مرور) مع حذف الحساب
 - `client/src/components/SimpleModal.tsx` — نموذج منبثق قابل لإعادة الاستخدام مع `footerExtra` و `confirmVariant`
+- `client/src/components/EventItem.tsx` — بطاقة المناسبة مع اسم الناشئ كرابط قابل للضغط
+- `client/src/components/BookingItem.tsx` — عنصر الحجز مع تفاصيل الناشئ وتاريخ الحجز
 - `client/src/components/PrivateRoute.tsx` — حارس المسارات المحمية
 - `client/src/components/Error.tsx` — مكون عرض التنبيهات والأخطاء
 - `client/src/components/Spinner.tsx` — مكون التحميل (react-loader-spinner)
+- `client/src/pages/Events.tsx` — صفحة المناسبات مع البحث والإنشاء والحجز والاشتراكات
+- `client/src/pages/Bookings.tsx` — صفحة حجوزات المستخدم مع إلغاء الحجز
+- `client/src/pages/UserEvents.tsx` — صفحة مناسبات المستخدم (تعديل/حذف) أو مناسبات ناشئ معيّن
 - `client/src/pages/Login.tsx` — صفحة تسجيل الدخول مع التحقق + التوجيه التلقائي بعد النجاح
 - `client/src/pages/SignUp.tsx` — صفحة إنشاء الحساب مع التحقق + التوجيه التلقائي بعد النجاح

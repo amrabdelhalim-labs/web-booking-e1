@@ -1,100 +1,97 @@
 /**
  * Events Page
  *
- * Displays all available events, allows creating new events,
- * viewing event details, and booking events.
- * Includes real-time subscription for newly added events.
+ * Displays all available events with real-time updates via subscriptions.
+ * Authenticated users can create new events and book existing ones.
+ * Includes server-side search filtering by title or description.
  *
- * TODO: Implement full events page (Phases 5.1, 5.3, 6.1)
+ * Features:
+ * - Debounced search bar (server-side filtering via GraphQL)
+ * - Infinite scroll pagination: 8 events per page, load more button
+ * - Create event modal for authenticated users
+ * - Event detail modal with booking capability
+ * - Real-time notifications for newly added events (subscription)
+ * - Empty state messaging
  */
 
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
+import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import {
-  useQuery,
-  useMutation,
-  useApolloClient,
-  useSubscription,
-} from "@apollo/client";
-import { EVENTS, BOOK_EVENT, CREATE_EVENT, EVENT_ADDED } from "../graphql/queries";
+  EVENTS,
+  BOOK_EVENT,
+  CREATE_EVENT,
+  EVENT_ADDED,
+} from "../graphql/queries";
+import { NavLink } from "react-router-dom";
+import AuthContext from "../context/auth-context";
 import EventItem from "../components/EventItem";
 import SimpleModal from "../components/SimpleModal";
-import AuthContext from "../context/auth-context";
-import { NavLink } from "react-router-dom";
-import Error from "../components/Error";
-import Spinner from "../components/Spinner";
+import Alert from "../components/Alert";
+import type { EventData } from "../types";
 
-/** Shape of a single event from the GraphQL response */
-interface EventData {
-  _id: string;
-  title: string;
-  description: string;
-  price: number;
-  date: string;
-  creator: { _id: string; email: string };
-}
+const PAGE_SIZE = 8;
 
 export default function EventsPage() {
-  const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
   const { token, userId } = useContext(AuthContext);
+
   const [alert, setAlert] = useState("");
-  const [modelAlert, setModelAlert] = useState("");
+  const [modalAlert, setModalAlert] = useState("");
+
+  // ─── Search (debounced) ───────────────────────────────────────────────
+  const [searchInput, setSearchInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSearchTerm(searchInput), 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  // ─── Create event form state ──────────────────────────────────────────
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
-  const client = useApolloClient();
 
-  // ─── Subscription for new events ────────────────────────────────────────
+  // ─── Event detail modal state ─────────────────────────────────────────
+  const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
+
+  // ─── Pagination state ────────────────────────────────────────────────
+  const [hasMore, setHasMore] = useState(true);
+
+  // ─── Events query ─────────────────────────────────────────────────────
+  const { loading, error, data, fetchMore } = useQuery(EVENTS, {
+    variables: { searchTerm, skip: 0, limit: PAGE_SIZE },
+  });
+
+  // Reset pagination when search term changes
+  useEffect(() => {
+    if (searchTerm !== undefined) {
+      setHasMore(true);
+    }
+  }, [searchTerm]);
+
+  // ─── Subscription: new events ─────────────────────────────────────────
   useSubscription(EVENT_ADDED, {
-    onData: ({ data: subscriptionData }) => {
-      if (subscriptionData.data) {
-        const addedEvent = subscriptionData.data.eventAdded;
-        setAlert(`مناسبة جديدة بعنوان: ${addedEvent.title}، أُضيفت للتو`);
-        window.scrollTo(0, 0);
+    onData: ({ client, data: subData }) => {
+      if (subData.data) {
+        const addedEvent = subData.data.eventAdded as EventData;
+        if (addedEvent.creator._id !== userId) {
+          client.refetchQueries({ include: ["Events"] });
+          setAlert(
+            `مناسبة جديدة بعنوان: ${addedEvent.title}، أُضيفت للتو`
+          );
+          window.scrollTo(0, 0);
+        }
       }
     },
   });
 
-  // ─── Events list sub-component ──────────────────────────────────────────
-  function EventList() {
-    const { loading, error, data } = useQuery(EVENTS);
-
-    if (loading) return <Spinner />;
-    if (error) {
-      setAlert(error.message);
-      return null;
-    }
-
-    client.refetchQueries({ include: ["Events"] });
-
-    const showDetailHandler = (eventId: string) => {
-      const clickedEvent = data.events.find(
-        (event: EventData) => event._id === eventId
-      );
-      setSelectedEvent(clickedEvent || null);
-    };
-
-    return (
-      <div className="container-fluid">
-        <div className="row justify-content-center">
-          {data.events.map((event: EventData) => (
-            <EventItem
-              key={event._id}
-              {...event}
-              onDetail={showDetailHandler}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // ─── Book event mutation ────────────────────────────────────────────────
-  const [bookEventHandler] = useMutation(BOOK_EVENT, {
-    onError: (error) => {
+  // ─── Book event mutation ──────────────────────────────────────────────
+  const [bookEvent] = useMutation(BOOK_EVENT, {
+    onError: (err) => {
       setSelectedEvent(null);
-      setAlert(error.message);
+      setAlert(err.message);
       window.scrollTo(0, 0);
     },
     onCompleted: () => {
@@ -103,114 +100,218 @@ export default function EventsPage() {
     },
   });
 
-  // ─── Create event mutation ──────────────────────────────────────────────
-  const [eventConfirmHandler] = useMutation(CREATE_EVENT, {
-    onError: (error) => {
-      setCreating(false);
-      setAlert(error.message);
-    },
+  // ─── Create event mutation ────────────────────────────────────────────
+  const [createEvent, { loading: createLoading }] = useMutation(CREATE_EVENT, {
+    onError: (err) => setModalAlert(err.message),
     onCompleted: () => {
       setCreating(false);
       setAlert("تم إضافة المناسبة بنجاح");
-      setModelAlert("");
-      client.refetchQueries({ include: ["Events"] });
+      setModalAlert("");
+      setTitle("");
+      setPrice("");
+      setDate("");
+      setDescription("");
     },
+    refetchQueries: ["Events"],
   });
+
+  // ─── Load more handler ───────────────────────────────────────────────
+  const handleLoadMore = useCallback(() => {
+    if (!data?.events || loading) return;
+    
+    const currentCount = data.events.length;
+    fetchMore({
+      variables: {
+        skip: currentCount,
+        limit: PAGE_SIZE,
+        searchTerm,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult?.events) return prev;
+        if (fetchMoreResult.events.length < PAGE_SIZE) {
+          setHasMore(false);
+        }
+        return {
+          events: [...prev.events, ...fetchMoreResult.events],
+        };
+      },
+    });
+  }, [data?.events, loading, fetchMore, searchTerm]);
+
+  const handleCreateEvent = () => {
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !date.trim() ||
+      Number(price) <= 0
+    ) {
+      setModalAlert("يجب ملء جميع الحقول بالشكل الصحيح!");
+      return;
+    }
+    createEvent({
+      variables: {
+        title: title.trim(),
+        price: +price,
+        date,
+        description: description.trim(),
+      },
+    });
+  };
+
+  const handleShowDetail = (eventId: string) => {
+    if (!data?.events) return;
+    const event = data.events.find((e: EventData) => e._id === eventId);
+    setSelectedEvent(event || null);
+  };
 
   return (
     <div>
-      {token && <Error error={alert} />}
+      <Alert message={alert} />
+
+      {/* Create event panel for authenticated users */}
       {token && (
         <div className="events-control pt-2 text-center pb-3">
           <h2>شارك مناسباتك الخاصة!</h2>
-          <button className="btn" onClick={() => setCreating(true)}>
+          <button className="btn btn-create" onClick={() => setCreating(true)}>
             إنشاء مناسبة
           </button>
         </div>
       )}
-      <div>
-        <h2 className="mb-3">المناسبات من حولك!</h2>
-        <EventList />
+
+      {/* Events section header + search */}
+      <div className="events-header">
+        <h2>المناسبات من حولك!</h2>
+        <div className="search-bar">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="ابحث عن مناسبة بالعنوان أو الوصف..."
+            value={searchInput}
+            onChange={({ target }) => setSearchInput(target.value)}
+          />
+          {searchInput && (
+            <button
+              className="search-clear"
+              type="button"
+              onClick={() => setSearchInput("")}
+              aria-label="مسح البحث"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Create event modal */}
+      {/* Events list */}
+      {error && <Alert message={error.message} variant="danger" />}
+      {data?.events && (
+        <>
+          <div className="container-fluid">
+            <div className="row justify-content-center">
+              {data.events.length === 0 && (
+                <p className="text-center text-muted mt-3">
+                  لا توجد مناسبات{searchTerm ? " مطابقة للبحث" : ""}
+                </p>
+              )}
+              {data.events.map((event: EventData) => (
+                <EventItem
+                  key={event._id}
+                  {...event}
+                  onDetail={handleShowDetail}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Load more button */}
+          {hasMore && data.events.length > 0 && (
+            <div className="load-more-container">
+              <button
+                className="btn btn-load-more"
+                onClick={handleLoadMore}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="spinner-small"></span> جاري التحميل...
+                  </>
+                ) : (
+                  "تحميل المزيد"
+                )}
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ─── Create event modal ──────────────────────────────────────── */}
       {creating && (
         <SimpleModal
           title="إضافة مناسبة"
           onCancel={() => {
             setCreating(false);
-            setAlert("");
-            setModelAlert("");
+            setModalAlert("");
           }}
-          onConfirm={() => {
-            if (
-              title.trim().length === 0 ||
-              Number(price) <= 0 ||
-              date.trim().length === 0 ||
-              description.trim().length === 0
-            ) {
-              setModelAlert("يجب ملئ جميع الحقول بالشكل الصحيح!");
-              return;
-            }
-            eventConfirmHandler({
-              variables: { title, price: +price, date, description },
-            });
-            setTitle("");
-            setPrice("");
-            setDate("");
-            setDescription("");
-          }}
+          onConfirm={handleCreateEvent}
           confirmText="تأكيد"
+          isDisabled={createLoading}
         >
-          <form>
-            <Error error={modelAlert} />
-            <div className="mb-1">
-              <label className="form-label" htmlFor="title">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCreateEvent();
+            }}
+          >
+            <Alert message={modalAlert} />
+            <div className="mb-2">
+              <label className="form-label" htmlFor="create-title">
                 العنوان
               </label>
               <input
                 className="form-control"
-                required
+                id="create-title"
                 type="text"
-                id="title"
+                required
                 value={title}
                 onChange={({ target }) => setTitle(target.value)}
               />
             </div>
-            <div className="mb-1 mt-1">
-              <label className="form-label" htmlFor="price">
+            <div className="mb-2">
+              <label className="form-label" htmlFor="create-price">
                 السعر
               </label>
               <input
                 className="form-control"
-                required
+                id="create-price"
                 type="number"
-                id="price"
+                required
+                min="0"
+                step="0.01"
                 value={price}
                 onChange={({ target }) => setPrice(target.value)}
               />
             </div>
-            <div className="mb-1 mt-1">
-              <label className="form-label" htmlFor="date">
+            <div className="mb-2">
+              <label className="form-label" htmlFor="create-date">
                 التاريخ
               </label>
               <input
                 className="form-control"
-                required
+                id="create-date"
                 type="datetime-local"
-                id="date"
+                required
                 value={date}
                 onChange={({ target }) => setDate(target.value)}
               />
             </div>
-            <div className="mb-1 mt-1">
-              <label className="form-label" htmlFor="description">
+            <div className="mb-2">
+              <label className="form-label" htmlFor="create-description">
                 التفاصيل
               </label>
               <textarea
                 className="form-control"
+                id="create-description"
                 required
-                id="description"
                 rows={3}
                 value={description}
                 onChange={({ target }) => setDescription(target.value)}
@@ -220,19 +321,13 @@ export default function EventsPage() {
         </SimpleModal>
       )}
 
-      {/* Event detail / booking modal */}
+      {/* ─── Event detail / booking modal ────────────────────────────── */}
       {selectedEvent && (
         <SimpleModal
-          title="حجز المناسبة"
-          onCancel={() => {
-            setCreating(false);
-            setSelectedEvent(null);
-            setAlert("");
-          }}
+          title="تفاصيل المناسبة"
+          onCancel={() => setSelectedEvent(null)}
           onConfirm={() => {
-            bookEventHandler({
-              variables: { eventId: selectedEvent._id },
-            });
+            bookEvent({ variables: { eventId: selectedEvent._id } });
           }}
           confirmText={
             token ? (
@@ -243,11 +338,11 @@ export default function EventsPage() {
           }
           isDisabled={selectedEvent.creator._id === userId}
         >
-          <h4 className="mb-4">{selectedEvent.title}</h4>
-          <h4 className="mb-4">
-            ${selectedEvent.price} {"-"}{" "}
+          <h4 className="mb-3">{selectedEvent.title}</h4>
+          <h5 className="mb-3 text-muted">
+            ${selectedEvent.price} -{" "}
             {selectedEvent.date.split(".")[0].replace(/-/g, "/")}
-          </h4>
+          </h5>
           <p>{selectedEvent.description}</p>
         </SimpleModal>
       )}

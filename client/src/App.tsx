@@ -7,8 +7,8 @@
  * Features:
  * - BrowserRouter with RTL-aware navigation
  * - AuthContext provider for global auth state
- * - Public routes: /events, /login, /signup
- * - Protected routes: /bookings (requires auth)
+ * - Public routes: /events, /login, /signup, /events/user/:userId
+ * - Protected routes: /bookings, /my-events (requires auth)
  * - Auto-redirect for authenticated users on auth pages
  */
 
@@ -20,6 +20,7 @@ import LoginPage from "./pages/Login";
 import SignUpPage from "./pages/SignUp";
 import EventsPage from "./pages/Events";
 import BookingsPage from "./pages/Bookings";
+import UserEventsPage from "./pages/UserEvents";
 import AuthContext from "./context/auth-context";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -94,12 +95,23 @@ export default function App() {
             {/* Public route */}
             <Route path="/events" element={<EventsPage />} />
 
-            {/* Protected route */}
+            {/* Creator's events (public) */}
+            <Route path="/events/user/:userId" element={<UserEventsPage />} />
+
+            {/* Protected routes */}
             <Route
               path="/bookings"
               element={
                 <PrivateRoute>
                   <BookingsPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-events"
+              element={
+                <PrivateRoute>
+                  <UserEventsPage />
                 </PrivateRoute>
               }
             />

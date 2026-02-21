@@ -122,9 +122,12 @@ h2 {
 
 .events-control {
   border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  padding: 1.5rem;
   margin: 2rem auto 0;
   width: 30rem;
   max-width: 80%;
+  background: #fafafa;
 }
 
 .form-control label,
@@ -184,6 +187,132 @@ button > a {
   color: var(--color-white);
 }
 
+/* ─── Button Variants ────────────────────────────────────────────────────── */
+
+/* .btn-create — Primary action (create event) */
+.btn-create {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem !important;
+  font-size: 1rem;
+  border-radius: 4px !important;
+  transition: all 0.2s ease;
+}
+
+.btn-create:hover,
+.btn-create:focus-visible {
+  background-color: var(--color-primary-hover) !important;
+  border-color: var(--color-primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(204, 102, 0, 0.25);
+}
+
+.btn-create:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(204, 102, 0, 0.15);
+}
+
+/* .btn-detail — Secondary action (view/book event) */
+.btn-detail {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+  padding: 0.4rem 0.8rem !important;
+  font-size: 0.85rem;
+  border-radius: 3px !important;
+  transition: all 0.2s ease;
+}
+
+.btn-detail:hover,
+.btn-detail:focus-visible {
+  background-color: var(--color-primary-hover) !important;
+  border-color: var(--color-primary-hover) !important;
+  transform: scale(1.05);
+}
+
+.btn-detail:active {
+  transform: scale(0.98);
+}
+
+/* .btn-owned — Tertiary action (edit/delete for owned events) */
+.btn-detail.btn-owned {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+}
+
+.btn-detail.btn-owned:hover,
+.btn-detail.btn-owned:focus-visible {
+  background-color: #5a6268 !important;
+  border-color: #5a6268 !important;
+}
+
+/* .btn-load-more — Pagination trigger */
+.btn-load-more {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+  padding: 0.7rem 1.5rem !important;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 4px !important;
+  margin: 1.5rem auto !important;
+  display: block !important;
+  transition: all 0.2s ease;
+  position: relative;
+  min-width: 150px;
+}
+
+.btn-load-more:hover,
+.btn-load-more:focus-visible {
+  background-color: var(--color-primary-hover) !important;
+  border-color: var(--color-primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(204, 102, 0, 0.25);
+}
+
+.btn-load-more:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(204, 102, 0, 0.15);
+}
+
+.btn-load-more:disabled {
+  background-color: var(--color-disabled) !important;
+  border-color: var(--color-disabled) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 0.7;
+}
+
+/* .load-more-container — Wrapper for load-more button */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+}
+
+/* .spinner-small — Inline loading indicator */
+.spinner-small {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--color-white);
+  border-radius: 50%;
+  animation: spinner-small-spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spinner-small-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 div > h2 {
   text-align: center;
   padding-top: 1.5%;
@@ -195,41 +324,159 @@ div > h2 {
 .bookings-item {
   display: flex;
   margin: 0.5rem 0;
-  padding: 0.5rem;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--color-primary);
+  border-radius: 4px;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+}
+
+.booking-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.booking-meta {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.booking-date {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  opacity: 0.8;
 }
 
 /* ─── Event Cards ────────────────────────────────────────────────────────── */
 
 /*
-  Width is intentionally NOT fixed here — Bootstrap's responsive
-  grid columns (col-6 col-md-4 col-lg-3) control the card width.
-  Height is fluid via min-height so longer content can expand.
+  Grid layout: 4 columns on lg, 3 on md, 2 on sm/xs
+  No fixed width/height — Bootstrap columns + min-height control sizing
 */
 .events-list-item {
   width: 100% !important;
-  min-height: 13rem;
+  min-height: 14rem;
   height: auto !important;
-  padding-top: 1rem !important;
-  border-radius: 5px !important;
-  border: 1px solid var(--color-primary);
-  margin: 0 0 1.5rem 0;
-  flex-direction: column !important;
-  overflow: auto !important;
+  border-radius: 8px !important;
+  border: 2px solid var(--color-primary);
+  margin-bottom: 1.5rem;
+  padding: 1rem !important;
+  overflow: hidden !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.events-list-item h1 {
+.events-list-item:hover {
+  box-shadow: 0 6px 12px rgba(204, 102, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.event-card-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.event-title {
+  flex-shrink: 0;
+}
+
+.event-title h1 {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   color: var(--color-primary);
+  word-break: break-word;
+  line-height: 1.3;
 }
 
-.events-list-item h2 {
+.event-meta {
+  flex-shrink: 0;
+}
+
+.event-meta h2 {
   margin: 0;
-  font-size: 1rem !important;
+  font-size: 0.95rem !important;
   color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.event-creator {
+  flex-shrink: 0;
+  padding: 0.4rem 0;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.event-action {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* ─── Events Header & Search ──────────────────────────────────────────────── */
+
+.events-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.search-bar {
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto 1.5rem;
+}
+
+.search-bar .form-control {
+  padding-right: 1rem;
+  padding-left: 2.5rem;
+  border-color: var(--color-primary);
+  border-radius: 20px;
+}
+
+.search-bar .form-control:focus {
+  border-color: var(--color-primary-hover);
+  box-shadow: 0 0 0 0.2rem rgba(204, 102, 0, 0.25);
+}
+
+.search-clear {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none !important;
+  border: none;
+  color: var(--color-text-muted) !important;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.search-clear:hover {
+  color: var(--color-primary) !important;
+}
+
+/* ─── Event Creator Link ─────────────────────────────────────────────────── */
+
+.event-creator-link {
+  color: var(--color-primary) !important;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.event-creator-link:hover {
+  color: var(--color-primary-hover) !important;
+  text-decoration: underline;
 }
 
 /* ─── Modal ──────────────────────────────────────────────────────────────── */
@@ -394,6 +641,12 @@ div > h2 {
     margin: 1rem auto 0;
   }
 
+  /* Full-width search bar */
+  .search-bar {
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
+
   /* Tighter headings on small screens */
   h1,
   h2 {
@@ -413,6 +666,17 @@ div > h2 {
   .main-navigation-items button,
   .main-navigation button {
     font-size: 0.95rem;
+  }
+
+  /* Stack booking items vertically on very small screens */
+  .bookings-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .bookings-item .btn {
+    align-self: flex-end;
   }
 }
 

@@ -20,7 +20,7 @@ import { useMutation } from "@apollo/client";
 import { UPDATE_USER, DELETE_USER } from "../graphql/queries";
 import AuthContext from "../context/auth-context";
 import SimpleModal from "./SimpleModal";
-import Error from "./Error";
+import Alert from "./Alert";
 import Spinner from "./Spinner";
 import Button from "react-bootstrap/Button";
 
@@ -131,7 +131,7 @@ export default function ProfileEditor({ onClose }: ProfileEditorProps) {
         </Button>
       }
     >
-      <Error error={alert} />
+      <Alert message={alert} />
 
       <div className="mb-3">
         <label className="form-label" htmlFor="profile-username">

@@ -16,18 +16,37 @@ import Event from "../models/event";
 import Booking from "../models/booking";
 import { isAuthenticated } from "../middlewares/isAuth";
 import { transformEvent } from "./transform";
-import { GraphQLContext, EventInput } from "../types";
+import { GraphQLContext, EventInput, UpdateEventInput } from "../types";
 
 const pubsub = new PubSub();
 
 export const eventResolver = {
   Query: {
     /**
-     * Fetches all events, sorted by newest first, with creator populated.
+     * Fetches events with pagination support, sorted by newest first.
+     * Optionally filters by searchTerm (matches title or description).
+     * Pagination: skip (offset) and limit (page size, default 8).
      */
-    events: async () => {
-      const events = await Event.find({})
+    events: async (
+      _parent: unknown,
+      {
+        searchTerm,
+        skip = 0,
+        limit = 8,
+      }: { searchTerm?: string; skip?: number; limit?: number }
+    ) => {
+      const filter: Record<string, unknown> = {};
+      if (searchTerm && searchTerm.trim()) {
+        const escaped = searchTerm
+          .trim()
+          .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(escaped, "i");
+        filter.$or = [{ title: regex }, { description: regex }];
+      }
+      const events = await Event.find(filter)
         .sort({ _id: -1 })
+        .skip(skip)
+        .limit(limit)
         .populate("creator");
       return events.map((event) => transformEvent(event));
     },
@@ -77,6 +96,48 @@ export const eventResolver = {
         pubsub.publish("EVENT_ADDED", { eventAdded: createdEvent });
 
         return createdEvent;
+      }
+    ),
+
+    /**
+     * Updates an event. Requires authentication.
+     * Only the creator can update their own event.
+     */
+    updateEvent: combineResolvers(
+      isAuthenticated,
+      async (
+        _parent: unknown,
+        {
+          eventId,
+          eventInput,
+        }: { eventId: string; eventInput: UpdateEventInput },
+        context: GraphQLContext
+      ) => {
+        const event = await Event.findById(eventId);
+        if (!event) {
+          throw new GraphQLError("المناسبة غير موجودة!", {
+            extensions: { code: "NOT_FOUND" },
+          });
+        }
+
+        if (event.creator.toString() !== context.user!._id.toString()) {
+          throw new GraphQLError("غير مصرح لك بتعديل هذه المناسبة!", {
+            extensions: { code: "FORBIDDEN" },
+          });
+        }
+
+        const updates: Record<string, unknown> = {};
+        if (eventInput.title !== undefined) updates.title = eventInput.title;
+        if (eventInput.description !== undefined)
+          updates.description = eventInput.description;
+        if (eventInput.price !== undefined) updates.price = eventInput.price;
+        if (eventInput.date !== undefined)
+          updates.date = new Date(eventInput.date);
+
+        const updated = await Event.findByIdAndUpdate(eventId, updates, {
+          new: true,
+        }).populate("creator");
+        return transformEvent(updated!);
       }
     ),
 

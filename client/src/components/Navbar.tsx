@@ -54,6 +54,12 @@ export default function Navbar() {
               </li>
             )}
 
+            {token && (
+              <li className="nav-item">
+                <NavLink to="/my-events">مناسباتي</NavLink>
+              </li>
+            )}
+
             {!token && (
               <li className="nav-item">
                 <NavLink to="/login">تسجيل دخول</NavLink>

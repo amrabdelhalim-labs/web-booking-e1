@@ -1,15 +1,20 @@
 /**
  * Booking Item Component
  *
- * Displays a single booking entry with event details
- * and a cancel button.
+ * Displays a single booking entry with event details,
+ * creator info, booking date, and a cancel button.
  *
- * TODO: Implement full booking item (Phase 5.4)
+ * Features:
+ * - Shows event title, price, and creator name
+ * - Displays booking date
+ * - Cancel button triggers confirmation via parent callback
  */
+
+import type { EventData } from "../types";
 
 interface BookingItemProps {
   _id: string;
-  event: { title: string; price: number };
+  event: EventData;
   createdAt: string;
   onCancelBooking: (bookingId: string) => void;
 }
@@ -21,12 +26,21 @@ export default function BookingItem({
   onCancelBooking,
 }: BookingItemProps) {
   return (
-    <li className="bookings-item d-flex">
-      <div>
-        {event.title} - {new Date(createdAt).toLocaleDateString()} -{" "}
-        {event.price}$
+    <li className="bookings-item">
+      <div className="booking-info">
+        <strong>{event.title}</strong>
+        <span className="booking-meta">
+          {event.creator?.username} · ${event.price} ·{" "}
+          {event.date.split(".")[0].split(" ")[0].replace(/-/g, "/")}
+        </span>
+        <small className="booking-date">
+          تاريخ الحجز: {new Date(createdAt).toLocaleDateString("ar-EG")}
+        </small>
       </div>
-      <button className="btn" onClick={() => onCancelBooking(_id)}>
+      <button
+        className="btn btn-danger btn-sm"
+        onClick={() => onCancelBooking(_id)}
+      >
         إلغاء
       </button>
     </li>

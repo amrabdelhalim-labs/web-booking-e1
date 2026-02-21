@@ -10,16 +10,22 @@ import { EVENT_FIELDS } from "./fragments";
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-/** Fetches all events with creator info */
+/** Fetches events with pagination, optionally filtered by searchTerm */
 export const EVENTS = gql`
   ${EVENT_FIELDS}
-  query Events {
-    events {
+  query Events($searchTerm: String, $skip: Int = 0, $limit: Int = 8) {
+    events(searchTerm: $searchTerm, skip: $skip, limit: $limit) {
       ...EventFields
-      creator {
-        _id
-        email
-      }
+    }
+  }
+`;
+
+/** Fetches all events created by a specific user */
+export const GET_USER_EVENTS = gql`
+  ${EVENT_FIELDS}
+  query GetUserEvents($userId: ID!) {
+    getUserEvents(userId: $userId) {
+      ...EventFields
     }
   }
 `;
@@ -42,7 +48,7 @@ export const BOOKINGS = gql`
   }
 `;
 
-// ─── Mutations ────────────────────────────────────────────────────────────────
+// ─── Auth Mutations ───────────────────────────────────────────────────────────
 
 /** Authenticates a user and returns token */
 export const LOGIN = gql`
@@ -72,6 +78,8 @@ export const CREATE_USER = gql`
   }
 `;
 
+// ─── Event Mutations ──────────────────────────────────────────────────────────
+
 /** Creates a new event */
 export const CREATE_EVENT = gql`
   ${EVENT_FIELDS}
@@ -93,6 +101,42 @@ export const CREATE_EVENT = gql`
     }
   }
 `;
+
+/** Updates an existing event (creator only) */
+export const UPDATE_EVENT = gql`
+  ${EVENT_FIELDS}
+  mutation UpdateEvent(
+    $eventId: ID!
+    $title: String
+    $description: String
+    $price: Float
+    $date: String
+  ) {
+    updateEvent(
+      eventId: $eventId
+      eventInput: {
+        title: $title
+        description: $description
+        price: $price
+        date: $date
+      }
+    ) {
+      ...EventFields
+    }
+  }
+`;
+
+/** Deletes an event and cascade-deletes its bookings */
+export const DELETE_EVENT = gql`
+  ${EVENT_FIELDS}
+  mutation DeleteEvent($eventId: ID!) {
+    deleteEvent(eventId: $eventId) {
+      ...EventFields
+    }
+  }
+`;
+
+// ─── Booking Mutations ────────────────────────────────────────────────────────
 
 /** Books an event for the authenticated user */
 export const BOOK_EVENT = gql`
@@ -136,7 +180,7 @@ export const DELETE_USER = gql`
 
 // ─── Subscriptions ────────────────────────────────────────────────────────────
 
-/** Subscribes to new event additions */
+/** Subscribes to new event additions (includes creator info) */
 export const EVENT_ADDED = gql`
   ${EVENT_FIELDS}
   subscription {

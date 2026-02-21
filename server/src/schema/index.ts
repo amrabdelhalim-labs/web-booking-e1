@@ -60,10 +60,17 @@ export const typeDefs = gql`
     date: String!
   }
 
+  input UpdateEventInput {
+    title: String
+    description: String
+    price: Float
+    date: String
+  }
+
   # ─── Queries ─────────────────────────────────────────────────────────────────
 
   type Query {
-    events: [Event!]
+    events(searchTerm: String, skip: Int = 0, limit: Int = 8): [Event!]
     bookings: [Booking!]
     getUserEvents(userId: ID!): [Event]
   }
@@ -76,6 +83,7 @@ export const typeDefs = gql`
     updateUser(updateUserInput: UpdateUserInput!): User
     deleteUser: Boolean
     createEvent(eventInput: EventInput!): Event
+    updateEvent(eventId: ID!, eventInput: UpdateEventInput!): Event
     bookEvent(eventId: ID!): Booking
     cancelBooking(bookingId: ID!): Event
     deleteEvent(eventId: ID!): [Event]

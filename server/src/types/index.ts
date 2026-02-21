@@ -104,3 +104,13 @@ export interface EventInput {
   price: number;
   date: string;
 }
+
+/**
+ * Input for updating an existing event (all fields optional).
+ */
+export interface UpdateEventInput {
+  title?: string;
+  description?: string;
+  price?: number;
+  date?: string;
+}
