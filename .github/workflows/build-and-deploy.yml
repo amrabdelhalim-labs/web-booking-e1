@@ -1,0 +1,146 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x]
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      # ───── Client Build & Test ─────
+      - name: Install client dependencies
+        run: cd client && npm ci
+      
+      - name: TypeScript check (Client)
+        run: cd client && npx tsc --noEmit
+      
+      - name: Build client
+        run: cd client && npm run build
+      
+      - name: Verify client dist folder
+        run: |
+          if [ ! -d "client/dist" ]; then
+            echo "❌ Client dist folder not created!"
+            exit 1
+          fi
+          du -sh client/dist
+          find client/dist -type f | wc -l
+      
+      # ───── Server Build & Test ─────
+      - name: Install server dependencies
+        run: cd server && npm ci
+      
+      - name: TypeScript check (Server)
+        run: cd server && npx tsc --noEmit
+      
+      - name: Build server
+        run: cd server && npm run build
+      
+      - name: Verify server dist folder
+        run: |
+          if [ ! -d "server/dist" ]; then
+            echo "❌ Server dist folder not created!"
+            exit 1
+          fi
+          du -sh server/dist
+          find server/dist -type f | wc -l
+  
+  deploy-web:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+      
+      - name: Install & build client
+        run: cd client && npm ci && npm run build
+      
+      - name: Create web branch
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout --orphan web 2>/dev/null || git checkout web
+          git rm -rf . --cached
+      
+      - name: Push web branch
+        run: |
+          rm -rf * .gitignore .env*
+          cp -r client/dist/* .
+          git add -A
+          git commit -m "Deploy frontend build [skip ci]" || true
+          git push -f origin web
+  
+  deploy-server:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+      
+      - name: Install & build server
+        run: cd server && npm ci && npm run build
+      
+      - name: Create server branch
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout --orphan server 2>/dev/null || git checkout server
+          git rm -rf . --cached
+      
+      - name: Prepare server deployment
+        run: |
+          rm -rf * .gitignore .env*
+          mkdir -p app
+          cp -r server/dist/* app/
+          cp server/package.json app/
+          cp server/package-lock.json app/ 2>/dev/null || true
+          # Create necessary files
+          cat > app/start.js << 'EOF'
+          require('./index.js');
+          EOF
+          cat > Procfile << 'EOF'
+          web: node app/index.js
+          EOF
+      
+      - name: Push server branch
+        run: |
+          git add -A
+          git commit -m "Deploy server build [skip ci]" || true
+          git push -f origin server

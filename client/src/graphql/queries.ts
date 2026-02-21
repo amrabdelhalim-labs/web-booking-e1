@@ -189,3 +189,21 @@ export const EVENT_ADDED = gql`
     }
   }
 `;
+
+/** Subscribes to new bookings (real-time updates for bookings page) */
+export const BOOKING_ADDED = gql`
+  ${EVENT_FIELDS}
+  subscription {
+    bookingAdded {
+      _id
+      createdAt
+      event {
+        ...EventFields
+      }
+      user {
+        username
+        email
+      }
+    }
+  }
+`;

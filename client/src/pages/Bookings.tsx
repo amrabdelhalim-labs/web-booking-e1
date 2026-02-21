@@ -11,9 +11,9 @@
  * - Error and loading state handling
  */
 
-import { useState } from "react";
-import { useQuery, useMutation } from "@apollo/client";
-import { BOOKINGS, CANCEL_BOOKING } from "../graphql/queries";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useSubscription } from "@apollo/client";
+import { BOOKINGS, CANCEL_BOOKING, BOOKING_ADDED } from "../graphql/queries";
 import BookingItem from "../components/BookingItem";
 import Alert from "../components/Alert";
 import Spinner from "../components/Spinner";
@@ -22,13 +22,27 @@ import type { BookingData } from "../types";
 export default function BookingsPage() {
   const [alert, setAlert] = useState("");
 
-  const { loading, error, data } = useQuery(BOOKINGS);
+  const { loading, error, data, refetch } = useQuery(BOOKINGS);
 
   const [cancelBooking] = useMutation(CANCEL_BOOKING, {
     onError: (err) => setAlert(err.message),
     onCompleted: () => setAlert("تم إلغاء حجزك بنجاح"),
     refetchQueries: ["Bookings"],
   });
+
+  // Subscribe to new bookings for real-time updates
+  useSubscription(BOOKING_ADDED, {
+    onData: ({ client, data: subData }) => {
+      if (subData.data?.bookingAdded) {
+        client.refetchQueries({ include: ["Bookings"] });
+      }
+    },
+  });
+
+  // Refetch bookings when component mounts (page entry)
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   if (loading) return <Spinner />;
 
