@@ -170,6 +170,8 @@ npm install
 ```env
 VITE_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
 VITE_GRAPHQL_WS_URL=ws://localhost:4000/graphql
+VITE_APP_DOMAIN=http://localhost:5173
+VITE_BASE_PATH=/
 ```
 
 ### 4️⃣ تشغيل التطبيق

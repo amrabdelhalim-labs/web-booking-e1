@@ -18,6 +18,9 @@ export const config = {
   /** JWT secret key for token signing */
   jwtSecret: process.env.JWT_SECRET || "default_secret",
 
-  /** Allowed client origin URL for CORS */
-  appUrl: process.env.APP_URL || "http://localhost:5173",
+  /** Allowed client origin URLs for CORS */
+  appUrls: (process.env.APP_URLS || process.env.APP_URL || "http://localhost:5173")
+    .split(",")
+    .map((url) => url.trim())
+    .filter(Boolean),
 };

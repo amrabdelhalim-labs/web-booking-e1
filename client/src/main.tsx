@@ -26,18 +26,12 @@ import { setContext } from "@apollo/client/link/context";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
-
-// ─── Configuration ────────────────────────────────────────────────────────────
-
-const GRAPHQL_HTTP_URI =
-  import.meta.env.VITE_GRAPHQL_HTTP_URL || "http://localhost:4000/graphql";
-const GRAPHQL_WS_URI =
-  import.meta.env.VITE_GRAPHQL_WS_URL || "ws://localhost:4000/graphql";
+import { GRAPHQL_HTTP_URL, GRAPHQL_WS_URL } from "./config";
 
 // ─── HTTP Link ────────────────────────────────────────────────────────────────
 
 const httpLink = createHttpLink({
-  uri: GRAPHQL_HTTP_URI,
+  uri: GRAPHQL_HTTP_URL,
   credentials: "same-origin",
 });
 
@@ -45,7 +39,7 @@ const httpLink = createHttpLink({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: GRAPHQL_WS_URI,
+    url: GRAPHQL_WS_URL,
     connectionParams: () => ({
       authToken: localStorage.getItem("token"),
     }),
@@ -83,7 +77,9 @@ const splitLink = split(
 const client = new ApolloClient({
   link: splitLink,
   cache: new InMemoryCache(),
-  connectToDevTools: import.meta.env.DEV,
+  devtools: {
+    enabled: import.meta.env.DEV,
+  },
 });
 
 // ─── Render Application ──────────────────────────────────────────────────────

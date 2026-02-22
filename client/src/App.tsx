@@ -21,6 +21,7 @@ import SignUpPage from "./pages/SignUp";
 import EventsPage from "./pages/Events";
 import BookingsPage from "./pages/Bookings";
 import UserEventsPage from "./pages/UserEvents";
+import NotFoundPage from "./pages/NotFound";
 import AuthContext from "./context/auth-context";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -67,7 +68,7 @@ export default function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AuthContext.Provider value={{ token, userId, username, login, logout }}>
         <Navbar />
         <main className="main-content">
@@ -115,6 +116,9 @@ export default function App() {
                 </PrivateRoute>
               }
             />
+
+            {/* 404 Not Found - Must be last */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
       </AuthContext.Provider>

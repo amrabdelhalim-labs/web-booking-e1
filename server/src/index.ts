@@ -78,7 +78,7 @@ async function startServer(): Promise<void> {
   // Apply Express middleware
   app.use(
     "/graphql",
-    cors<cors.CorsRequest>({ origin: config.appUrl }),
+    cors<cors.CorsRequest>({ origin: config.appUrls }),
     express.json(),
     // @ts-ignore - Type mismatch between @apollo/server and @types/express versions
     expressMiddleware(server, {
@@ -110,13 +110,15 @@ async function startServer(): Promise<void> {
     console.log("📦 Database connected successfully");
   } catch (err) {
     console.error("❌ Database connection error:", err);
+    process.exit(1);
   }
 
   // Start listening
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: config.port }, resolve)
   );
-  console.log(`🚀 Server ready at http://localhost:${config.port}/graphql`);
+  console.log(`🚀 Server ready at port ${config.port}`);
+  console.log(`🌐 CORS origins: ${config.appUrls.join(', ')}`);
 }
 
 startServer();
