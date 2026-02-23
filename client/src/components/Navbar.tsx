@@ -23,7 +23,7 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-md navbar-dark main-navigation">
       <div className="container-fluid">
         <NavLink to="/events" className="navbar-brand">
-          <h1>مناسبات عمرو</h1>
+          <h1>مناسباتي</h1>
         </NavLink>
 
         <button

@@ -41,6 +41,18 @@ jobs:
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_dispatch' && (inputs.target == 'server' || inputs.target == 'both'))
 
+    # Add MongoDB service for tests
+    services:
+      mongodb:
+        image: mongo:7-jammy
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -55,6 +67,14 @@ jobs:
       - name: Install server dependencies
         working-directory: server
         run: npm ci
+
+      - name: Run server tests
+        working-directory: server
+        run: npm run test:all
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test_jwt_secret_key_for_ci_testing_only_32chars
+          MONGODB_URI: mongodb://localhost:27017/test_events_db
 
       - name: Build server
         working-directory: server
@@ -126,6 +146,10 @@ jobs:
       - name: Install client dependencies
         working-directory: client
         run: npm ci
+
+      - name: Run client tests
+        working-directory: client
+        run: npm test
 
       - name: Build client
         working-directory: client
