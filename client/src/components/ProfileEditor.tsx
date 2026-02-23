@@ -15,10 +15,10 @@
  * - Error/success feedback via Alert component
  */
 
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER, DELETE_USER } from "../graphql/queries";
-import AuthContext from "../context/auth-context";
+import { useAuth } from "../hooks/useAuth";
 import SimpleModal from "./SimpleModal";
 import Alert from "./Alert";
 import Spinner from "./Spinner";
@@ -30,7 +30,7 @@ interface ProfileEditorProps {
 }
 
 export default function ProfileEditor({ onClose }: ProfileEditorProps) {
-  const { username: currentUsername, login, logout } = useContext(AuthContext);
+  const { username: currentUsername, login, logout } = useAuth();
 
   const [newUsername, setNewUsername] = useState(currentUsername ?? "");
   const [newPassword, setNewPassword] = useState("");

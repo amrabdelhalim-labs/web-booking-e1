@@ -5,16 +5,15 @@
  * Wraps protected routes to enforce authentication.
  */
 
-import { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import AuthContext from "../context/auth-context";
+import { useAuth } from "../hooks/useAuth";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
 }
 
 export default function PrivateRoute({ children }: PrivateRouteProps) {
-  const { token } = useContext(AuthContext);
+  const { token } = useAuth();
 
   if (!token) {
     return <Navigate replace to="/login" />;

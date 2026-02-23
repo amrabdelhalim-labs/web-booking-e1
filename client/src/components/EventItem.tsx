@@ -10,9 +10,9 @@
  * - Responsive grid sizing: 4 per row (lg), 3 per row (md), 2 per row (sm)
  */
 
-import { useContext } from "react";
 import { Link } from "react-router-dom";
-import AuthContext from "../context/auth-context";
+import { useAuth } from "../hooks/useAuth";
+import { formatDateShort } from "../utils/formatDate";
 import type { EventData } from "../types";
 
 interface EventItemProps extends EventData {
@@ -28,7 +28,7 @@ export default function EventItem({
   creator,
   onDetail,
 }: EventItemProps) {
-  const { userId } = useContext(AuthContext);
+  const { userId } = useAuth();
   const isOwner = userId === creator._id;
 
   return (
@@ -41,7 +41,7 @@ export default function EventItem({
           <div className="event-meta">
             <h2>
               ${price} -{" "}
-              {date.split(".")[0].split(" ")[0].replace(/-/g, "/")}
+              {formatDateShort(date)}
             </h2>
           </div>
           <div className="event-creator">

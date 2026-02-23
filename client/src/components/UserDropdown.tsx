@@ -12,12 +12,12 @@
  * - Integrates ProfileEditor modal inline
  */
 
-import { useState, useContext } from "react";
-import AuthContext from "../context/auth-context";
+import { useState } from "react";
+import { useAuth } from "../hooks/useAuth";
 import ProfileEditor from "./ProfileEditor";
 
 export default function UserDropdown() {
-  const { username, logout } = useContext(AuthContext);
+  const { username, logout } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
 
   return (

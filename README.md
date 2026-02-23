@@ -18,10 +18,13 @@
 - [متطلبات التشغيل](#متطلبات-التشغيل)
 - [التثبيت والإعداد](#التثبيت-والإعداد)
 - [البنية الهيكلية](#البنية-الهيكلية)
+- [المعمارية](#المعمارية)
+- [الاختبارات](#الاختبارات)
 - [واجهة GraphQL](#واجهة-graphql)
 - [المكونات الرئيسية](#المكونات-الرئيسية)
 - [الأمان والمصادقة](#الأمان-والمصادقة)
 - [النشر والإنتاج](#النشر-والإنتاج)
+- [التوثيق](#التوثيق)
 - [الترخيص](#الترخيص)
 
 </div>
@@ -207,21 +210,36 @@ web-booking-e1/
 │   │   │   ├── EventItem.tsx
 │   │   │   ├── Navbar.tsx
 │   │   │   ├── PrivateRoute.tsx
+│   │   │   ├── ProfileEditor.tsx
 │   │   │   ├── SimpleModal.tsx
-│   │   │   └── Spinner.tsx
+│   │   │   ├── Spinner.tsx
+│   │   │   └── UserDropdown.tsx
 │   │   ├── pages/                   # صفحات التطبيق
 │   │   │   ├── Bookings.tsx
 │   │   │   ├── Events.tsx
 │   │   │   ├── Login.tsx
 │   │   │   ├── SignUp.tsx
-│   │   │   └── UserEvents.tsx
+│   │   │   ├── UserEvents.tsx
+│   │   │   └── NotFound.tsx
 │   │   ├── context/                 # الحالة العامة
-│   │   │   └── auth-context.ts
+│   │   │   ├── auth-context.ts     # تعريف السياق والأنواع
+│   │   │   └── AuthProvider.tsx    # مكون موفر المصادقة
 │   │   ├── graphql/                 # استعلامات GraphQL
 │   │   │   ├── fragments.ts
 │   │   │   └── queries.ts
+│   │   ├── hooks/                   # خطافات مخصصة
+│   │   │   └── useAuth.ts         # خطاف المصادقة
+│   │   ├── utils/                   # دوال مساعدة
+│   │   │   └── formatDate.ts      # تنسيق التواريخ
+│   │   ├── __tests__/               # اختبارات Vitest
+│   │   │   ├── config.test.ts
+│   │   │   ├── types.test.ts
+│   │   │   ├── formatDate.test.ts
+│   │   │   ├── useAuth.test.tsx
+│   │   │   └── graphql.test.ts
 │   │   ├── types.ts                 # أنواع TypeScript
-│   │   ├── index.css                # الأنماط
+│   │   ├── config.ts                # ثوابت التطبيق
+│   │   ├── setupTests.ts            # إعداد بيئة الاختبار
 │   │   ├── App.tsx
 │   │   └── main.tsx
 │   ├── vite.config.ts
@@ -233,6 +251,15 @@ web-booking-e1/
 │   │   │   ├── booking.ts
 │   │   │   ├── event.ts
 │   │   │   └── user.ts
+│   │   ├── repositories/            # طبقة الوصول للبيانات
+│   │   │   ├── repository.interface.ts
+│   │   │   ├── base.repository.ts
+│   │   │   ├── user.repository.ts
+│   │   │   ├── event.repository.ts
+│   │   │   ├── booking.repository.ts
+│   │   │   └── index.ts            # RepositoryManager
+│   │   ├── validators/              # التحقق من المدخلات
+│   │   │   └── index.ts
 │   │   ├── resolvers/               # GraphQL Resolvers
 │   │   │   ├── auth.ts
 │   │   │   ├── booking.ts
@@ -243,13 +270,101 @@ web-booking-e1/
 │   │   │   └── index.ts
 │   │   ├── middlewares/             # الوسيطيات
 │   │   │   └── isAuth.ts
+│   │   ├── tests/                   # اختبارات السيرفر
+│   │   │   ├── test.helpers.ts
+│   │   │   ├── repositories.test.ts
+│   │   │   ├── comprehensive.test.ts
+│   │   │   └── api.test.ts
 │   │   ├── types/                   # أنواع TypeScript
 │   │   └── index.ts
 │   ├── tsconfig.json
 │   └── package.json
 │
+├── docs/                            # التوثيق
+│   ├── database-abstraction.md     # شرح Repository Pattern
+│   ├── repository-quick-reference.md # دليل سريع
+│   ├── graphql-api.md              # توثيق واجهة GraphQL
+│   └── testing.md                  # دليل الاختبارات
+│
 └── README.md                        # هذا الملف
 ```
+
+---
+
+## المعمارية
+
+<div dir="rtl">
+
+### Repository Pattern (السيرفر)
+
+السيرفر يستخدم **نمط Repository** لفصل منطق الوصول للبيانات عن منطق العمل:
+
+```
+GraphQL Resolvers → Repository Manager → Specialized Repositories → Mongoose Models
+```
+
+- **BaseRepository**: عمليات CRUD عامة مع pagination آمن (max 50)
+- **UserRepository**: `findByEmail`, `emailExists`, `updateProfile`
+- **EventRepository**: `findAllWithCreator`, `search`, `titleExists`, `updateWithCreator`
+- **BookingRepository**: `userHasBooked`, `createAndPopulate`, `deleteByUserCascade`
+- **RepositoryManager**: Singleton للوصول الموحد لجميع الـ repositories
+
+> 📖 التفصيل: [docs/database-abstraction.md](docs/database-abstraction.md) · [docs/repository-quick-reference.md](docs/repository-quick-reference.md)
+
+### Validators (التحقق من المدخلات)
+
+رسائل خطأ بالعربية تُرسل كـ `GraphQLError` مع كود `BAD_USER_INPUT`:
+- `validateUserInput` — التحقق من بيانات التسجيل
+- `validateLoginInput` — التحقق من بيانات الدخول
+- `validateEventInput` — التحقق من بيانات المناسبة
+
+### Auth Provider (العميل)
+
+مكون `AuthProvider` مستخرج من `App.tsx` يدير حالة المصادقة:
+- خطاف `useAuth()` للوصول المريح من أي مكون
+- أدوات `formatDate` في `utils/` لتوحيد تنسيق التواريخ
+
+</div>
+
+---
+
+## الاختبارات
+
+<div dir="rtl">
+
+### اختبارات السيرفر (131 اختبار)
+
+```bash
+cd server
+npm run test:all
+```
+
+| الحزمة | الأمر | العدد |
+|--------|-------|-------|
+| Repository Tests | `npm test` | 43 |
+| Comprehensive Tests | `npm run test:comprehensive` | 45 |
+| E2E API Tests | `npm run test:e2e` | 43 |
+
+### اختبارات العميل (54 اختبار)
+
+```bash
+cd client
+npm test
+```
+
+| الملف | العدد | التغطية |
+|-------|-------|---------|
+| config.test.ts | 9 | ثوابت التطبيق وروابط GraphQL |
+| types.test.ts | 10 | أنواع Creator, EventData, BookingData |
+| formatDate.test.ts | 11 | دوال تنسيق التاريخ |
+| useAuth.test.tsx | 5 | خطاف المصادقة |
+| graphql.test.ts | 19 | جميع عمليات GraphQL (14 عملية) |
+
+**المجموع الكلي: 185 اختبار**
+
+> 📖 التفصيل: [docs/testing.md](docs/testing.md)
+
+</div>
 
 ---
 
@@ -408,17 +523,22 @@ VITE_GRAPHQL_WS_URL=wss://your-domain.com/graphql
 
 ### Frontend
 ```bash
-npm run dev      # تطوير
-npm run build    # بناء
-npm run preview  # معاينة
-npm run lint     # فحص الكود
+npm run dev        # تطوير
+npm run build      # بناء
+npm run preview    # معاينة
+npm test           # اختبارات
+npm run test:watch # اختبارات مستمرة
 ```
 
 ### Backend
 ```bash
-npm run dev      # تطوير
-npm run build    # بناء
-npm start        # إنتاج
+npm run dev              # تطوير
+npm run build            # بناء
+npm start                # إنتاج
+npm test                 # اختبارات Repository
+npm run test:comprehensive  # اختبارات شاملة
+npm run test:e2e         # اختبارات E2E
+npm run test:all         # جميع الاختبارات
 ```
 
 </div>
@@ -459,6 +579,21 @@ npm start        # إنتاج
 **المشكلة: لا تظهر البيانات**
 - افتح DevTools وتحقق من الأخطاء
 - تحقق من حالة الاتصال في Network tab
+
+</div>
+
+---
+
+## التوثيق
+
+<div dir="rtl">
+
+| الملف | الوصف |
+|-------|-------|
+| [docs/database-abstraction.md](docs/database-abstraction.md) | شرح Repository Pattern والتجريد في قاعدة البيانات |
+| [docs/repository-quick-reference.md](docs/repository-quick-reference.md) | دليل سريع مرجعي لعمليات الـ repositories |
+| [docs/graphql-api.md](docs/graphql-api.md) | توثيق واجهة GraphQL الكامل |
+| [docs/testing.md](docs/testing.md) | دليل الاختبارات (185 اختبار) |
 
 </div>
 

@@ -12,16 +12,16 @@
  * - Navigation link to login page
  */
 
-import { useState, useContext, useEffect, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { CREATE_USER } from "../graphql/queries";
-import AuthContext from "../context/auth-context";
+import { useAuth } from "../hooks/useAuth";
 import Alert from "../components/Alert";
 import Spinner from "../components/Spinner";
 
 export default function SignUpPage() {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [alert, setAlert] = useState("");

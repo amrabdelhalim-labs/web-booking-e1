@@ -12,13 +12,12 @@
  * - UserDropdown with hover menu (edit profile, logout)
  */
 
-import { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import AuthContext from "../context/auth-context";
+import { useAuth } from "../hooks/useAuth";
 import UserDropdown from "./UserDropdown";
 
 export default function Navbar() {
-  const { token } = useContext(AuthContext);
+  const { token } = useAuth();
 
   return (
     <nav className="navbar navbar-expand-md navbar-dark main-navigation">

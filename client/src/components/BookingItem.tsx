@@ -11,6 +11,7 @@
  */
 
 import type { EventData } from "../types";
+import { formatDateShort, formatDateArabic } from "../utils/formatDate";
 
 interface BookingItemProps {
   _id: string;
@@ -31,10 +32,10 @@ export default function BookingItem({
         <strong>{event.title}</strong>
         <span className="booking-meta">
           {event.creator?.username} · ${event.price} ·{" "}
-          {event.date.split(".")[0].split(" ")[0].replace(/-/g, "/")}
+          {formatDateShort(event.date)}
         </span>
         <small className="booking-date">
-          تاريخ الحجز: {new Date(createdAt).toLocaleDateString("ar-EG")}
+          تاريخ الحجز: {formatDateArabic(createdAt)}
         </small>
       </div>
       <button

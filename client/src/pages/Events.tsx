@@ -14,7 +14,7 @@
  * - Empty state messaging
  */
 
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import {
   EVENTS,
@@ -23,7 +23,8 @@ import {
   EVENT_ADDED,
 } from "../graphql/queries";
 import { NavLink } from "react-router-dom";
-import AuthContext from "../context/auth-context";
+import { useAuth } from "../hooks/useAuth";
+import { formatDateFull } from "../utils/formatDate";
 import EventItem from "../components/EventItem";
 import SimpleModal from "../components/SimpleModal";
 import Alert from "../components/Alert";
@@ -32,7 +33,7 @@ import type { EventData } from "../types";
 const PAGE_SIZE = 8;
 
 export default function EventsPage() {
-  const { token, userId } = useContext(AuthContext);
+  const { token, userId } = useAuth();
 
   const [alert, setAlert] = useState("");
   const [modalAlert, setModalAlert] = useState("");
@@ -341,7 +342,7 @@ export default function EventsPage() {
           <h4 className="mb-3">{selectedEvent.title}</h4>
           <h5 className="mb-3 text-muted">
             ${selectedEvent.price} -{" "}
-            {selectedEvent.date.split(".")[0].replace(/-/g, "/")}
+            {formatDateFull(selectedEvent.date)}
           </h5>
           <p>{selectedEvent.description}</p>
         </SimpleModal>

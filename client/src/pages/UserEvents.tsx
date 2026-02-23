@@ -13,7 +13,7 @@
  * - Empty state messaging
  */
 
-import { useState, useContext, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
@@ -23,14 +23,15 @@ import {
   DELETE_EVENT,
   BOOK_EVENT,
 } from "../graphql/queries";
-import AuthContext from "../context/auth-context";
+import { useAuth } from "../hooks/useAuth";
+import { formatDateForInput, formatDateFull } from "../utils/formatDate";
 import SimpleModal from "../components/SimpleModal";
 import Alert from "../components/Alert";
 import Spinner from "../components/Spinner";
 import type { EventData } from "../types";
 
 export default function UserEventsPage() {
-  const { token, userId: currentUserId } = useContext(AuthContext);
+  const { token, userId: currentUserId } = useAuth();
   const { userId: paramUserId } = useParams<{ userId: string }>();
 
   const targetUserId = paramUserId || currentUserId;
@@ -98,7 +99,7 @@ export default function UserEventsPage() {
     setEditTitle(event.title);
     setEditPrice(String(event.price));
     // Format date for datetime-local input
-    const dateStr = event.date.split(".")[0].replace(" ", "T");
+    const dateStr = formatDateForInput(event.date);
     setEditDate(dateStr);
     setEditDescription(event.description);
     setModalAlert("");
@@ -123,7 +124,7 @@ export default function UserEventsPage() {
       variables.description = editDescription.trim();
     if (Number(editPrice) !== editingEvent.price)
       variables.price = +editPrice;
-    if (editDate !== editingEvent.date.split(".")[0].replace(" ", "T"))
+    if (editDate !== formatDateForInput(editingEvent.date))
       variables.date = editDate;
 
     // Check if any field actually changed
@@ -328,7 +329,7 @@ export default function UserEventsPage() {
           <h4 className="mb-3">{selectedEvent.title}</h4>
           <h5 className="mb-3 text-muted">
             ${selectedEvent.price} -{" "}
-            {selectedEvent.date.split(".")[0].replace(/-/g, "/")}
+            {formatDateFull(selectedEvent.date)}
           </h5>
           <p>{selectedEvent.description}</p>
         </SimpleModal>
