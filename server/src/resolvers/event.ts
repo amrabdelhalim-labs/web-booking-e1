@@ -6,15 +6,18 @@
  * - Creating new events (authenticated)
  * - Deleting events with cascade (removes related bookings)
  * - Publishing subscription events when a new event is created
+ *
+ * Data access is abstracted through the Repository Pattern.
+ * Input validation is handled by dedicated validators.
  */
 
 import { GraphQLError } from "graphql";
 import { combineResolvers } from "graphql-resolvers";
 import { PubSub } from "graphql-subscriptions";
 
-import Event from "../models/event";
-import Booking from "../models/booking";
 import { isAuthenticated } from "../middlewares/isAuth";
+import { getRepositoryManager } from "../repositories";
+import { validateEventInput, validateUpdateEventInput } from "../validators";
 import { transformEvent } from "./transform";
 import { GraphQLContext, EventInput, UpdateEventInput } from "../types";
 
@@ -35,19 +38,14 @@ export const eventResolver = {
         limit = 8,
       }: { searchTerm?: string; skip?: number; limit?: number }
     ) => {
-      const filter: Record<string, unknown> = {};
+      const repos = getRepositoryManager();
+
+      let events;
       if (searchTerm && searchTerm.trim()) {
-        const escaped = searchTerm
-          .trim()
-          .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const regex = new RegExp(escaped, "i");
-        filter.$or = [{ title: regex }, { description: regex }];
+        events = await repos.event.search(searchTerm, skip, limit);
+      } else {
+        events = await repos.event.findAllWithCreator({}, skip, limit);
       }
-      const events = await Event.find(filter)
-        .sort({ _id: -1 })
-        .skip(skip)
-        .limit(limit)
-        .populate("creator");
       return events.map((event) => transformEvent(event));
     },
 
@@ -55,7 +53,8 @@ export const eventResolver = {
      * Fetches all events created by a specific user.
      */
     getUserEvents: async (_parent: unknown, { userId }: { userId: string }) => {
-      const events = await Event.find({ creator: userId }).populate("creator");
+      const repos = getRepositoryManager();
+      const events = await repos.event.findByCreator(userId);
       return events.map((event) => transformEvent(event));
     },
   },
@@ -63,7 +62,7 @@ export const eventResolver = {
   Mutation: {
     /**
      * Creates a new event. Requires authentication.
-     * Validates that no duplicate title exists.
+     * Validates input and checks for duplicate title.
      * Publishes eventAdded subscription on success.
      */
     createEvent: combineResolvers(
@@ -73,24 +72,26 @@ export const eventResolver = {
         { eventInput }: { eventInput: EventInput },
         context: GraphQLContext
       ) => {
-        const existingEvent = await Event.findOne({ title: eventInput.title });
-        if (existingEvent) {
+        validateEventInput(eventInput);
+
+        const repos = getRepositoryManager();
+        const titleTaken = await repos.event.titleExists(eventInput.title);
+        if (titleTaken) {
           throw new GraphQLError(
             "يوجد لدينا مناسبة بنفس هذا العنوان، الرجاء اختيار عنوان آخر!",
             { extensions: { code: "BAD_USER_INPUT" } }
           );
         }
 
-        const event = new Event({
+        const event = await repos.event.create({
           title: eventInput.title,
           description: eventInput.description,
           price: eventInput.price,
           date: new Date(eventInput.date),
           creator: context.user!._id,
-        });
+        } as any);
 
-        const result = await event.save();
-        const populatedResult = await result.populate("creator");
+        const populatedResult = await event.populate("creator");
         const createdEvent = transformEvent(populatedResult);
 
         pubsub.publish("EVENT_ADDED", { eventAdded: createdEvent });
@@ -113,7 +114,10 @@ export const eventResolver = {
         }: { eventId: string; eventInput: UpdateEventInput },
         context: GraphQLContext
       ) => {
-        const event = await Event.findById(eventId);
+        validateUpdateEventInput(eventInput);
+
+        const repos = getRepositoryManager();
+        const event = await repos.event.findById(eventId);
         if (!event) {
           throw new GraphQLError("المناسبة غير موجودة!", {
             extensions: { code: "NOT_FOUND" },
@@ -134,9 +138,7 @@ export const eventResolver = {
         if (eventInput.date !== undefined)
           updates.date = new Date(eventInput.date);
 
-        const updated = await Event.findByIdAndUpdate(eventId, updates, {
-          new: true,
-        }).populate("creator");
+        const updated = await repos.event.updateWithCreator(eventId, updates);
         return transformEvent(updated!);
       }
     ),
@@ -153,7 +155,8 @@ export const eventResolver = {
         { eventId }: { eventId: string },
         context: GraphQLContext
       ) => {
-        const event = await Event.findById(eventId);
+        const repos = getRepositoryManager();
+        const event = await repos.event.findById(eventId);
         if (!event) {
           throw new GraphQLError("المناسبة غير موجودة!", {
             extensions: { code: "NOT_FOUND" },
@@ -168,15 +171,13 @@ export const eventResolver = {
         }
 
         // Cascade: delete all bookings for this event
-        await Booking.deleteMany({ event: eventId });
+        await repos.booking.deleteByEvent(eventId);
 
         // Delete the event
-        await Event.findByIdAndDelete(eventId);
+        await repos.event.delete(eventId);
 
         // Return updated events list
-        const events = await Event.find({})
-          .sort({ _id: -1 })
-          .populate("creator");
+        const events = await repos.event.findAllWithCreator();
         return events.map((e) => transformEvent(e));
       }
     ),

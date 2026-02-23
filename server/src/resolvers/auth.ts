@@ -4,6 +4,9 @@
  * Handles user registration (createUser), login, profile update, and account deletion.
  * Uses bcrypt for password hashing and JWT for token generation.
  * Cascade deletion removes all user's events and bookings on account delete.
+ *
+ * Data access is abstracted through the Repository Pattern.
+ * Input validation is handled by dedicated validators.
  */
 
 import { GraphQLError } from "graphql";
@@ -11,11 +14,14 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { combineResolvers } from "graphql-resolvers";
 
-import User from "../models/user";
-import Event from "../models/event";
-import Booking from "../models/booking";
 import { config } from "../config";
 import { isAuthenticated } from "../middlewares/isAuth";
+import { getRepositoryManager } from "../repositories";
+import {
+  validateUserInput,
+  validateUpdateUserInput,
+  validateLoginInput,
+} from "../validators";
 import { GraphQLContext, UserInput, UpdateUserInput } from "../types";
 
 export const authResolver = {
@@ -28,7 +34,10 @@ export const authResolver = {
       _parent: unknown,
       { email, password }: { email: string; password: string }
     ) => {
-      const user = await User.findOne({ email });
+      validateLoginInput(email, password);
+
+      const repos = getRepositoryManager();
+      const user = await repos.user.findByEmail(email);
       if (!user) {
         throw new GraphQLError("هذا الحساب غير موجود لدينا!!", {
           extensions: { code: "BAD_USER_INPUT" },
@@ -43,10 +52,7 @@ export const authResolver = {
         );
       }
 
-      const token = jwt.sign(
-        { id: user.id },
-        config.jwtSecret
-      );
+      const token = jwt.sign({ id: user.id }, config.jwtSecret);
 
       return { userId: user.id, token, username: user.username };
     },
@@ -59,25 +65,24 @@ export const authResolver = {
       _parent: unknown,
       { userInput }: { userInput: UserInput }
     ) => {
-      const existingUser = await User.findOne({ email: userInput.email });
-      if (existingUser) {
+      validateUserInput(userInput);
+
+      const repos = getRepositoryManager();
+      const emailTaken = await repos.user.emailExists(userInput.email);
+      if (emailTaken) {
         throw new GraphQLError("هذا الحساب موجود مسبقًا لدينا!!", {
           extensions: { code: "BAD_USER_INPUT" },
         });
       }
 
       const hashedPassword = await bcrypt.hash(userInput.password, 12);
-      const user = new User({
+      const user = await repos.user.create({
         username: userInput.username,
         email: userInput.email,
         password: hashedPassword,
       });
-      await user.save();
 
-      const token = jwt.sign(
-        { id: user.id },
-        config.jwtSecret
-      );
+      const token = jwt.sign({ id: user.id }, config.jwtSecret);
 
       return { userId: user.id, token, username: user.username };
     },
@@ -93,7 +98,10 @@ export const authResolver = {
         { updateUserInput }: { updateUserInput: UpdateUserInput },
         context: GraphQLContext
       ) => {
-        const user = await User.findById(context.user!._id);
+        validateUpdateUserInput(updateUserInput);
+
+        const repos = getRepositoryManager();
+        const user = await repos.user.findById(context.user!._id.toString());
         if (!user) {
           throw new GraphQLError("المستخدم غير موجود!", {
             extensions: { code: "NOT_FOUND" },
@@ -121,22 +129,20 @@ export const authResolver = {
     deleteUser: combineResolvers(
       isAuthenticated,
       async (_parent: unknown, _args: unknown, context: GraphQLContext) => {
-        const userId = context.user!._id;
+        const repos = getRepositoryManager();
+        const userId = context.user!._id.toString();
 
-        // Find all events created by this user
-        const userEvents = await Event.find({ creator: userId });
-        const userEventIds = userEvents.map((e) => e._id);
+        // Find all event IDs created by this user
+        const userEventIds = await repos.event.getEventIdsByCreator(userId);
 
         // Delete all bookings on user's events + all bookings made by user
-        await Booking.deleteMany({
-          $or: [{ user: userId }, { event: { $in: userEventIds } }],
-        });
+        await repos.booking.deleteByUserCascade(userId, userEventIds);
 
         // Delete all events created by user
-        await Event.deleteMany({ creator: userId });
+        await repos.event.deleteWhere({ creator: userId });
 
         // Delete the user account
-        await User.findByIdAndDelete(userId);
+        await repos.user.delete(userId);
 
         return true;
       }

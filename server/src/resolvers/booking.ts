@@ -5,15 +5,16 @@
  * - Querying user bookings (authenticated)
  * - Booking an event (authenticated, prevents duplicate bookings)
  * - Cancelling a booking (authenticated)
+ *
+ * Data access is abstracted through the Repository Pattern.
  */
 
 import { GraphQLError } from "graphql";
 import { combineResolvers } from "graphql-resolvers";
 import { PubSub } from "graphql-subscriptions";
 
-import Event from "../models/event";
-import Booking from "../models/booking";
 import { isAuthenticated } from "../middlewares/isAuth";
+import { getRepositoryManager } from "../repositories";
 import { transformBooking, transformEvent } from "./transform";
 import { GraphQLContext } from "../types";
 
@@ -28,9 +29,10 @@ export const bookingResolver = {
     bookings: combineResolvers(
       isAuthenticated,
       async (_parent: unknown, _args: unknown, context: GraphQLContext) => {
-        const bookings = await Booking.find({ user: context.user!._id })
-          .populate({ path: "event", populate: { path: "creator" } })
-          .populate("user");
+        const repos = getRepositoryManager();
+        const bookings = await repos.booking.findByUser(
+          context.user!._id.toString()
+        );
         return bookings.map((booking) => transformBooking(booking));
       }
     ),
@@ -48,38 +50,35 @@ export const bookingResolver = {
         { eventId }: { eventId: string },
         context: GraphQLContext
       ) => {
-        const existingBooking = await Booking.findOne({
-          event: eventId,
-          user: context.user!._id,
-        });
-        if (existingBooking) {
+        const repos = getRepositoryManager();
+        const userId = context.user!._id.toString();
+
+        const alreadyBooked = await repos.booking.userHasBooked(
+          userId,
+          eventId
+        );
+        if (alreadyBooked) {
           throw new GraphQLError("قد حجزت هذه المناسبة بالفعل مسبقًا!", {
             extensions: { code: "BAD_USER_INPUT" },
           });
         }
 
-        const fetchedEvent = await Event.findById(eventId);
+        const fetchedEvent = await repos.event.findById(eventId);
         if (!fetchedEvent) {
           throw new GraphQLError("المناسبة غير موجودة!", {
             extensions: { code: "NOT_FOUND" },
           });
         }
 
-        const booking = new Booking({
-          user: context.user!._id,
-          event: fetchedEvent._id,
-        });
+        const populatedBooking = await repos.booking.createAndPopulate(
+          userId,
+          fetchedEvent._id.toString()
+        );
+        const transformedBooking = transformBooking(populatedBooking);
 
-        const result = await booking.save();
-        const populatedResult = await result.populate([
-          { path: "event", populate: { path: "creator" } },
-          { path: "user" },
-        ]);
-        const transformedBooking = transformBooking(populatedResult);
-        
         // Publish booking added event
         pubsub.publish("BOOKING_ADDED", { bookingAdded: transformedBooking });
-        
+
         return transformedBooking;
       }
     ),
@@ -95,10 +94,8 @@ export const bookingResolver = {
         { bookingId }: { bookingId: string },
         context: GraphQLContext
       ) => {
-        const booking = await Booking.findById(bookingId).populate({
-          path: "event",
-          populate: { path: "creator" },
-        });
+        const repos = getRepositoryManager();
+        const booking = await repos.booking.findByIdWithDetails(bookingId);
 
         if (!booking) {
           throw new GraphQLError("الحجز غير موجود!", {
@@ -114,7 +111,7 @@ export const bookingResolver = {
         }
 
         const event = transformEvent(booking.event as any);
-        await Booking.findByIdAndDelete(bookingId);
+        await repos.booking.delete(bookingId);
         return event;
       }
     ),
