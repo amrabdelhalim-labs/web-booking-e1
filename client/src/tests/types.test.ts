@@ -8,7 +8,7 @@
  *  3. هيكل واجهة BookingData يطابق بيانات الحجز من السيرفر
  *  4. الأنواع تتوافق مع هيكل Schema الخاص بـ GraphQL
  *
- * الملف: client/src/__tests__/types.test.ts
+ * الملف: client/src/tests/types.test.ts
  */
 import { describe, it, expect } from "vitest";
 import type { Creator, EventData, BookingData } from "../types";

@@ -8,7 +8,7 @@
  *  3. دالة اشتقاق WebSocket URL تعمل بشكل صحيح
  *  4. القيم الافتراضية لا تشير إلى خوادم الإنتاج
  *
- * الملف: client/src/__tests__/config.test.ts
+ * الملف: client/src/tests/config.test.ts
  */
 import { describe, it, expect } from "vitest";
 import {

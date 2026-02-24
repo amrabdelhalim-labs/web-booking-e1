@@ -8,7 +8,7 @@
  *  3. أسماء العمليات تتوافق مع مسميات السيرفر
  *  4. لا يوجد عمليات مكررة
  *
- * الملف: client/src/__tests__/graphql.test.ts
+ * الملف: client/src/tests/graphql.test.ts
  */
 import { describe, it, expect } from "vitest";
 import { EVENT_FIELDS } from "../graphql/fragments";

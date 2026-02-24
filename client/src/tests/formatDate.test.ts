@@ -9,7 +9,7 @@
  *  4. formatDateFull تزيل الملي ثانية مع إبقاء الوقت
  *  5. جميع الدوال تتعامل مع صيغ التاريخ المختلفة من GraphQL
  *
- * الملف: client/src/__tests__/formatDate.test.ts
+ * الملف: client/src/tests/formatDate.test.ts
  */
 import { describe, it, expect } from "vitest";
 import {

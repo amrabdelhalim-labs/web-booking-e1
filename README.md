@@ -231,7 +231,7 @@ web-booking-e1/
 │   │   │   └── useAuth.ts         # خطاف المصادقة
 │   │   ├── utils/                   # دوال مساعدة
 │   │   │   └── formatDate.ts      # تنسيق التواريخ
-│   │   ├── __tests__/               # اختبارات Vitest
+│   │   ├── tests/                   # اختبارات Vitest
 │   │   │   ├── config.test.ts
 │   │   │   ├── types.test.ts
 │   │   │   ├── formatDate.test.ts

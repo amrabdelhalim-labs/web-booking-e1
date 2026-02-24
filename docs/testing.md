@@ -228,11 +228,11 @@ function printSummary(): void;
 
 ### العميل (npm test)
 ```
- ✓ src/__tests__/types.test.ts (10 tests)
- ✓ src/__tests__/config.test.ts (9 tests)
- ✓ src/__tests__/formatDate.test.ts (11 tests)
- ✓ src/__tests__/useAuth.test.tsx (5 tests)
- ✓ src/__tests__/graphql.test.ts (19 tests)
+ ✓ src/tests/types.test.ts (10 tests)
+ ✓ src/tests/config.test.ts (9 tests)
+ ✓ src/tests/formatDate.test.ts (11 tests)
+ ✓ src/tests/useAuth.test.tsx (5 tests)
+ ✓ src/tests/graphql.test.ts (19 tests)
 
  Test Files  5 passed (5)
       Tests  54 passed (54)

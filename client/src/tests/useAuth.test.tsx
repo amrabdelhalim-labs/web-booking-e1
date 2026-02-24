@@ -8,7 +8,7 @@
  *  3. دوال login و logout تعمل بشكل صحيح
  *  4. البيانات تُخزّن وتُمسح من localStorage
  *
- * الملف: client/src/__tests__/useAuth.test.tsx
+ * الملف: client/src/tests/useAuth.test.tsx
  */
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
