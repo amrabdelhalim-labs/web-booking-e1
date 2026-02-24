@@ -505,7 +505,24 @@ git add server/ && git commit -m "feat(server): add review entity with repositor
 git add client/ && git commit -m "feat(client): add review components + graphql operations"
 ```
 
+### Tagging (when applicable)
+
+Create an annotated tag only if this commit represents a **significant milestone** — a new feature
+complete with tests, or a notable improvement. Patch-level fixes (docs, renames) use `vX.Y.Z`;
+new features use `vX.(Y+1).0`.
+
+```bash
+git tag -a v1.4.0 -m "v1.4.0 - Add Review System
+
+- Review entity: model, repository, validators, resolvers
+- Cascade delete from Event
+- Client: ReviewList + AddReview components
+- 131 → 158 tests passing"
+```
+
+See workspace tagging rules: `docs/ai-improvement-guide.md § Tagging Strategy`.
+
 ---
 
 *Companion document: [`architecture.md`](./architecture.md)*  
-*Workspace improvement guide: [`docs/ai-improvement-guide.md`](../../../../docs/ai-improvement-guide.md)*
+*Workspace improvement guide: [`docs/ai-improvement-guide.md`](../../../../docs/ai-improvement-guide.md)
