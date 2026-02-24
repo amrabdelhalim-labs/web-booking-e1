@@ -5,7 +5,7 @@
  * Used during async operations like data fetching and mutations.
  */
 
-import { Puff } from "react-loader-spinner";
+import { Puff } from 'react-loader-spinner';
 
 export default function Spinner() {
   return (

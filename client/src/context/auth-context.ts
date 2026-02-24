@@ -6,7 +6,7 @@
  * Used by Navbar, PrivateRoute, and auth pages.
  */
 
-import { createContext } from "react";
+import { createContext } from 'react';
 
 /**
  * Shape of the authentication context value.

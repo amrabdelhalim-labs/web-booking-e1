@@ -10,8 +10,8 @@
  * الموقع: client/src/context/AuthProvider.tsx
  */
 
-import { useState, useCallback, type ReactNode } from "react";
-import AuthContext from "./auth-context";
+import { useState, useCallback, type ReactNode } from 'react';
+import AuthContext from './auth-context';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -22,36 +22,27 @@ interface AuthProviderProps {
  * ويوفرها عبر AuthContext لجميع المكونات.
  */
 export default function AuthProvider({ children }: AuthProviderProps) {
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token")
-  );
-  const [userId, setUserId] = useState<string | null>(
-    localStorage.getItem("userId")
-  );
-  const [username, setUsername] = useState<string | null>(
-    localStorage.getItem("username")
-  );
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [userId, setUserId] = useState<string | null>(localStorage.getItem('userId'));
+  const [username, setUsername] = useState<string | null>(localStorage.getItem('username'));
 
   /**
    * يخزن بيانات المصادقة في الحالة و localStorage.
    */
-  const login = useCallback(
-    (userToken: string, loginUserId: string, loginUsername: string) => {
-      if (userToken) {
-        setToken(userToken);
-        localStorage.setItem("token", userToken);
-      }
-      if (loginUserId) {
-        setUserId(loginUserId);
-        localStorage.setItem("userId", loginUserId);
-      }
-      if (loginUsername) {
-        setUsername(loginUsername);
-        localStorage.setItem("username", loginUsername);
-      }
-    },
-    []
-  );
+  const login = useCallback((userToken: string, loginUserId: string, loginUsername: string) => {
+    if (userToken) {
+      setToken(userToken);
+      localStorage.setItem('token', userToken);
+    }
+    if (loginUserId) {
+      setUserId(loginUserId);
+      localStorage.setItem('userId', loginUserId);
+    }
+    if (loginUsername) {
+      setUsername(loginUsername);
+      localStorage.setItem('username', loginUsername);
+    }
+  }, []);
 
   /**
    * يمسح بيانات المصادقة من الحالة و localStorage.

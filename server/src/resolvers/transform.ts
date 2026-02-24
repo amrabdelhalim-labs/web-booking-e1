@@ -6,7 +6,7 @@
  * document-to-plain-object conversion.
  */
 
-import { IEvent, IBooking } from "../types";
+import { IEvent, IBooking } from '../types';
 
 /**
  * Transforms an Event document for GraphQL response.
@@ -14,7 +14,7 @@ import { IEvent, IBooking } from "../types";
  */
 export const transformEvent = (event: IEvent) => ({
   ...event._doc,
-  date: new Date(event.date).toISOString().replace(/T/, " "),
+  date: new Date(event.date).toISOString().replace(/T/, ' '),
 });
 
 /**

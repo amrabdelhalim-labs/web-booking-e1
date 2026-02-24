@@ -16,7 +16,7 @@
  * formatDateShort("2024-06-15 10:00:00.000") → "2024/06/15"
  */
 export function formatDateShort(dateStr: string): string {
-  return dateStr.split(".")[0].split("T")[0].split(" ")[0].replace(/-/g, "/");
+  return dateStr.split('.')[0].split('T')[0].split(' ')[0].replace(/-/g, '/');
 }
 
 /**
@@ -28,7 +28,7 @@ export function formatDateShort(dateStr: string): string {
  * formatDateArabic("2024-06-15T10:00:00.000Z") → "١٥/٦/٢٠٢٤"
  */
 export function formatDateArabic(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("ar-EG");
+  return new Date(dateStr).toLocaleDateString('ar-EG');
 }
 
 /**
@@ -40,7 +40,7 @@ export function formatDateArabic(dateStr: string): string {
  * formatDateForInput("2024-06-15 10:00:00.000") → "2024-06-15T10:00:00"
  */
 export function formatDateForInput(dateStr: string): string {
-  return dateStr.split(".")[0].replace(" ", "T");
+  return dateStr.split('.')[0].replace(' ', 'T');
 }
 
 /**
@@ -52,5 +52,5 @@ export function formatDateForInput(dateStr: string): string {
  * formatDateFull("2024-06-15T10:00:00.000Z") → "2024/06/15T10:00:00"
  */
 export function formatDateFull(dateStr: string): string {
-  return dateStr.split(".")[0].replace(/-/g, "/");
+  return dateStr.split('.')[0].replace(/-/g, '/');
 }

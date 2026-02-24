@@ -12,18 +12,18 @@
  * - Auto-redirect for authenticated users on auth pages
  */
 
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import "./App.css";
-import Navbar from "./components/Navbar";
-import LoginPage from "./pages/Login";
-import SignUpPage from "./pages/SignUp";
-import EventsPage from "./pages/Events";
-import BookingsPage from "./pages/Bookings";
-import UserEventsPage from "./pages/UserEvents";
-import NotFoundPage from "./pages/NotFound";
-import AuthProvider from "./context/AuthProvider";
-import PrivateRoute from "./components/PrivateRoute";
-import { useAuth } from "./hooks/useAuth";
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import './App.css';
+import Navbar from './components/Navbar';
+import LoginPage from './pages/Login';
+import SignUpPage from './pages/SignUp';
+import EventsPage from './pages/Events';
+import BookingsPage from './pages/Bookings';
+import UserEventsPage from './pages/UserEvents';
+import NotFoundPage from './pages/NotFound';
+import AuthProvider from './context/AuthProvider';
+import PrivateRoute from './components/PrivateRoute';
+import { useAuth } from './hooks/useAuth';
 
 /**
  * Inner layout that uses auth context for conditional routing.
@@ -38,17 +38,10 @@ function AppRoutes() {
       <main className="main-content">
         <Routes>
           {/* Redirect authenticated users away from auth pages */}
-          {token && (
-            <Route path="/login" element={<Navigate replace to="/events" />} />
-          )}
+          {token && <Route path="/login" element={<Navigate replace to="/events" />} />}
           <Route path="/login" element={<LoginPage />} />
 
-          {token && (
-            <Route
-              path="/signup"
-              element={<Navigate replace to="/events" />}
-            />
-          )}
+          {token && <Route path="/signup" element={<Navigate replace to="/events" />} />}
           <Route path="/signup" element={<SignUpPage />} />
 
           {/* Default redirect */}

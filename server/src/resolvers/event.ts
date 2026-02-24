@@ -11,15 +11,15 @@
  * Input validation is handled by dedicated validators.
  */
 
-import { GraphQLError } from "graphql";
-import { combineResolvers } from "graphql-resolvers";
-import { PubSub } from "graphql-subscriptions";
+import { GraphQLError } from 'graphql';
+import { combineResolvers } from 'graphql-resolvers';
+import { PubSub } from 'graphql-subscriptions';
 
-import { isAuthenticated } from "../middlewares/isAuth";
-import { getRepositoryManager } from "../repositories";
-import { validateEventInput, validateUpdateEventInput } from "../validators";
-import { transformEvent } from "./transform";
-import { GraphQLContext, EventInput, UpdateEventInput } from "../types";
+import { isAuthenticated } from '../middlewares/isAuth';
+import { getRepositoryManager } from '../repositories';
+import { validateEventInput, validateUpdateEventInput } from '../validators';
+import { transformEvent } from './transform';
+import { GraphQLContext, EventInput, UpdateEventInput } from '../types';
 
 const pubsub = new PubSub();
 
@@ -32,11 +32,7 @@ export const eventResolver = {
      */
     events: async (
       _parent: unknown,
-      {
-        searchTerm,
-        skip = 0,
-        limit = 8,
-      }: { searchTerm?: string; skip?: number; limit?: number }
+      { searchTerm, skip = 0, limit = 8 }: { searchTerm?: string; skip?: number; limit?: number }
     ) => {
       const repos = getRepositoryManager();
 
@@ -77,10 +73,9 @@ export const eventResolver = {
         const repos = getRepositoryManager();
         const titleTaken = await repos.event.titleExists(eventInput.title);
         if (titleTaken) {
-          throw new GraphQLError(
-            "يوجد لدينا مناسبة بنفس هذا العنوان، الرجاء اختيار عنوان آخر!",
-            { extensions: { code: "BAD_USER_INPUT" } }
-          );
+          throw new GraphQLError('يوجد لدينا مناسبة بنفس هذا العنوان، الرجاء اختيار عنوان آخر!', {
+            extensions: { code: 'BAD_USER_INPUT' },
+          });
         }
 
         const event = await repos.event.create({
@@ -91,10 +86,10 @@ export const eventResolver = {
           creator: context.user!._id,
         } as any);
 
-        const populatedResult = await event.populate("creator");
+        const populatedResult = await event.populate('creator');
         const createdEvent = transformEvent(populatedResult);
 
-        pubsub.publish("EVENT_ADDED", { eventAdded: createdEvent });
+        pubsub.publish('EVENT_ADDED', { eventAdded: createdEvent });
 
         return createdEvent;
       }
@@ -108,10 +103,7 @@ export const eventResolver = {
       isAuthenticated,
       async (
         _parent: unknown,
-        {
-          eventId,
-          eventInput,
-        }: { eventId: string; eventInput: UpdateEventInput },
+        { eventId, eventInput }: { eventId: string; eventInput: UpdateEventInput },
         context: GraphQLContext
       ) => {
         validateUpdateEventInput(eventInput);
@@ -119,24 +111,22 @@ export const eventResolver = {
         const repos = getRepositoryManager();
         const event = await repos.event.findById(eventId);
         if (!event) {
-          throw new GraphQLError("المناسبة غير موجودة!", {
-            extensions: { code: "NOT_FOUND" },
+          throw new GraphQLError('المناسبة غير موجودة!', {
+            extensions: { code: 'NOT_FOUND' },
           });
         }
 
         if (event.creator.toString() !== context.user!._id.toString()) {
-          throw new GraphQLError("غير مصرح لك بتعديل هذه المناسبة!", {
-            extensions: { code: "FORBIDDEN" },
+          throw new GraphQLError('غير مصرح لك بتعديل هذه المناسبة!', {
+            extensions: { code: 'FORBIDDEN' },
           });
         }
 
         const updates: Record<string, unknown> = {};
         if (eventInput.title !== undefined) updates.title = eventInput.title;
-        if (eventInput.description !== undefined)
-          updates.description = eventInput.description;
+        if (eventInput.description !== undefined) updates.description = eventInput.description;
         if (eventInput.price !== undefined) updates.price = eventInput.price;
-        if (eventInput.date !== undefined)
-          updates.date = new Date(eventInput.date);
+        if (eventInput.date !== undefined) updates.date = new Date(eventInput.date);
 
         const updated = await repos.event.updateWithCreator(eventId, updates);
         return transformEvent(updated!);
@@ -150,23 +140,19 @@ export const eventResolver = {
      */
     deleteEvent: combineResolvers(
       isAuthenticated,
-      async (
-        _parent: unknown,
-        { eventId }: { eventId: string },
-        context: GraphQLContext
-      ) => {
+      async (_parent: unknown, { eventId }: { eventId: string }, context: GraphQLContext) => {
         const repos = getRepositoryManager();
         const event = await repos.event.findById(eventId);
         if (!event) {
-          throw new GraphQLError("المناسبة غير موجودة!", {
-            extensions: { code: "NOT_FOUND" },
+          throw new GraphQLError('المناسبة غير موجودة!', {
+            extensions: { code: 'NOT_FOUND' },
           });
         }
 
         // Only the creator can delete their event
         if (event.creator.toString() !== context.user!._id.toString()) {
-          throw new GraphQLError("غير مصرح لك بحذف هذه المناسبة!", {
-            extensions: { code: "FORBIDDEN" },
+          throw new GraphQLError('غير مصرح لك بحذف هذه المناسبة!', {
+            extensions: { code: 'FORBIDDEN' },
           });
         }
 
@@ -185,7 +171,7 @@ export const eventResolver = {
 
   Subscription: {
     eventAdded: {
-      subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"]),
+      subscribe: () => pubsub.asyncIterator(['EVENT_ADDED']),
     },
   },
 };

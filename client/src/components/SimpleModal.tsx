@@ -11,9 +11,9 @@
  * - RTL-aware layout
  */
 
-import type { ReactNode } from "react";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+import type { ReactNode } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 interface SimpleModalProps {
   /** Modal header title */
@@ -40,7 +40,7 @@ export default function SimpleModal({
   onConfirm,
   onCancel,
   confirmText,
-  confirmVariant = "primary",
+  confirmVariant = 'primary',
   isDisabled = false,
   footerExtra,
 }: SimpleModalProps) {
@@ -52,11 +52,7 @@ export default function SimpleModal({
       <Modal.Body>{children}</Modal.Body>
       <Modal.Footer>
         {footerExtra}
-        <Button
-          variant={confirmVariant}
-          onClick={onConfirm}
-          disabled={isDisabled}
-        >
+        <Button variant={confirmVariant} onClick={onConfirm} disabled={isDisabled}>
           {confirmText}
         </Button>
         <Button variant="secondary" onClick={onCancel}>

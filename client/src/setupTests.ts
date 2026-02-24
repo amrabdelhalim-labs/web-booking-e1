@@ -8,7 +8,7 @@
  *  2. محاكاة (Mock) واجهات المتصفح غير المتوفرة في بيئة jsdom
  *  3. محاكاة localStorage
  */
-import "@testing-library/jest-dom";
+import '@testing-library/jest-dom';
 
 // ─── محاكاة localStorage (في حال لم توفرها jsdom بالكامل) ───
 const localStorageMock = (() => {
@@ -31,11 +31,11 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(window, "localStorage", {
+Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
 // ─── محاكاة import.meta.env ───
 if (!import.meta.env.BASE_URL) {
-  Object.defineProperty(import.meta.env, "BASE_URL", { value: "/" });
+  Object.defineProperty(import.meta.env, 'BASE_URL', { value: '/' });
 }

@@ -5,8 +5,8 @@
  * Events are created by users and can be booked by other users.
  */
 
-import mongoose, { Schema } from "mongoose";
-import { IEvent } from "../types";
+import mongoose, { Schema } from 'mongoose';
+import { IEvent } from '../types';
 
 const eventSchema = new Schema<IEvent>({
   title: {
@@ -27,8 +27,8 @@ const eventSchema = new Schema<IEvent>({
   },
   creator: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
   },
 });
 
-export default mongoose.model<IEvent>("Event", eventSchema);
+export default mongoose.model<IEvent>('Event', eventSchema);

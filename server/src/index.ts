@@ -6,23 +6,23 @@
  * configures JWT authentication context, and connects to MongoDB.
  */
 
-import express from "express";
-import { createServer } from "http";
-import cors from "cors";
-import jwt from "jsonwebtoken";
-import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
-import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { WebSocketServer } from "ws";
-import { useServer } from "graphql-ws/lib/use/ws";
-import mongoose from "mongoose";
+import express from 'express';
+import { createServer } from 'http';
+import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import mongoose from 'mongoose';
 
-import { config } from "./config";
-import { typeDefs } from "./schema";
-import { resolvers } from "./resolvers";
-import { GraphQLContext, JwtPayload } from "./types";
-import User from "./models/user";
+import { config } from './config';
+import { typeDefs } from './schema';
+import { resolvers } from './resolvers';
+import { GraphQLContext, JwtPayload } from './types';
+import User from './models/user';
 
 /**
  * Starts the Apollo Server with Express and WebSocket support.
@@ -39,7 +39,7 @@ async function startServer(): Promise<void> {
   // Set up WebSocket server for subscriptions
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: "/graphql",
+    path: '/graphql',
   });
   const serverCleanup = useServer({ schema }, wsServer);
 
@@ -51,8 +51,8 @@ async function startServer(): Promise<void> {
         async requestDidStart(requestContext) {
           const { operationName, query } = requestContext.request;
           // Skip introspection queries to reduce console noise
-          if (query && operationName !== "IntrospectionQuery") {
-            const opLabel = operationName ? ` (${operationName})` : "";
+          if (query && operationName !== 'IntrospectionQuery') {
+            const opLabel = operationName ? ` (${operationName})` : '';
             console.log(`📨 GraphQL${opLabel}:\n${query}`);
           }
         },
@@ -77,7 +77,7 @@ async function startServer(): Promise<void> {
 
   // Apply Express middleware
   app.use(
-    "/graphql",
+    '/graphql',
     cors<cors.CorsRequest>({ origin: config.appUrls }),
     express.json(),
     // @ts-ignore - Type mismatch between @apollo/server and @types/express versions
@@ -107,16 +107,14 @@ async function startServer(): Promise<void> {
   // Connect to MongoDB
   try {
     await mongoose.connect(config.dbUrl);
-    console.log("📦 Database connected successfully");
+    console.log('📦 Database connected successfully');
   } catch (err) {
-    console.error("❌ Database connection error:", err);
+    console.error('❌ Database connection error:', err);
     process.exit(1);
   }
 
   // Start listening
-  await new Promise<void>((resolve) =>
-    httpServer.listen({ port: config.port }, resolve)
-  );
+  await new Promise<void>((resolve) => httpServer.listen({ port: config.port }, resolve));
   console.log(`🚀 Server ready at port ${config.port}`);
   console.log(`🌐 CORS origins: ${config.appUrls.join(', ')}`);
 }

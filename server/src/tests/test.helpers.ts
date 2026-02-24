@@ -15,13 +15,13 @@
 // ─── Colors ──────────────────────────────────────────────────────────────────
 
 const colors = {
-  reset: "\x1b[0m",
-  green: "\x1b[32m",
-  red: "\x1b[31m",
-  yellow: "\x1b[33m",
-  cyan: "\x1b[36m",
-  dim: "\x1b[2m",
-  bold: "\x1b[1m",
+  reset: '\x1b[0m',
+  green: '\x1b[32m',
+  red: '\x1b[31m',
+  yellow: '\x1b[33m',
+  cyan: '\x1b[36m',
+  dim: '\x1b[2m',
+  bold: '\x1b[1m',
 };
 
 // ─── Counters ────────────────────────────────────────────────────────────────
@@ -66,9 +66,7 @@ export function assert(condition: boolean, message: string): void {
  * Logs a section header (e.g., "User Repository Tests").
  */
 export function logSection(title: string): void {
-  console.log(
-    `\n${colors.cyan}${colors.bold}═══ ${title} ═══${colors.reset}\n`
-  );
+  console.log(`\n${colors.cyan}${colors.bold}═══ ${title} ═══${colors.reset}\n`);
 }
 
 /**
@@ -100,27 +98,17 @@ export function logError(message: string): void {
  */
 export function printSummary(): number {
   const total = passed + failed;
-  console.log(
-    `\n${colors.bold}═══════════════════════════════════════════${colors.reset}`
-  );
+  console.log(`\n${colors.bold}═══════════════════════════════════════════${colors.reset}`);
   console.log(`${colors.bold}  Test Summary${colors.reset}`);
-  console.log(
-    `${colors.bold}═══════════════════════════════════════════${colors.reset}`
-  );
-  console.log(
-    `  ${colors.green}Passed: ${passed}${colors.reset} / ${total}`
-  );
+  console.log(`${colors.bold}═══════════════════════════════════════════${colors.reset}`);
+  console.log(`  ${colors.green}Passed: ${passed}${colors.reset} / ${total}`);
 
   if (failed > 0) {
     console.log(`  ${colors.red}Failed: ${failed}${colors.reset}`);
-    console.log(
-      `\n${colors.red}${colors.bold}  ✗ SOME TESTS FAILED${colors.reset}\n`
-    );
+    console.log(`\n${colors.red}${colors.bold}  ✗ SOME TESTS FAILED${colors.reset}\n`);
     return 1;
   }
 
-  console.log(
-    `\n${colors.green}${colors.bold}  ✓ ALL TESTS PASSED${colors.reset}\n`
-  );
+  console.log(`\n${colors.green}${colors.bold}  ✓ ALL TESTS PASSED${colors.reset}\n`);
   return 0;
 }

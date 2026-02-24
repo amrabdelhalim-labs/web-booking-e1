@@ -5,10 +5,10 @@
  * Uses lodash merge for deep merging of resolver objects.
  */
 
-import { merge } from "lodash";
-import { authResolver } from "./auth";
-import { eventResolver } from "./event";
-import { bookingResolver } from "./booking";
+import { merge } from 'lodash';
+import { authResolver } from './auth';
+import { eventResolver } from './event';
+import { bookingResolver } from './booking';
 
 /**
  * Combined resolvers from all modules.

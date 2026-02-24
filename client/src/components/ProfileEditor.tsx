@@ -15,14 +15,14 @@
  * - Error/success feedback via Alert component
  */
 
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { UPDATE_USER, DELETE_USER } from "../graphql/queries";
-import { useAuth } from "../hooks/useAuth";
-import SimpleModal from "./SimpleModal";
-import Alert from "./Alert";
-import Spinner from "./Spinner";
-import Button from "react-bootstrap/Button";
+import { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { UPDATE_USER, DELETE_USER } from '../graphql/queries';
+import { useAuth } from '../hooks/useAuth';
+import SimpleModal from './SimpleModal';
+import Alert from './Alert';
+import Spinner from './Spinner';
+import Button from 'react-bootstrap/Button';
 
 interface ProfileEditorProps {
   /** Callback to close the modal */
@@ -32,9 +32,9 @@ interface ProfileEditorProps {
 export default function ProfileEditor({ onClose }: ProfileEditorProps) {
   const { username: currentUsername, login, logout } = useAuth();
 
-  const [newUsername, setNewUsername] = useState(currentUsername ?? "");
-  const [newPassword, setNewPassword] = useState("");
-  const [alert, setAlert] = useState("");
+  const [newUsername, setNewUsername] = useState(currentUsername ?? '');
+  const [newPassword, setNewPassword] = useState('');
+  const [alert, setAlert] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   // ─── Update User Mutation ───────────────────────────────────────────────
@@ -44,10 +44,10 @@ export default function ProfileEditor({ onClose }: ProfileEditorProps) {
     onCompleted: (data) => {
       const { username: updatedName } = data.updateUser;
       // Re-sync the context and localStorage with the new username
-      const token = localStorage.getItem("token") ?? "";
-      const userId = localStorage.getItem("userId") ?? "";
+      const token = localStorage.getItem('token') ?? '';
+      const userId = localStorage.getItem('userId') ?? '';
       login(token, userId, updatedName);
-      setAlert("تم تحديث البيانات بنجاح");
+      setAlert('تم تحديث البيانات بنجاح');
     },
   });
 
@@ -68,12 +68,12 @@ export default function ProfileEditor({ onClose }: ProfileEditorProps) {
     const trimmedPass = newPassword.trim();
 
     if (trimmedName.length < 3) {
-      setAlert("اسم المستخدم يجب أن يكون 3 أحرف على الأقل");
+      setAlert('اسم المستخدم يجب أن يكون 3 أحرف على الأقل');
       return;
     }
 
     if (trimmedPass && trimmedPass.length < 6) {
-      setAlert("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+      setAlert('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
       return;
     }
 
@@ -82,7 +82,7 @@ export default function ProfileEditor({ onClose }: ProfileEditorProps) {
     if (trimmedPass) variables.password = trimmedPass;
 
     if (Object.keys(variables).length === 0) {
-      setAlert("لم يتم إجراء أي تغيير");
+      setAlert('لم يتم إجراء أي تغيير');
       return;
     }
 
@@ -92,7 +92,7 @@ export default function ProfileEditor({ onClose }: ProfileEditorProps) {
   const handleDelete = () => {
     if (!confirmDelete) {
       setConfirmDelete(true);
-      setAlert("اضغط على زر حذف الحساب مرة أخرى للتأكيد");
+      setAlert('اضغط على زر حذف الحساب مرة أخرى للتأكيد');
       return;
     }
     deleteUser();
@@ -122,12 +122,8 @@ export default function ProfileEditor({ onClose }: ProfileEditorProps) {
       }}
       confirmText="حفظ التعديلات"
       footerExtra={
-        <Button
-          variant="danger"
-          onClick={handleDelete}
-          className="me-auto"
-        >
-          {confirmDelete ? "تأكيد حذف الحساب" : "حذف الحساب"}
+        <Button variant="danger" onClick={handleDelete} className="me-auto">
+          {confirmDelete ? 'تأكيد حذف الحساب' : 'حذف الحساب'}
         </Button>
       }
     >

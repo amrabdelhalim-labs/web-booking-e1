@@ -5,7 +5,7 @@
  * Includes all types, inputs, queries, mutations, and subscriptions.
  */
 
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 export const typeDefs = gql`
   # ─── Types ───────────────────────────────────────────────────────────────────

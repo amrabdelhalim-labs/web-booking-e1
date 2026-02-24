@@ -8,7 +8,7 @@
  * building repositories over Mongoose models.
  */
 
-import { Document, FilterQuery, UpdateQuery, QueryOptions } from "mongoose";
+import { Document, FilterQuery, UpdateQuery, QueryOptions } from 'mongoose';
 
 /**
  * Base repository interface for Mongoose models.

@@ -14,33 +14,28 @@
  * - Empty state messaging
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { useQuery, useMutation, useSubscription } from "@apollo/client";
-import {
-  EVENTS,
-  BOOK_EVENT,
-  CREATE_EVENT,
-  EVENT_ADDED,
-} from "../graphql/queries";
-import { NavLink } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { formatDateFull } from "../utils/formatDate";
-import EventItem from "../components/EventItem";
-import SimpleModal from "../components/SimpleModal";
-import Alert from "../components/Alert";
-import type { EventData } from "../types";
+import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useMutation, useSubscription } from '@apollo/client';
+import { EVENTS, BOOK_EVENT, CREATE_EVENT, EVENT_ADDED } from '../graphql/queries';
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { formatDateFull } from '../utils/formatDate';
+import EventItem from '../components/EventItem';
+import SimpleModal from '../components/SimpleModal';
+import Alert from '../components/Alert';
+import type { EventData } from '../types';
 
 const PAGE_SIZE = 8;
 
 export default function EventsPage() {
   const { token, userId } = useAuth();
 
-  const [alert, setAlert] = useState("");
-  const [modalAlert, setModalAlert] = useState("");
+  const [alert, setAlert] = useState('');
+  const [modalAlert, setModalAlert] = useState('');
 
   // ─── Search (debounced) ───────────────────────────────────────────────
-  const [searchInput, setSearchInput] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => setSearchTerm(searchInput), 300);
@@ -49,10 +44,10 @@ export default function EventsPage() {
 
   // ─── Create event form state ──────────────────────────────────────────
   const [creating, setCreating] = useState(false);
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [date, setDate] = useState("");
-  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [date, setDate] = useState('');
+  const [description, setDescription] = useState('');
 
   // ─── Event detail modal state ─────────────────────────────────────────
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
@@ -78,10 +73,8 @@ export default function EventsPage() {
       if (subData.data) {
         const addedEvent = subData.data.eventAdded as EventData;
         if (addedEvent.creator._id !== userId) {
-          client.refetchQueries({ include: ["Events"] });
-          setAlert(
-            `مناسبة جديدة بعنوان: ${addedEvent.title}، أُضيفت للتو`
-          );
+          client.refetchQueries({ include: ['Events'] });
+          setAlert(`مناسبة جديدة بعنوان: ${addedEvent.title}، أُضيفت للتو`);
           window.scrollTo(0, 0);
         }
       }
@@ -97,7 +90,7 @@ export default function EventsPage() {
     },
     onCompleted: () => {
       setSelectedEvent(null);
-      setAlert("تم حجز المناسبة بنجاح");
+      setAlert('تم حجز المناسبة بنجاح');
     },
   });
 
@@ -106,20 +99,20 @@ export default function EventsPage() {
     onError: (err) => setModalAlert(err.message),
     onCompleted: () => {
       setCreating(false);
-      setAlert("تم إضافة المناسبة بنجاح");
-      setModalAlert("");
-      setTitle("");
-      setPrice("");
-      setDate("");
-      setDescription("");
+      setAlert('تم إضافة المناسبة بنجاح');
+      setModalAlert('');
+      setTitle('');
+      setPrice('');
+      setDate('');
+      setDescription('');
     },
-    refetchQueries: ["Events"],
+    refetchQueries: ['Events'],
   });
 
   // ─── Load more handler ───────────────────────────────────────────────
   const handleLoadMore = useCallback(() => {
     if (!data?.events || loading) return;
-    
+
     const currentCount = data.events.length;
     fetchMore({
       variables: {
@@ -140,13 +133,8 @@ export default function EventsPage() {
   }, [data?.events, loading, fetchMore, searchTerm]);
 
   const handleCreateEvent = () => {
-    if (
-      !title.trim() ||
-      !description.trim() ||
-      !date.trim() ||
-      Number(price) <= 0
-    ) {
-      setModalAlert("يجب ملء جميع الحقول بالشكل الصحيح!");
+    if (!title.trim() || !description.trim() || !date.trim() || Number(price) <= 0) {
+      setModalAlert('يجب ملء جميع الحقول بالشكل الصحيح!');
       return;
     }
     createEvent({
@@ -194,7 +182,7 @@ export default function EventsPage() {
             <button
               className="search-clear"
               type="button"
-              onClick={() => setSearchInput("")}
+              onClick={() => setSearchInput('')}
               aria-label="مسح البحث"
             >
               ✕
@@ -211,15 +199,11 @@ export default function EventsPage() {
             <div className="row justify-content-center">
               {data.events.length === 0 && (
                 <p className="text-center text-muted mt-3">
-                  لا توجد مناسبات{searchTerm ? " مطابقة للبحث" : ""}
+                  لا توجد مناسبات{searchTerm ? ' مطابقة للبحث' : ''}
                 </p>
               )}
               {data.events.map((event: EventData) => (
-                <EventItem
-                  key={event._id}
-                  {...event}
-                  onDetail={handleShowDetail}
-                />
+                <EventItem key={event._id} {...event} onDetail={handleShowDetail} />
               ))}
             </div>
           </div>
@@ -227,17 +211,13 @@ export default function EventsPage() {
           {/* Load more button */}
           {hasMore && data.events.length > 0 && (
             <div className="load-more-container">
-              <button
-                className="btn btn-load-more"
-                onClick={handleLoadMore}
-                disabled={loading}
-              >
+              <button className="btn btn-load-more" onClick={handleLoadMore} disabled={loading}>
                 {loading ? (
                   <>
                     <span className="spinner-small"></span> جاري التحميل...
                   </>
                 ) : (
-                  "تحميل المزيد"
+                  'تحميل المزيد'
                 )}
               </button>
             </div>
@@ -251,7 +231,7 @@ export default function EventsPage() {
           title="إضافة مناسبة"
           onCancel={() => {
             setCreating(false);
-            setModalAlert("");
+            setModalAlert('');
           }}
           onConfirm={handleCreateEvent}
           confirmText="تأكيد"
@@ -330,19 +310,12 @@ export default function EventsPage() {
           onConfirm={() => {
             bookEvent({ variables: { eventId: selectedEvent._id } });
           }}
-          confirmText={
-            token ? (
-              "احجز"
-            ) : (
-              <NavLink to="/login">سجل دخول لتحجز</NavLink>
-            )
-          }
+          confirmText={token ? 'احجز' : <NavLink to="/login">سجل دخول لتحجز</NavLink>}
           isDisabled={selectedEvent.creator._id === userId}
         >
           <h4 className="mb-3">{selectedEvent.title}</h4>
           <h5 className="mb-3 text-muted">
-            ${selectedEvent.price} -{" "}
-            {formatDateFull(selectedEvent.date)}
+            ${selectedEvent.price} - {formatDateFull(selectedEvent.date)}
           </h5>
           <p>{selectedEvent.description}</p>
         </SimpleModal>

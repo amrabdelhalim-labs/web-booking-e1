@@ -13,22 +13,17 @@
  * - Empty state messaging
  */
 
-import { useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { NavLink } from "react-router-dom";
-import { useQuery, useMutation } from "@apollo/client";
-import {
-  GET_USER_EVENTS,
-  UPDATE_EVENT,
-  DELETE_EVENT,
-  BOOK_EVENT,
-} from "../graphql/queries";
-import { useAuth } from "../hooks/useAuth";
-import { formatDateForInput, formatDateFull } from "../utils/formatDate";
-import SimpleModal from "../components/SimpleModal";
-import Alert from "../components/Alert";
-import Spinner from "../components/Spinner";
-import type { EventData } from "../types";
+import { useState, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_USER_EVENTS, UPDATE_EVENT, DELETE_EVENT, BOOK_EVENT } from '../graphql/queries';
+import { useAuth } from '../hooks/useAuth';
+import { formatDateForInput, formatDateFull } from '../utils/formatDate';
+import SimpleModal from '../components/SimpleModal';
+import Alert from '../components/Alert';
+import Spinner from '../components/Spinner';
+import type { EventData } from '../types';
 
 export default function UserEventsPage() {
   const { token, userId: currentUserId } = useAuth();
@@ -37,18 +32,18 @@ export default function UserEventsPage() {
   const targetUserId = paramUserId || currentUserId;
   const isOwnEvents = !!token && targetUserId === currentUserId;
 
-  const [alert, setAlert] = useState("");
-  const [modalAlert, setModalAlert] = useState("");
+  const [alert, setAlert] = useState('');
+  const [modalAlert, setModalAlert] = useState('');
 
   // ─── Detail modal (for non-owner viewing) ─────────────────────────────
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
 
   // ─── Edit modal state ─────────────────────────────────────────────────
   const [editingEvent, setEditingEvent] = useState<EventData | null>(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editPrice, setEditPrice] = useState("");
-  const [editDate, setEditDate] = useState("");
-  const [editDescription, setEditDescription] = useState("");
+  const [editTitle, setEditTitle] = useState('');
+  const [editPrice, setEditPrice] = useState('');
+  const [editDate, setEditDate] = useState('');
+  const [editDescription, setEditDescription] = useState('');
 
   // ─── Inline delete confirmation ───────────────────────────────────────
   const [deletingEventId, setDeletingEventId] = useState<string | null>(null);
@@ -64,20 +59,20 @@ export default function UserEventsPage() {
     onError: (err) => setModalAlert(err.message),
     onCompleted: () => {
       setEditingEvent(null);
-      setAlert("تم تحديث المناسبة بنجاح");
-      setModalAlert("");
+      setAlert('تم تحديث المناسبة بنجاح');
+      setModalAlert('');
     },
-    refetchQueries: ["GetUserEvents", "Events"],
+    refetchQueries: ['GetUserEvents', 'Events'],
   });
 
   // ─── Delete mutation ──────────────────────────────────────────────────
   const [deleteEvent] = useMutation(DELETE_EVENT, {
     onError: (err) => setAlert(err.message),
     onCompleted: () => {
-      setAlert("تم حذف المناسبة بنجاح");
+      setAlert('تم حذف المناسبة بنجاح');
       setDeletingEventId(null);
     },
-    refetchQueries: ["GetUserEvents", "Events"],
+    refetchQueries: ['GetUserEvents', 'Events'],
   });
 
   // ─── Book event mutation ──────────────────────────────────────────────
@@ -88,7 +83,7 @@ export default function UserEventsPage() {
     },
     onCompleted: () => {
       setSelectedEvent(null);
-      setAlert("تم حجز المناسبة بنجاح");
+      setAlert('تم حجز المناسبة بنجاح');
     },
   });
 
@@ -102,7 +97,7 @@ export default function UserEventsPage() {
     const dateStr = formatDateForInput(event.date);
     setEditDate(dateStr);
     setEditDescription(event.description);
-    setModalAlert("");
+    setModalAlert('');
   }, []);
 
   const handleUpdate = () => {
@@ -113,23 +108,20 @@ export default function UserEventsPage() {
       !editDate.trim() ||
       Number(editPrice) <= 0
     ) {
-      setModalAlert("يجب ملء جميع الحقول بالشكل الصحيح!");
+      setModalAlert('يجب ملء جميع الحقول بالشكل الصحيح!');
       return;
     }
 
     const variables: Record<string, unknown> = { eventId: editingEvent._id };
-    if (editTitle.trim() !== editingEvent.title)
-      variables.title = editTitle.trim();
+    if (editTitle.trim() !== editingEvent.title) variables.title = editTitle.trim();
     if (editDescription.trim() !== editingEvent.description)
       variables.description = editDescription.trim();
-    if (Number(editPrice) !== editingEvent.price)
-      variables.price = +editPrice;
-    if (editDate !== formatDateForInput(editingEvent.date))
-      variables.date = editDate;
+    if (Number(editPrice) !== editingEvent.price) variables.price = +editPrice;
+    if (editDate !== formatDateForInput(editingEvent.date)) variables.date = editDate;
 
     // Check if any field actually changed
     if (Object.keys(variables).length === 1) {
-      setModalAlert("لم يتم إجراء أي تغيير");
+      setModalAlert('لم يتم إجراء أي تغيير');
       return;
     }
 
@@ -143,10 +135,10 @@ export default function UserEventsPage() {
   // ─── Derive page title ────────────────────────────────────────────────
   const creatorName = data?.getUserEvents?.[0]?.creator?.username;
   const pageTitle = isOwnEvents
-    ? "مناسباتي"
+    ? 'مناسباتي'
     : creatorName
       ? `مناسبات ${creatorName}`
-      : "مناسبات المستخدم";
+      : 'مناسبات المستخدم';
 
   if (loading) return <Spinner />;
 
@@ -162,21 +154,14 @@ export default function UserEventsPage() {
       <div className="container-fluid">
         <div className="row justify-content-center">
           {data?.getUserEvents?.map((event: EventData) => (
-            <div
-              key={event._id}
-              className="events-list-item col-md-4 col-lg-3 col-6"
-            >
+            <div key={event._id} className="events-list-item col-md-4 col-lg-3 col-6">
               <div className="text-center align-items-center flex-column d-grid gap-2">
                 <div className="p-1">
                   <h1>{event.title}</h1>
                 </div>
                 <div className="p-1">
                   <h2>
-                    ${event.price} -{" "}
-                    {event.date
-                      .split(".")[0]
-                      .split(" ")[0]
-                      .replace(/-/g, "/")}
+                    ${event.price} - {event.date.split('.')[0].split(' ')[0].replace(/-/g, '/')}
                   </h2>
                 </div>
                 <div className="p-2 d-flex gap-2 justify-content-center flex-wrap">
@@ -184,9 +169,7 @@ export default function UserEventsPage() {
                     <>
                       {deletingEventId === event._id ? (
                         <>
-                          <span className="text-danger small align-self-center">
-                            هل أنت متأكد؟
-                          </span>
+                          <span className="text-danger small align-self-center">هل أنت متأكد؟</span>
                           <button
                             className="btn btn-danger btn-sm"
                             onClick={() => handleDelete(event._id)}
@@ -202,10 +185,7 @@ export default function UserEventsPage() {
                         </>
                       ) : (
                         <>
-                          <button
-                            className="btn btn-sm"
-                            onClick={() => startEditing(event)}
-                          >
+                          <button className="btn btn-sm" onClick={() => startEditing(event)}>
                             تعديل
                           </button>
                           <button
@@ -218,10 +198,7 @@ export default function UserEventsPage() {
                       )}
                     </>
                   ) : (
-                    <button
-                      className="btn btn-sm"
-                      onClick={() => setSelectedEvent(event)}
-                    >
+                    <button className="btn btn-sm" onClick={() => setSelectedEvent(event)}>
                       عرض التفاصيل
                     </button>
                   )}
@@ -238,7 +215,7 @@ export default function UserEventsPage() {
           title="تعديل المناسبة"
           onCancel={() => {
             setEditingEvent(null);
-            setModalAlert("");
+            setModalAlert('');
           }}
           onConfirm={handleUpdate}
           confirmText="حفظ التعديلات"
@@ -317,19 +294,12 @@ export default function UserEventsPage() {
           onConfirm={() => {
             bookEvent({ variables: { eventId: selectedEvent._id } });
           }}
-          confirmText={
-            token ? (
-              "احجز"
-            ) : (
-              <NavLink to="/login">سجل دخول لتحجز</NavLink>
-            )
-          }
+          confirmText={token ? 'احجز' : <NavLink to="/login">سجل دخول لتحجز</NavLink>}
           isDisabled={!token}
         >
           <h4 className="mb-3">{selectedEvent.title}</h4>
           <h5 className="mb-3 text-muted">
-            ${selectedEvent.price} -{" "}
-            {formatDateFull(selectedEvent.date)}
+            ${selectedEvent.price} - {formatDateFull(selectedEvent.date)}
           </h5>
           <p>{selectedEvent.description}</p>
         </SimpleModal>

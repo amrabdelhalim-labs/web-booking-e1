@@ -6,21 +6,21 @@
  * Timestamps are automatically managed by Mongoose.
  */
 
-import mongoose, { Schema } from "mongoose";
-import { IBooking } from "../types";
+import mongoose, { Schema } from 'mongoose';
+import { IBooking } from '../types';
 
 const bookingSchema = new Schema<IBooking>(
   {
     event: {
       type: Schema.Types.ObjectId,
-      ref: "Event",
+      ref: 'Event',
     },
     user: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IBooking>("Booking", bookingSchema);
+export default mongoose.model<IBooking>('Booking', bookingSchema);

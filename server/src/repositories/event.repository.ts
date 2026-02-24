@@ -7,9 +7,9 @@
  * Singleton: Use getEventRepository() to get the shared instance.
  */
 
-import { BaseRepository } from "./base.repository";
-import Event from "../models/event";
-import { IEvent } from "../types";
+import { BaseRepository } from './base.repository';
+import Event from '../models/event';
+import { IEvent } from '../types';
 
 class EventRepository extends BaseRepository<IEvent> {
   constructor() {
@@ -24,30 +24,22 @@ class EventRepository extends BaseRepository<IEvent> {
     skip: number = 0,
     limit: number = 8
   ): Promise<IEvent[]> {
-    return Event.find(filter)
-      .sort({ _id: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate("creator");
+    return Event.find(filter).sort({ _id: -1 }).skip(skip).limit(limit).populate('creator');
   }
 
   /**
    * Find events by creator with populated creator info.
    */
   async findByCreator(creatorId: string): Promise<IEvent[]> {
-    return Event.find({ creator: creatorId }).populate("creator");
+    return Event.find({ creator: creatorId }).populate('creator');
   }
 
   /**
    * Search events by title or description (case-insensitive).
    */
-  async search(
-    searchTerm: string,
-    skip: number = 0,
-    limit: number = 8
-  ): Promise<IEvent[]> {
-    const escaped = searchTerm.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(escaped, "i");
+  async search(searchTerm: string, skip: number = 0, limit: number = 8): Promise<IEvent[]> {
+    const escaped = searchTerm.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'i');
     return this.findAllWithCreator(
       { $or: [{ title: regex }, { description: regex }] },
       skip,
@@ -66,24 +58,21 @@ class EventRepository extends BaseRepository<IEvent> {
    * Find a single event with populated creator info.
    */
   async findByIdWithCreator(id: string): Promise<IEvent | null> {
-    return Event.findById(id).populate("creator");
+    return Event.findById(id).populate('creator');
   }
 
   /**
    * Update event fields and return the updated event with populated creator.
    */
-  async updateWithCreator(
-    id: string,
-    data: Record<string, unknown>
-  ): Promise<IEvent | null> {
-    return Event.findByIdAndUpdate(id, data, { new: true }).populate("creator");
+  async updateWithCreator(id: string, data: Record<string, unknown>): Promise<IEvent | null> {
+    return Event.findByIdAndUpdate(id, data, { new: true }).populate('creator');
   }
 
   /**
    * Get all event IDs created by a specific user.
    */
   async getEventIdsByCreator(creatorId: string): Promise<string[]> {
-    const events = await Event.find({ creator: creatorId }).select("_id");
+    const events = await Event.find({ creator: creatorId }).select('_id');
     return events.map((e) => e._id.toString());
   }
 }

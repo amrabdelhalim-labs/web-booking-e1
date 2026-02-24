@@ -7,9 +7,9 @@
  * Singleton: Use getBookingRepository() to get the shared instance.
  */
 
-import { BaseRepository } from "./base.repository";
-import Booking from "../models/booking";
-import { IBooking } from "../types";
+import { BaseRepository } from './base.repository';
+import Booking from '../models/booking';
+import { IBooking } from '../types';
 
 class BookingRepository extends BaseRepository<IBooking> {
   constructor() {
@@ -21,8 +21,8 @@ class BookingRepository extends BaseRepository<IBooking> {
    */
   async findByUser(userId: string): Promise<IBooking[]> {
     return Booking.find({ user: userId })
-      .populate({ path: "event", populate: { path: "creator" } })
-      .populate("user");
+      .populate({ path: 'event', populate: { path: 'creator' } })
+      .populate('user');
   }
 
   /**
@@ -30,8 +30,8 @@ class BookingRepository extends BaseRepository<IBooking> {
    */
   async findByIdWithDetails(id: string): Promise<IBooking | null> {
     return Booking.findById(id).populate({
-      path: "event",
-      populate: { path: "creator" },
+      path: 'event',
+      populate: { path: 'creator' },
     });
   }
 
@@ -40,8 +40,8 @@ class BookingRepository extends BaseRepository<IBooking> {
    */
   async findByIdFullyPopulated(id: string): Promise<IBooking | null> {
     return Booking.findById(id)
-      .populate({ path: "event", populate: { path: "creator" } })
-      .populate("user");
+      .populate({ path: 'event', populate: { path: 'creator' } })
+      .populate('user');
   }
 
   /**
@@ -54,27 +54,18 @@ class BookingRepository extends BaseRepository<IBooking> {
   /**
    * Create a booking and return it with all populated fields.
    */
-  async createAndPopulate(
-    userId: string,
-    eventId: string
-  ): Promise<IBooking> {
+  async createAndPopulate(userId: string, eventId: string): Promise<IBooking> {
     const booking = await this.create({
       user: userId as any,
       event: eventId as any,
     });
-    return booking.populate([
-      { path: "event", populate: { path: "creator" } },
-      { path: "user" },
-    ]);
+    return booking.populate([{ path: 'event', populate: { path: 'creator' } }, { path: 'user' }]);
   }
 
   /**
    * Delete all bookings for a user or on a user's events.
    */
-  async deleteByUserCascade(
-    userId: string,
-    eventIds: string[]
-  ): Promise<number> {
+  async deleteByUserCascade(userId: string, eventIds: string[]): Promise<number> {
     const result = await Booking.deleteMany({
       $or: [{ user: userId }, { event: { $in: eventIds } }],
     });

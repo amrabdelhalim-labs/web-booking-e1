@@ -12,22 +12,22 @@
  * - Navigation link to login page
  */
 
-import { useState, useEffect, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/client";
-import { CREATE_USER } from "../graphql/queries";
-import { useAuth } from "../hooks/useAuth";
-import Alert from "../components/Alert";
-import Spinner from "../components/Spinner";
+import { useState, useEffect, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { CREATE_USER } from '../graphql/queries';
+import { useAuth } from '../hooks/useAuth';
+import Alert from '../components/Alert';
+import Spinner from '../components/Spinner';
 
 export default function SignUpPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [alert, setAlert] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [alert, setAlert] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [signup, { loading, data }] = useMutation(CREATE_USER, {
     onError: (error) => setAlert(error.message),
@@ -37,20 +37,20 @@ export default function SignUpPage() {
     if (!loading && data) {
       const { token, userId, username: uname } = data.createUser;
       login(token, userId, uname);
-      navigate("/events", { replace: true });
+      navigate('/events', { replace: true });
     }
   }, [data, loading, login, navigate]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    setAlert("");
+    setAlert('');
 
     if (username.trim().length < 3) {
-      setAlert("اسم المستخدم يجب أن يكون 3 أحرف على الأقل");
+      setAlert('اسم المستخدم يجب أن يكون 3 أحرف على الأقل');
       return;
     }
     if (password.trim().length < 6) {
-      setAlert("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+      setAlert('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
       return;
     }
 
@@ -120,11 +120,7 @@ export default function SignUpPage() {
         <button className="btn m-2" type="submit">
           إنشاء حساب
         </button>
-        <button
-          className="btn"
-          type="button"
-          onClick={() => navigate("/login")}
-        >
+        <button className="btn" type="button" onClick={() => navigate('/login')}>
           انتقل إلى تسجيل الدخول
         </button>
       </div>

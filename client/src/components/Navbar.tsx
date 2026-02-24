@@ -12,9 +12,9 @@
  * - UserDropdown with hover menu (edit profile, logout)
  */
 
-import { NavLink } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import UserDropdown from "./UserDropdown";
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import UserDropdown from './UserDropdown';
 
 export default function Navbar() {
   const { token } = useAuth();
@@ -38,10 +38,7 @@ export default function Navbar() {
           <span className="navbar-toggler-icon" />
         </button>
 
-        <div
-          className="collapse navbar-collapse main-navigation-items"
-          id="navbarContent"
-        >
+        <div className="collapse navbar-collapse main-navigation-items" id="navbarContent">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
               <NavLink to="/events">المناسبات</NavLink>

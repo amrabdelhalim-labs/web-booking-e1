@@ -5,7 +5,7 @@
  * Includes Mongoose document interfaces, GraphQL context types, and resolver types.
  */
 
-import { Document, Types } from "mongoose";
+import { Document, Types } from 'mongoose';
 
 // ─── Mongoose Document Interfaces ────────────────────────────────────────────
 

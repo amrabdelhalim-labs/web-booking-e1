@@ -11,9 +11,9 @@
  *   const events = await repos.event.findAllWithCreator();
  */
 
-import { getUserRepository, UserRepository } from "./user.repository";
-import { getEventRepository, EventRepository } from "./event.repository";
-import { getBookingRepository, BookingRepository } from "./booking.repository";
+import { getUserRepository, UserRepository } from './user.repository';
+import { getEventRepository, EventRepository } from './event.repository';
+import { getBookingRepository, BookingRepository } from './booking.repository';
 
 /**
  * Repository Manager class.
@@ -67,7 +67,7 @@ class RepositoryManager {
 
     const allHealthy = Object.values(results).every(Boolean);
     return {
-      status: allHealthy ? "healthy" : "degraded",
+      status: allHealthy ? 'healthy' : 'degraded',
       repositories: results,
     };
   }

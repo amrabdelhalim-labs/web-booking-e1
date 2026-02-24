@@ -17,14 +17,8 @@
  *   }
  */
 
-import {
-  Model,
-  Document,
-  FilterQuery,
-  UpdateQuery,
-  QueryOptions,
-} from "mongoose";
-import { IRepository } from "./repository.interface";
+import { Model, Document, FilterQuery, UpdateQuery, QueryOptions } from 'mongoose';
+import { IRepository } from './repository.interface';
 
 export class BaseRepository<T extends Document> implements IRepository<T> {
   protected model: Model<T>;
@@ -43,20 +37,14 @@ export class BaseRepository<T extends Document> implements IRepository<T> {
   /**
    * Find all documents matching a filter.
    */
-  async findAll(
-    filter: FilterQuery<T> = {},
-    options: QueryOptions = {}
-  ): Promise<T[]> {
+  async findAll(filter: FilterQuery<T> = {}, options: QueryOptions = {}): Promise<T[]> {
     return this.model.find(filter, null, options);
   }
 
   /**
    * Find a single document matching a filter.
    */
-  async findOne(
-    filter: FilterQuery<T>,
-    options: QueryOptions = {}
-  ): Promise<T | null> {
+  async findOne(filter: FilterQuery<T>, options: QueryOptions = {}): Promise<T | null> {
     return this.model.findOne(filter, null, options);
   }
 
@@ -114,10 +102,7 @@ export class BaseRepository<T extends Document> implements IRepository<T> {
    * Update all documents matching a filter.
    * Returns the number of modified documents.
    */
-  async updateWhere(
-    filter: FilterQuery<T>,
-    data: UpdateQuery<T>
-  ): Promise<number> {
+  async updateWhere(filter: FilterQuery<T>, data: UpdateQuery<T>): Promise<number> {
     const result = await this.model.updateMany(filter, data);
     return result.modifiedCount;
   }

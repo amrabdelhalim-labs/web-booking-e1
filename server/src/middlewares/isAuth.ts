@@ -5,8 +5,8 @@
  * Used with graphql-resolvers' combineResolvers to protect mutations/queries.
  */
 
-import { GraphQLError } from "graphql";
-import { GraphQLContext } from "../types";
+import { GraphQLError } from 'graphql';
+import { GraphQLContext } from '../types';
 
 /**
  * Authentication guard resolver.
@@ -19,8 +19,8 @@ export const isAuthenticated = (
   context: GraphQLContext
 ): void => {
   if (!context.user) {
-    throw new GraphQLError("Authentication required!", {
-      extensions: { code: "UNAUTHENTICATED" },
+    throw new GraphQLError('Authentication required!', {
+      extensions: { code: 'UNAUTHENTICATED' },
     });
   }
 };

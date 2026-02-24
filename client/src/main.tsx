@@ -9,30 +9,24 @@
  * - Split Link to route operations to the correct transport
  */
 
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "bootstrap/dist/js/bootstrap.min.js";
-import "bootstrap/dist/css/bootstrap.rtl.min.css";
-import "./index.css";
-import App from "./App";
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  createHttpLink,
-  split,
-} from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import { getMainDefinition } from "@apollo/client/utilities";
-import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
-import { createClient } from "graphql-ws";
-import { GRAPHQL_HTTP_URL, GRAPHQL_WS_URL } from "./config";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import 'bootstrap/dist/js/bootstrap.min.js';
+import 'bootstrap/dist/css/bootstrap.rtl.min.css';
+import './index.css';
+import App from './App';
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink, split } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { getMainDefinition } from '@apollo/client/utilities';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { createClient } from 'graphql-ws';
+import { GRAPHQL_HTTP_URL, GRAPHQL_WS_URL } from './config';
 
 // ─── HTTP Link ────────────────────────────────────────────────────────────────
 
 const httpLink = createHttpLink({
   uri: GRAPHQL_HTTP_URL,
-  credentials: "same-origin",
+  credentials: 'same-origin',
 });
 
 // ─── WebSocket Link (Subscriptions) ───────────────────────────────────────────
@@ -41,7 +35,7 @@ const wsLink = new GraphQLWsLink(
   createClient({
     url: GRAPHQL_WS_URL,
     connectionParams: () => ({
-      authToken: localStorage.getItem("token"),
+      authToken: localStorage.getItem('token'),
     }),
   })
 );
@@ -49,11 +43,11 @@ const wsLink = new GraphQLWsLink(
 // ─── Auth Link (JWT Token Injection) ──────────────────────────────────────────
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   return {
     headers: {
       ...headers,
-      authorization: token ? `JWT ${token}` : "",
+      authorization: token ? `JWT ${token}` : '',
     },
   };
 });
@@ -63,10 +57,7 @@ const authLink = setContext((_, { headers }) => {
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
-    return (
-      definition.kind === "OperationDefinition" &&
-      definition.operation === "subscription"
-    );
+    return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
   },
   wsLink,
   authLink.concat(httpLink)
@@ -84,7 +75,7 @@ const client = new ApolloClient({
 
 // ─── Render Application ──────────────────────────────────────────────────────
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <App />

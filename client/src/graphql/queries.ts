@@ -5,8 +5,8 @@
  * Uses fragments for shared field selections.
  */
 
-import { gql } from "@apollo/client";
-import { EVENT_FIELDS } from "./fragments";
+import { gql } from '@apollo/client';
+import { EVENT_FIELDS } from './fragments';
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
@@ -63,14 +63,8 @@ export const LOGIN = gql`
 
 /** Registers a new user and returns token */
 export const CREATE_USER = gql`
-  mutation CreateUser(
-    $username: String!
-    $email: String!
-    $password: String!
-  ) {
-    createUser(
-      userInput: { username: $username, email: $email, password: $password }
-    ) {
+  mutation CreateUser($username: String!, $email: String!, $password: String!) {
+    createUser(userInput: { username: $username, email: $email, password: $password }) {
       token
       userId
       username
@@ -83,19 +77,9 @@ export const CREATE_USER = gql`
 /** Creates a new event */
 export const CREATE_EVENT = gql`
   ${EVENT_FIELDS}
-  mutation CreateEvent(
-    $title: String!
-    $description: String!
-    $price: Float!
-    $date: String!
-  ) {
+  mutation CreateEvent($title: String!, $description: String!, $price: Float!, $date: String!) {
     createEvent(
-      eventInput: {
-        title: $title
-        description: $description
-        price: $price
-        date: $date
-      }
+      eventInput: { title: $title, description: $description, price: $price, date: $date }
     ) {
       ...EventFields
     }
@@ -114,12 +98,7 @@ export const UPDATE_EVENT = gql`
   ) {
     updateEvent(
       eventId: $eventId
-      eventInput: {
-        title: $title
-        description: $description
-        price: $price
-        date: $date
-      }
+      eventInput: { title: $title, description: $description, price: $price, date: $date }
     ) {
       ...EventFields
     }

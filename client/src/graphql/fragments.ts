@@ -5,7 +5,7 @@
  * Fragments avoid duplication across queries and mutations.
  */
 
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client';
 
 /**
  * Event fields fragment - shared across event queries/mutations.

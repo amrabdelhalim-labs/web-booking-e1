@@ -7,9 +7,9 @@
  * Singleton: Use getUserRepository() to get the shared instance.
  */
 
-import { BaseRepository } from "./base.repository";
-import User from "../models/user";
-import { IUser } from "../types";
+import { BaseRepository } from './base.repository';
+import User from '../models/user';
+import { IUser } from '../types';
 
 class UserRepository extends BaseRepository<IUser> {
   constructor() {

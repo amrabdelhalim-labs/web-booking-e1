@@ -5,8 +5,8 @@
  * Users can create events, book events, and authenticate.
  */
 
-import mongoose, { Schema } from "mongoose";
-import { IUser } from "../types";
+import mongoose, { Schema } from 'mongoose';
+import { IUser } from '../types';
 
 const userSchema = new Schema<IUser>({
   username: {
@@ -23,4 +23,4 @@ const userSchema = new Schema<IUser>({
   },
 });
 
-export default mongoose.model<IUser>("User", userSchema);
+export default mongoose.model<IUser>('User', userSchema);

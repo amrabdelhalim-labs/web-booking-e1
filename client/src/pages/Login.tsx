@@ -12,21 +12,21 @@
  * - Navigation link to sign up page
  */
 
-import { useState, useEffect, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/client";
-import { LOGIN } from "../graphql/queries";
-import { useAuth } from "../hooks/useAuth";
-import Alert from "../components/Alert";
-import Spinner from "../components/Spinner";
+import { useState, useEffect, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { LOGIN } from '../graphql/queries';
+import { useAuth } from '../hooks/useAuth';
+import Alert from '../components/Alert';
+import Spinner from '../components/Spinner';
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [alert, setAlert] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [alert, setAlert] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [loginMutation, { loading, data }] = useMutation(LOGIN, {
     onError: (error) => setAlert(error.message),
@@ -36,13 +36,13 @@ export default function LoginPage() {
     if (!loading && data) {
       const { token, userId, username } = data.login;
       login(token, userId, username);
-      navigate("/events", { replace: true });
+      navigate('/events', { replace: true });
     }
   }, [data, loading, login, navigate]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    setAlert("");
+    setAlert('');
     loginMutation({
       variables: { email: email.trim(), password: password.trim() },
     });
@@ -89,11 +89,7 @@ export default function LoginPage() {
         <button className="btn m-2" type="submit">
           تسجيل الدخول
         </button>
-        <button
-          className="btn"
-          type="button"
-          onClick={() => navigate("/signup")}
-        >
+        <button className="btn" type="button" onClick={() => navigate('/signup')}>
           انتقل إلى إنشاء حساب
         </button>
       </div>
