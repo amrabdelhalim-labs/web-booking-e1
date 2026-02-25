@@ -93,9 +93,23 @@ jobs:
           cp server/package-lock.json /tmp/server-deploy/
           printf 'web: node dist/index.js\n' > /tmp/server-deploy/Procfile
 
-          # Remove "build" script since dist/ is pre-compiled
-          # (Heroku takes the compiled files, doesn't rebuild)
-          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('/tmp/server-deploy/package.json.bak'));delete p.scripts.build;fs.writeFileSync('/tmp/server-deploy/package.json',JSON.stringify(p,null,2))"
+          # Remove build/test/dev scripts and devDependencies for production
+          # (dist/ is pre-compiled — Heroku runs the compiled JS directly)
+          node -e "
+            const fs = require('fs');
+            const p = JSON.parse(fs.readFileSync('/tmp/server-deploy/package.json.bak'));
+            delete p.scripts.build;
+            delete p.scripts.dev;
+            delete p.scripts['test'];
+            delete p.scripts['test:all'];
+            delete p.scripts['test:unit'];
+            delete p.scripts['test:integration'];
+            delete p.scripts['test:e2e'];
+            delete p.scripts['format'];
+            delete p.scripts['format:check'];
+            delete p.devDependencies;
+            fs.writeFileSync('/tmp/server-deploy/package.json', JSON.stringify(p, null, 2));
+          "
           rm /tmp/server-deploy/package.json.bak
 
           # 2️⃣ Create clean orphan branch
