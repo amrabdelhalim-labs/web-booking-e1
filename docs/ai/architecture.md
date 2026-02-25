@@ -379,5 +379,52 @@ expect(result.current.token).toBe("token");
 
 ---
 
+## 7. CI/CD Workflow
+
+### GitHub Actions (`.github/workflows/build-and-deploy.yml`)
+
+مهمتان متوازيتان تعملان عند Push إلى `main` أو `workflow_dispatch`:
+
+| المهمة | الخدمات | الخطوات | هدف النشر |
+|--------|---------|---------|----------|
+| **deploy-server** | MongoDB 7 | `npm ci` → `npm run test:all` → `npm run build` → نشر على فرع `server` | Heroku / Render |
+| **deploy-client** | — | `npm ci` → `npm test` → `npm run build` → نشر على فرع `web` | GitHub Pages / Netlify |
+
+### آلية نشر الخادم
+
+الخادم TypeScript — يُبنى إلى `dist/` أولاً، ثم تُنسخ الملفات المُجمَّعة فقط:
+
+```bash
+cp -r server/dist /tmp/server-deploy/
+cp server/package.json /tmp/server-deploy/package.json.bak
+cp server/package-lock.json /tmp/server-deploy/
+```
+
+ثم يُعدَّل `package.json` بحذف `devDependencies` وجميع scripts التطوير والاختبار قبل النشر:
+
+```javascript
+delete p.scripts.build;   // dist/ مُجمَّع مسبقاً
+delete p.scripts.dev;
+delete p.scripts['test'];
+delete p.scripts['test:all'];
+delete p.scripts['format'];
+delete p.devDependencies; // TypeScript، Jest، etc. لا تُثبَّت في الإنتاج
+```
+
+### فروع النشر
+
+- **`server`** — فرع يتيم يحتوي: `dist/`، `package.json` (dependencies فقط)، `package-lock.json`، `Procfile`
+- **`web`** — فرع يتيم يحتوي محتويات `client/dist/` + `.nojekyll`
+- جميع commits النشر تحمل لاحقة `[skip ci]` لمنع الحلقات اللانهائية
+
+### القرارات التصميمية
+
+1. **بناء TypeScript إلزامي** — الخادم لا يُنشر كـ source بل كـ `dist/` مُجمَّع
+2. **حذف `devDependencies`** — TypeScript وأدوات الاختبار لا تُثبَّت في الإنتاج
+3. **حذف `scripts.build`** — `dist/` جاهز، Heroku لا يحتاج إعادة البناء
+4. **`cancel-in-progress: false`** — يضمن اكتمال النشر حتى لو جاء push جديد
+
+---
+
 *This document is the single authoritative reference for مناسباتي architecture.*  
 *See [`feature-guide.md`](./feature-guide.md) for how to add a new feature using these patterns.*
