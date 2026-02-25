@@ -1,4 +1,4 @@
-# GraphQL API Documentation
+# واجهة GraphQL
 
 ## نظرة عامة
 

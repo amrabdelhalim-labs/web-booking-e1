@@ -1,46 +1,47 @@
-# Contributing Guide — مناسباتي (web-booking-e1)
+# دليل المساهمة — مناسباتي (web-booking-e1)
 
-> **Read this before making any change.**  
-> These rules are non-negotiable and enforced at code review. Deviations require explicit
-> justification.
-
----
-
-## 1. Architecture First
-
-Before writing any code, read the AI guidance docs:
-
-| Document | Read when |
-|----------|-----------|
-| [`docs/ai/README.md`](docs/ai/README.md) | Always — start here |
-| [`docs/ai/architecture.md`](docs/ai/architecture.md) | Making any server or client change |
-| [`docs/ai/feature-guide.md`](docs/ai/feature-guide.md) | Adding a new entity or feature |
-
-**Critical rules summary (full list in `docs/ai/README.md`):**
-- Never import a Mongoose model directly in a resolver — use `getRepositoryManager()`
-- Every mutation has a validator with Arabic error messages
-- Protected resolvers use `combineResolvers(isAuthenticated, ...)` — never inline auth checks
-- Client auth state via `useAuth()` — never `useContext(AuthContext)` directly
-- Date formatting via `formatDate*` utilities — never inline `new Date(...)`
+> **اقرأ هذا الملف قبل إجراء أي تغيير.**
+> هذه القواعد غير قابلة للتفاوض وتُطبَّق عند مراجعة الكود. أي انحراف يتطلب مبرراً صريحاً.
 
 ---
 
-## 2. Branch Naming
+## 1. المعمارية أولاً
+
+قبل كتابة أي كود، اقرأ توثيق توجيهات AI:
+
+| الملف | اقرأه عند |
+|-------|---------|
+| [`docs/ai/README.md`](docs/ai/README.md) | دائماً — ابدأ من هنا |
+| [`docs/ai/architecture.md`](docs/ai/architecture.md) | إجراء أي تغيير في الخادم أو العميل |
+| [`docs/ai/feature-guide.md`](docs/ai/feature-guide.md) | إضافة كيان أو ميزة جديدة |
+
+**ملخص القواعد الحرجة (القائمة الكاملة في `docs/ai/README.md`):**
+- لا تستورد نموذج Mongoose مباشرة في المحلِّل (resolver) — جميع الوصول عبر `getRepositoryManager()`
+- كل mutation لها محقق يستخدم رسائل خطأ عربية
+- المحققون يرمون `GraphQLError` مع `extensions.code: "BAD_USER_INPUT"`
+- المحلِّلات المحمية تستخدم `combineResolvers(isAuthenticated, ...)` — لا تضع فحوصات المصادقة inline
+- جميع repositories هي singletons — استخدم دوالّ `get{Entity}Repository()`
+- حالة المصادق في العميل عبر `useAuth()` — لا `useContext(AuthContext)` مباشرة
+- تنسيق التواريخ عبر `formatDate*` utilities من `formatDate.ts` — لا inline `new Date(...)`
+
+---
+
+## 2. أسماء الفروع
 
 ```
-main           ← production-ready code only; never commit directly
-feat/<topic>   ← new feature (e.g., feat/event-ratings)
-fix/<topic>    ← bug fix (e.g., fix/booking-date-validation)
-docs/<topic>   ← documentation only (e.g., docs/update-ai-guide)
-chore/<topic>  ← tooling, dependencies, config (e.g., chore/update-prettier)
-refactor/<topic> ← refactor without behavior change
+main             ← كود جاهز للإنتاج فقط؛ لا تُودِع مباشرة
+feat/<topic>     ← ميزة جديدة (مثال: feat/event-ratings)
+fix/<topic>      ← إصلاح خطأ (مثال: fix/booking-date-validation)
+docs/<topic>     ← توثيق فقط (مثال: docs/update-ai-guide)
+chore/<topic>    ← أدوات، اعتماديات، إعداد (مثال: chore/update-prettier)
+refactor/<topic> ← إعادة هيكلة بدون تغيير في السلوك
 ```
 
 ---
 
-## 3. Commit Messages
+## 3. رسائل الإيداع (Commit Messages)
 
-**Format:** [Conventional Commits](https://www.conventionalcommits.org/) — English only.
+**الصيغة:** [Conventional Commits](https://www.conventionalcommits.org/) — **بالإنجليزية فقط**.
 
 ```
 <type>(<scope>): <short description>
@@ -50,41 +51,41 @@ refactor/<topic> ← refactor without behavior change
 <footer — breaking changes or issue references>
 ```
 
-### Types
+### الأنواع (Types)
 
-| Type | When to use |
-|------|-------------|
-| `feat` | New feature or behavior |
-| `fix` | Bug fix |
-| `docs` | Documentation changes only |
-| `test` | Adding or updating tests |
-| `refactor` | Code restructure without behavior change |
-| `chore` | Tooling, config, dependencies, CI |
-| `style` | Formatting only (no logic change) |
+| النوع | متى تستخدمه |
+|-------|------------|
+| `feat` | ميزة أو سلوك جديد |
+| `fix` | إصلاح خطأ |
+| `docs` | تغييرات في التوثيق فقط |
+| `test` | إضافة أو تحديث اختبارات |
+| `refactor` | إعادة هيكلة بدون تغيير في السلوك |
+| `chore` | أدوات، إعداد، اعتماديات، CI |
+| `style` | تنسيق فقط (بدون تغيير منطقي) |
 
-### Scopes
+### النطاقات (Scopes)
 
-| Scope | Applies to |
-|-------|-----------|
-| `server` | `server/` directory |
-| `client` | `client/` directory |
-| `docs` | `docs/` directory |
+| النطاق | ينطبق على |
+|--------|----------|
+| `server` | مجلد `server/` |
+| `client` | مجلد `client/` |
+| `docs` | مجلد `docs/` |
 | `ci` | `.github/workflows/` |
-| `ai` | `docs/ai/` specifically |
+| `ai` | `docs/ai/` تحديداً |
 
-### Rules
+### قواعد الإيداع
 
-1. **Subject line ≤ 72 characters**
-2. **Subject uses imperative mood** — "add", "fix", "update", not "added", "fixed"
-3. **No period at end of subject line**
-4. **Body mandatory for non-trivial commits** — list each significant change
-5. **Separate subject from body with a blank line**
-6. **One logical change per commit** — do not mix server + client + docs in one commit
+1. **سطر الموضوع ≤ 72 حرفاً**
+2. **الموضوع يستخدم صيغة الأمر** — "add"، "fix"، "update"، ليس "added"، "fixed"
+3. **لا نقطة في نهاية سطر الموضوع**
+4. **النص الأساسي إلزامي للإيداعات غير التافهة** — اذكر كل تغيير مهم
+5. **افصل الموضوع عن النص بسطر فارغ**
+6. **تغيير منطقي واحد لكل إيداع** — لا تخلط server + client + docs في إيداع واحد
 
-### Examples
+### أمثلة
 
 ```bash
-# ✅ CORRECT
+# ✅ صحيح
 git commit -m "feat(server): add event rating repository + resolver
 
 - Add Rating Mongoose model with ref to Event and User
@@ -94,91 +95,96 @@ git commit -m "feat(server): add event rating repository + resolver
 - Add isAuthenticated guard on createRating resolver
 - Cascade delete ratings when parent Event is deleted"
 
-# ✅ CORRECT (patch)
+# ✅ صحيح (patch)
 git commit -m "fix(client): correct date display in EventCard
 
 - Replace inline new Date().toLocaleDateString() with formatDateArabic()
 - Fixes incorrect locale on Safari"
 
-# ✅ CORRECT (docs only)
+# ✅ صحيح (توثيق فقط)
 git commit -m "docs(ai): update architecture diagram with rating layer"
 
-# ❌ WRONG — Arabic subject
+# ❌ خاطئ — موضوع عربي
 git commit -m "إضافة التقييمات"
 
-# ❌ WRONG — mixed scope
+# ❌ خاطئ — نطاق مختلط
 git commit -m "feat: add ratings server and client"
 
-# ❌ WRONG — no body on non-trivial commit
+# ❌ خاطئ — لا نص في إيداع غير تافه
 git commit -m "feat(server): add repository pattern"
 
-# ❌ WRONG — past tense
+# ❌ خاطئ — صيغة الماضي
 git commit -m "feat(server): added rating resolver"
 ```
 
 ---
 
-## 4. Tagging Strategy
+## 4. استراتيجية التاجات (Tagging Strategy)
 
-Tags mark **meaningful release milestones** — not every commit.
+تُحدِّد التاجات **معالم الإصدار المهمة** — ليس كل إيداع.
 
-### When to create a tag
+### متى تنشئ تاجاً
 
-| Version bump | Trigger |
-|---|---|
-| `v1.0.0` (major) | First production-ready version, or breaking change |
-| `v1.X.0` (minor) | New feature complete with tests |
-| `v1.X.Y` (patch) | Documentation fix, bug fix, minor correction |
+| رفع الإصدار | المحفّز |
+|------------|---------|
+| `v1.0.0` (major) | أول إصدار جاهز للإنتاج، أو تغيير جذري (breaking change) |
+| `v1.X.0` (minor) | ميزة جديدة مكتملة مع الاختبارات |
+| `v1.X.Y` (patch) | إصلاح توثيق، إصلاح خطأ، أو تصحيح ثانوي |
 
-**Never tag:**
-- Work-in-progress commits
-- Commits with failing tests or TypeScript errors
-- Individual "Finished: X page" style commits
-- Every commit in a feature branch
+**لا تضع تاجاً أبداً على:**
+- إيداعات في منتصف العمل (work-in-progress)
+- إيداعات بها اختبارات فاشلة أو أخطاء TypeScript
+- إيداعات من نوع "Finished: X page"
+- كل إيداع في فرع الميزة
 
-### Tag format — annotated tags only
+### صيغة التاج — annotated tags حصراً
 
 ```bash
-# Annotated tag (ALWAYS use -a flag — never lightweight tags)
+# تاج موصوف (استخدم دائماً -a — لا lightweight tags)
 git tag -a v1.4.0 -m "v1.4.0 - Add Event Rating System
 
-- Rating model + RatingRepository (Mongoose)
+- Rating Mongoose model with refs to Event and User
+- RatingRepository extending BaseRepository
 - createRating / deleteRating mutations + resolvers
+- isAuthenticated guard on createRating
 - Cascade delete from Event
 - Client: StarRating component + useRatings hook
 - Server tests: 131 → 154 passing
 - Client tests: 54 → 61 passing"
 
-# Tag on a past commit
+# تاج على إيداع سابق
 git tag -a v1.0.0 <hash> -m "v1.0.0 - ..."
+
+# رفع التاج إلى GitHub
+git push origin v1.4.0
 ```
 
-### Tag message rules
+### قواعد رسالة التاج
 
-1. **First line:** `vX.Y.Z - Human-readable title`
-2. **Body:** bullet list of the most significant changes
-3. **Include test counts** if tests changed
-4. **English only**
+1. **السطر الأول:** `vX.Y.Z - عنوان بشري واضح`
+2. **النص:** قائمة بأهم التغييرات
+3. **اذكر أعداد الاختبارات** عند تغييرها (قبل → بعد)
+4. **بالإنجليزية فقط**
 
 ---
 
-## 5. Code Formatting
+## 5. تنسيق الكود
 
-**All code is formatted with Prettier** before every commit. No manual indentation decisions.
+**جميع الكود منسّق بـ Prettier** قبل كل إيداع. لا قرارات مسافات يدوية.
 
 ```bash
-# Format all source files (run from project root — works on all OS)
+# تنسيق جميع الملفات (من جذر المشروع — يعمل على جميع الأنظمة)
 node format.mjs
 
-# Check without writing (used in CI)
+# التحقق بدون كتابة (CI — يخرج 1 إذا كان غير منسّق)
 node format.mjs --check
 
-# Or per-package:
+# أو لكل حزمة:
 cd server && npm run format
 cd client && npm run format
 ```
 
-**Prettier config** (`.prettierrc.json` in `server/` and `client/`):
+**إعداد Prettier** (`.prettierrc.json` في `server/` و`client/`):
 ```json
 {
   "semi": true,
@@ -192,64 +198,63 @@ cd client && npm run format
 }
 ```
 
-**Rules:**
-- 2-space indentation — always, no tabs
-- Single quotes for strings
-- Trailing commas in multi-line structures (ES5 compatible)
-- Max line width: 100 characters
-- Never manually adjust whitespace — let Prettier decide
+**القواعد:**
+- مسافة بادئة 2 فراغ — دائماً، لا tabs
+- علامات اقتباس مفردة للسلاسل النصية
+- فواصل trailing في الهياكل متعددة الأسطر (متوافق مع ES5)
+- أقصى عرض للسطر: 100 حرف
+- لا تُعدِّل المسافات يدوياً — دع Prettier يقرر
 
 ---
 
-## 6. Pre-Commit Checklist
+## 6. قائمة التحقق قبل الإيداع
 
-Run this before every `git commit`:
+شغّل هذا قبل كل `git commit`:
 
 ```bash
-# 1. TypeScript compilation — server
+# 1. فحص TypeScript — الخادم
 cd server && npx tsc --noEmit
 
-# 2. TypeScript compilation — client
+# 2. فحص TypeScript — العميل
 cd client && npx tsc --noEmit
 
-# 3. All server tests
+# 3. جميع اختبارات الخادم
 cd server && npm run test:all
 
-# 4. All client tests
+# 4. جميع اختبارات العميل
 cd client && npm run test
 
-# 5. Prettier — ensure formatting is applied
+# 5. Prettier — تأكد من تطبيق التنسيق
 node format.mjs --check
 ```
 
-**All of the above must pass before committing.** A commit with compilation errors or
-failing tests must never reach `main`.
+**يجب أن ينجح كل ما سبق قبل الإيداع.** إيداع بأخطاء تجميع أو اختبارات فاشلة يجب ألا يصل إلى `main`.
 
 ---
 
-## 7. Documentation Updates
+## 7. تحديثات التوثيق
 
-When adding or changing a feature:
+عند إضافة ميزة أو تغييرها:
 
-| Change type | Required doc updates |
-|-------------|---------------------|
-| New entity (model + repo + resolver) | `docs/ai/feature-guide.md`, `docs/ai/architecture.md`, `docs/graphql-api.md` |
-| New GraphQL operation | `docs/graphql-api.md`, `docs/ai/README.md` (operations table) |
-| New env var | `docs/ai/README.md` (env vars section), `README.md` |
-| New test file | `docs/testing.md` |
-| Auth change | `docs/ai/architecture.md` (auth section) |
+| نوع التغيير | تحديثات التوثيق المطلوبة |
+|------------|------------------------|
+| كيان جديد (model + repo + resolver) | `docs/ai/feature-guide.md`، `docs/ai/architecture.md`، `docs/graphql-api.md` |
+| عملية GraphQL جديدة | `docs/graphql-api.md`، `docs/ai/README.md` (جدول العمليات) |
+| متغير بيئة جديد | `docs/ai/README.md` (قسم المتغيرات)، `README.md` |
+| ملف اختبار جديد | `docs/testing.md` |
+| تغيير في المصادقة | `docs/ai/architecture.md` (قسم المصادقة) |
 
-**Documentation commits must be separate from code commits** (use `docs` type).
+**إيداعات التوثيق يجب أن تكون منفصلة عن إيداعات الكود** (استخدم النوع `docs`).
 
 ---
 
-## 8. Testing Requirements
+## 8. متطلبات الاختبار
 
-| Test suite | Command | Must pass before |
-|-----------|---------|-----------------|
-| Server repository tests | `npm run test` | Any server commit |
-| Server comprehensive tests | `npm run test:comprehensive` | Any server commit |
-| Server E2E API tests | `npm run test:e2e` | Any server commit |
-| Client tests | npm run test` | Any client commit |
+| مجموعة الاختبار | الأمر | يجب أن تنجح قبل |
+|----------------|-------|----------------|
+| repositories الخادم | `cd server && npm run test` | أي إيداع على الخادم |
+| الاختبارات الشاملة | `cd server && npm run test:comprehensive` | أي إيداع على الخادم |
+| E2E API | `cd server && npm run test:e2e` | أي إيداع على الخادم |
+| اختبارات العميل | `cd client && npm run test` | أي إيداع على العميل |
 
-See [`docs/testing.md`](docs/testing.md) for full test documentation.
+راجع [`docs/testing.md`](docs/testing.md) للتوثيق الكامل للاختبارات.
