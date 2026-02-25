@@ -497,6 +497,24 @@ export const REVIEW_ADDED = gql`
 - [ ] Constants come from `config.ts`, never hardcoded URLs
 - [ ] Client tests updated + `npm run test` passes
 
+### Pre-Commit Check
+
+```bash
+# 1. اختبارات الخادم
+cd server && npm run test:all
+
+# 2. اختبارات العميل
+cd client && npm test
+
+# 3. فحص التنسيق
+node format.mjs --check
+
+# 4. فحص الورك فلو (لازم عند تعديل أي شيء في .github/workflows أو package.json)
+node validate-workflow.mjs
+```
+
+All steps must pass before committing. See `CONTRIBUTING.md` for full standards.
+
 ### Commit
 ```bash
 # Server changes first:

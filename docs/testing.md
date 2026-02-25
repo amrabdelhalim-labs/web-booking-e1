@@ -240,6 +240,82 @@ function printSummary(): void;
 
 ---
 
+## قائمة فحص ما قبل التضمين (Pre-Commit)
+
+```bash
+# 1. اختبارات الخادم (131 اختبار)
+cd server && npm run test:all
+
+# 2. اختبارات العميل (54 اختبار)
+cd client && npm test
+
+# 3. فحص التنسيق
+node format.mjs --check
+
+# 4. فحص الورك فلو (يكتشف أخطاء النشر قبل الرفع)
+node validate-workflow.mjs
+```
+
+جميع الخطوات الأربع يجب أن تنجح قبل التضمين. راجع `CONTRIBUTING.md` للمعايير الكاملة.
+
+---
+
+## التحقق المحلي من الورك فلو
+
+يوفّر `validate-workflow.mjs` فحصاً آلياً لملف GitHub Actions قبل الدفع،
+على غرار `format.mjs` تماماً:
+
+```bash
+node validate-workflow.mjs
+```
+
+### ما يفحصه السكريبت
+
+| القسم | الفحص | النتيجة المتوقعة |
+|-------|-------|----------------|
+| هيكل YAML | لا توجد tab chars، المفاتيح الأساسية موجودة | ✅ |
+| `[skip ci]` | commits النشر تحمل اللاحقة | ✅ |
+| خطوة البناء | `npm run build` موجودة (tsc يُجمَّع قبل النشر) | ✅ |
+| نسخ `dist/` فقط | `cp -r server/dist` موجودة (لا نسخ خام) | ✅ |
+| `devDependencies` | محذوفة (TypeScript tools لا تصل لـ Heroku) | ✅ |
+| محاكاة `package.json` | `dev`, `build`, `test*`, `format*` محذوفة | ✅ |
+| script `start` | موجود بعد التنظيف | ✅ |
+| TypeScript devDeps | `typescript`, `ts-node-dev` محذوفة | ✅ |
+
+### ملاحظة خاصة بـ مناسباتي
+
+هذا المشروع يستخدم TypeScript — الخادم يُجمَّع أولاً بـ `tsc`
+ثم يُنسخ **`server/dist/` فقط** (لا rsync للكود المصدري).
+لذلك يفحص السكريبت وجود خطوة البناء ووجود `cp -r server/dist`
+bدلاً من فحص rsync excludes.
+
+### ناتج ناجح مثال
+
+```
+── 1. YAML structure
+  ✅ No hard tab characters
+  ✅ Deploy commits use [skip ci] to prevent recursive triggers
+  …
+
+── 2. TypeScript build deploy (server)
+  ✅ Server build step found (tsc compiles TypeScript before deploy)
+  ✅ Workflow copies server/dist (compiled output only)
+  ✅ Workflow deletes devDependencies
+
+── 3. package.json stripping simulation
+  ✅ "start" script preserved: "node dist/index.js"
+  ✅ devDependencies removed
+  ✅ TypeScript devDep "typescript" removed from deploy
+  …
+
+────────────────────────────────────────────────────────────
+  Passed: 15   Failed: 0
+
+[OK] Workflow is valid and ready to push.
+```
+
+---
+
 ## الملخص الكامل
 
 | الحزمة | الإطار | عدد الاختبارات |

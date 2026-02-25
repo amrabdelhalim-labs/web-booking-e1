@@ -226,6 +226,9 @@ cd client && npm run test
 
 # 5. Prettier — تأكد من تطبيق التنسيق
 node format.mjs --check
+
+# 6. فحص الورك فلو (لازم عند تعديل .github/workflows أو server/package.json)
+node validate-workflow.mjs
 ```
 
 **يجب أن ينجح كل ما سبق قبل الإيداع.** إيداع بأخطاء تجميع أو اختبارات فاشلة يجب ألا يصل إلى `main`.
