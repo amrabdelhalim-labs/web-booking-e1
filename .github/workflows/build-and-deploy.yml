@@ -105,6 +105,7 @@ jobs:
             delete p.scripts['test:unit'];
             delete p.scripts['test:integration'];
             delete p.scripts['test:e2e'];
+            delete p.scripts['test:comprehensive'];
             delete p.scripts['format'];
             delete p.scripts['format:check'];
             delete p.devDependencies;
