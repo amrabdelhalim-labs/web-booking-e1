@@ -280,8 +280,7 @@ node validate-workflow.mjs
 | `devDependencies` | محذوفة (TypeScript tools لا تصل لـ Heroku) | ✅ |
 | محاكاة `package.json` | `dev`, `build`, `test*`, `format*` محذوفة | ✅ |
 | script `start` | موجود بعد التنظيف | ✅ |
-| TypeScript devDeps | `typescript`, `ts-node-dev` محذوفة | ✅ |
-
+| TypeScript devDeps | `typescript`, `ts-node-dev` محذوفة | ✅ || تحقق الاكتمال | كل script يطابق نمط محظور في `package.json` محذوف من الورك فلو | ✅ |
 ### ملاحظة خاصة بـ مناسباتي
 
 هذا المشروع يستخدم TypeScript — الخادم يُجمَّع أولاً بـ `tsc`
@@ -308,8 +307,11 @@ bدلاً من فحص rsync excludes.
   ✅ TypeScript devDep "typescript" removed from deploy
   …
 
+── 4. Completeness check (scripts → workflow sync)
+  ✅ All forbidden-pattern scripts are accounted for in workflow deletions
+
 ────────────────────────────────────────────────────────────
-  Passed: 15   Failed: 0
+  Passed: 16   Failed: 0
 
 [OK] Workflow is valid and ready to push.
 ```
