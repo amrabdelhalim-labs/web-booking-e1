@@ -221,14 +221,39 @@ heroku[router]: at=error code=H10 desc="App crashed"
 **الحل:**
 
 ### 1. **تحقق من MongoDB URI على Heroku:**
+
+التطبيق يدعم 3 متغيرات بيئة (بالترتيب):
+- `DATABASE_URL` (موصى به لـ Heroku)
+- `MONGODB_URI` (MongoDB Atlas standard)
+- `DB_URL` (custom)
+
+**فحص المتغيرات الحالية:**
 ```bash
-heroku config:get DB_URL
+heroku config -a your-app-name
 ```
 
-يجب أن يكون كاملاً مثل:
+**إضافة المتغير - طريقة GUI (مُوصى بها):**
+1. افتح [Heroku Dashboard](https://dashboard.heroku.com)
+2. اختر التطبيق → Settings
+3. Reveal Config Vars
+4. أضف `DATABASE_URL` والقيمة هي MongoDB Atlas URI كاملاً
+5. لا حاجة لـ restart - Heroku يعيد التشغيل تلقائياً
+
+**إضافة المتغير - طريقة CLI (بديلة):**
+```bash
+# استخدم single quotes لتجنب مشاكل PowerShell
+heroku config:set DATABASE_URL='mongodb+srv://username:password@cluster.mongodb.net/database-name?retryWrites=true&w=majority' -a your-app-name
 ```
-mongodb+srv://username:password@cluster.mongodb.net/database-name?retryWrites=true&w=majority
+
+**القيمة يجب أن تكون كاملة مثل:**
 ```
+mongodb+srv://username:password@cluster.mongodb.net/database-name?retryWrites=true&w=majority&appName=Cluster0
+```
+
+⚠️ **ملاحظة مهمة:** 
+- لا تستخدم `DB_URL` و `DATABASE_URL` معاً - استخدم واحد فقط
+- إذا وجدت متغيرات متعددة، احذف التي لا تريدها
+- البيئة المحلية تستخدم `.env` - لن تتأثر بتغييرات Heroku
 
 ### 2. **أضف IP Whitelist في MongoDB Atlas:**
 1. اذهب إلى [MongoDB Atlas](https://cloud.mongodb.com)

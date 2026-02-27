@@ -133,7 +133,11 @@ npm install
 ```env
 NODE_ENV=development
 PORT=4000
+# استخدم أحد المتغيرات التالية (التطبيق يدعمها كلها):
 DB_URL=mongodb://localhost:27017/event-booking
+# أو للتطوير مع MongoDB Atlas:
+# DATABASE_URL=mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/event-booking?retryWrites=true&w=majority
+
 JWT_SECRET=your-super-secret-key-change-in-production
 APP_URLS=http://localhost:5173
 ```
@@ -142,12 +146,18 @@ APP_URLS=http://localhost:5173
 ```env
 NODE_ENV=production
 PORT=3000
-DB_URL=mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/event-booking?retryWrites=true&w=majority
+# استخدم DATABASE_URL (موصى به لـ Heroku) أو MONGODB_URI أو DB_URL
+DATABASE_URL=mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/event-booking?retryWrites=true&w=majority
+
 JWT_SECRET=your-super-secret-key-change-in-production
 APP_URLS=https://your-frontend-domain.com
 ```
 
-**⚠️ مهم:** استخدم [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) للإنتاج وليس MongoDB محلياً.
+**📝 ملاحظات:**
+- التطبيق يدعم 3 متغيرات للـ database بالترتيب: `DATABASE_URL` ← `MONGODB_URI` ← `DB_URL`
+- استخدم متغير واحد فقط - لا تستخدمهم معاً
+- على Heroku، أضف المتغيرات عبر Dashboard → Settings → Config Vars (أسهل من CLI)
+- **⚠️ مهم:** استخدم [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) للإنتاج وليس MongoDB محلياً
 
 ### 3. إعداد العميل
 
@@ -416,25 +426,34 @@ cd server && npm run build
 
 **الخادم:**
 ```env
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/event-booking
+# Use ONE of these database variables (checked in order):
+DATABASE_URL=mongodb+srv://user:pass@cluster.mongodb.net/event-booking?retryWrites=true&w=majority
+# Or: MONGODB_URI=... (MongoDB Atlas standard)
+# Or: DB_URL=... (custom)
+
 JWT_SECRET=<مفتاح قوي طويل>
 NODE_ENV=production
 PORT=4000
+APP_URLS=https://your-frontend-domain.com
 ```
+
+**ملاحظة:** على Heroku/Render، أضف المتغيرات عبر Dashboard → Settings → Config Vars
 
 **العميل:**
 ```env
-VITE_GRAPHQL_HTTP_URL=https://your-api.com/graphql
-VITE_GRAPHQL_WS_URL=wss://your-api.com/graphql
+VITE_GRAPHQL_HTTP_URL=https://your-api.herokuapp.com/graphql
+VITE_GRAPHQL_WS_URL=wss://your-api.herokuapp.com/graphql
+VITE_APP_DOMAIN=https://your-frontend-domain.com
+VITE_BASE_PATH=/
 ```
 
 ### منصات النشر
 
-| المكون | المنصة |
-|--------|--------|
-| Frontend | Vercel / Netlify |
-| Backend | Railway / Render |
-| Database | MongoDB Atlas |
+| المكون | المنصة | ملاحظات |
+|--------|--------|---------|
+| Frontend | GitHub Pages / Vercel / Netlify | GitHub Pages في الفرع `web` |
+| Backend | Heroku / Railway / Render | Heroku في الفرع `server` |
+| Database | MongoDB Atlas | يجب السماح بجميع IPs (0.0.0.0/0) |
 
 ---
 
@@ -479,11 +498,15 @@ npm run test:all          # جميع الاختبارات
 
 | الملف | الوصف |
 |-------|-------|
+| [docs/heroku-deployment.md](docs/heroku-deployment.md) | دليل شامل لنشر الخادم على Heroku |
 | [docs/database-abstraction.md](docs/database-abstraction.md) | شرح Repository Pattern |
 | [docs/repository-quick-reference.md](docs/repository-quick-reference.md) | دليل سريع مرجعي |
 | [docs/graphql-api.md](docs/graphql-api.md) | توثيق واجهة GraphQL |
 | [docs/testing.md](docs/testing.md) | دليل الاختبارات |
+| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | حلول المشاكل الشائعة |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | دليل المساهمة |
+| [docs/ai/](docs/ai/) | توثيقات للذكاء الاصطناعي (Architecture, Feature Guide) |
+| [docs/tutorials/](docs/tutorials/) | شروحات تعليمية مفصلة |
 
 ---
 

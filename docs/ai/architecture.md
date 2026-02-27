@@ -227,11 +227,127 @@ Every event and booking returned from resolvers passes through `transformEvent` 
 - Normalizes dates to ISO strings
 - Ensures `creator` is populated
 
+### 2.9 Environment Configuration (`server/src/config/index.ts`)
+
+**All environment variables are centralized in config/index.ts:**
+
+```typescript
+export const config = {
+  port: process.env.PORT || 4000,
+  
+  // Database URL - supports 3 variables (checked in priority order):
+  // 1. DATABASE_URL (Heroku standard)
+  // 2. MONGODB_URI (MongoDB Atlas standard)  
+  // 3. DB_URL (custom)
+  dbUrl: process.env.DATABASE_URL || 
+         process.env.MONGODB_URI || 
+         process.env.DB_URL || 
+         'mongodb://localhost:27017/event-booking',
+  
+  jwtSecret: process.env.JWT_SECRET || 'default_secret',
+  
+  appUrls: (process.env.APP_URLS || process.env.APP_URL || 'http://localhost:5173')
+    .split(',')
+    .map(url => url.trim())
+    .filter(Boolean)
+};
+```
+
+**Environment Variable Reference:**
+
+| Variable | Required | Default | Purpose |
+|----------|----------|---------|---------|
+| `NODE_ENV` | No | `development` | Runtime environment |
+| `PORT` | No | `4000` | Server port |
+| `DATABASE_URL` | Yes* | localhost | MongoDB connection URI (Heroku standard) |
+| `MONGODB_URI` | Yes* | localhost | MongoDB connection URI (Atlas standard) |
+| `DB_URL` | Yes* | localhost | MongoDB connection URI (custom) |
+| `JWT_SECRET` | Yes | — | Secret key for JWT signing |
+| `APP_URLS` | Yes | localhost:5173 | Allowed CORS origins (comma-separated) |
+
+\***Only ONE database variable is needed** — they are checked in order: `DATABASE_URL` → `MONGODB_URI` → `DB_URL`
+
+**Local Development `.env` Example:**
+```env
+NODE_ENV=development
+PORT=4000
+DATABASE_URL=mongodb://localhost:27017/event-booking
+JWT_SECRET=dev-secret-change-in-production
+APP_URLS=http://localhost:5173
+```
+
+**Heroku Production Config Vars:**
+```env
+NODE_ENV=production
+DATABASE_URL=mongodb+srv://user:pass@cluster.mongodb.net/event-booking?retryWrites=true&w=majority
+JWT_SECRET=<generated-strong-secret>
+APP_URLS=https://your-frontend-domain.com
+```
+
+**Rules:**
+- Never import `dotenv` or call `process.env` outside `config/index.ts`
+- Always import from `config` → ensures type safety and single source of truth
+- Use Heroku Dashboard → Settings → Config Vars to set production values
+- For MongoDB Atlas in production, ensure Network Access allows `0.0.0.0/0` (all IPs)
+
 ---
 
 ## 3. Client Architecture Details
 
-### 3.1 Apollo Client Setup (`client/src/main.tsx` or `App.tsx`)
+### 3.1 Environment Configuration (`client/src/config.ts`)
+
+**All client configuration is centralized in config.ts:**
+
+```typescript
+export const APP_DOMAIN = 
+  import.meta.env.VITE_APP_DOMAIN || 'https://amrabdelhalim-labs.github.io/web-booking-e1';
+
+export const APP_BASE_PATH = '/web-booking-e1';
+export const APP_NAME = 'Event Booking';
+
+export const GRAPHQL_HTTP_URL = 
+  import.meta.env.VITE_GRAPHQL_HTTP_URL || 'http://localhost:4000/graphql';
+
+// Auto-derive WebSocket URL from HTTP URL
+const deriveWsUrl = (httpUrl: string): string =>
+  httpUrl.replace(/^https?:\/\//, match => match === 'https://' ? 'wss://' : 'ws://');
+
+export const GRAPHQL_WS_URL = 
+  import.meta.env.VITE_GRAPHQL_WS_URL || deriveWsUrl(GRAPHQL_HTTP_URL);
+```
+
+**Client Environment Variable Reference:**
+
+| Variable | Required | Default | Purpose |
+|----------|----------|---------|---------|
+| `VITE_GRAPHQL_HTTP_URL` | Yes | localhost:4000 | GraphQL server HTTP endpoint |
+| `VITE_GRAPHQL_WS_URL` | No | (auto-derived) | GraphQL server WebSocket endpoint |
+| `VITE_APP_DOMAIN` | No | GitHub Pages URL | Public URL where frontend is hosted |
+| `VITE_BASE_PATH` | No | `/` | Base path for routing (e.g., `/web-booking-e1/`) |
+
+**Local Development `.env` or `.env.local`:**
+```env
+VITE_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
+VITE_GRAPHQL_WS_URL=ws://localhost:4000/graphql
+VITE_APP_DOMAIN=http://localhost:5173
+VITE_BASE_PATH=/
+```
+
+**Production (GitHub Pages / Netlify / Vercel):**
+```env
+VITE_GRAPHQL_HTTP_URL=https://your-api.herokuapp.com/graphql
+VITE_GRAPHQL_WS_URL=wss://your-api.herokuapp.com/graphql
+VITE_APP_DOMAIN=https://your-domain.com
+VITE_BASE_PATH=/
+```
+
+**Rules:**
+- All Vite env variables must be prefixed with `VITE_` to be exposed to browser
+- Never hardcode URLs — always import from `config.ts`
+- WebSocket URL is auto-derived (http→ws, https→wss) if not explicitly set
+- For GitHub Pages deployment, set `VITE_BASE_PATH` to match repository name
+
+### 3.2 Apollo Client Setup (`client/src/main.tsx` or `App.tsx`)
 
 - **HTTP link** → queries and mutations → `GRAPHQL_HTTP_URL`
 - **WebSocket link** → subscriptions → `GRAPHQL_WS_URL`

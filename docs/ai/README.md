@@ -139,18 +139,34 @@ npm run test:watch        # vitest watch mode
 ## Environment Variables
 
 ### Server (`server/.env`)
-```
+```env
+NODE_ENV=development
 PORT=4000
-MONGO_URI=mongodb://localhost:27017/web-booking-e1
-JWT_SECRET=your_jwt_secret
-CORS_ORIGINS=http://localhost:5173
+# Use ONE of these (checked in order: DATABASE_URL → MONGODB_URI → DB_URL):
+DATABASE_URL=mongodb://localhost:27017/event-booking
+# Or for MongoDB Atlas:
+# DATABASE_URL=mongodb+srv://user:pass@cluster.mongodb.net/event-booking?retryWrites=true&w=majority
+JWT_SECRET=your_jwt_secret_change_in_production
+APP_URLS=http://localhost:5173
 ```
 
-### Client (`client/.env`)
-```
+**Production (Heroku/Render):**
+- Set via Dashboard → Config Vars (recommended) or CLI
+- Use `DATABASE_URL` (Heroku standard) or `MONGODB_URI` (Atlas standard)
+- Must use MongoDB Atlas — localhost won't work in cloud deployments
+
+### Client (`client/.env` or `.env.local`)
+```env
 VITE_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
 VITE_GRAPHQL_WS_URL=ws://localhost:4000/graphql
+VITE_APP_DOMAIN=http://localhost:5173
+VITE_BASE_PATH=/
 ```
+
+**Production:**
+- `VITE_GRAPHQL_HTTP_URL=https://your-api.herokuapp.com/graphql`
+- `VITE_GRAPHQL_WS_URL=wss://your-api.herokuapp.com/graphql`
+- WebSocket URL auto-derives from HTTP URL if not set (http→ws, https→wss)
 
 ---
 
