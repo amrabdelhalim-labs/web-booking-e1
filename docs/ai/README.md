@@ -5,7 +5,7 @@
 >
 > **Project name in prose:** مناسباتي  
 > **Folder:** `web-booking-e1/`  
-> **Last reviewed:** 2026-02-24
+> **Last reviewed:** 2026-02-28
 
 ---
 
@@ -32,6 +32,18 @@
 |------|-------------|
 | [`architecture.md`](./architecture.md) | Before making any change — understand the full layer structure |
 | [`feature-guide.md`](./feature-guide.md) | Adding a new entity/feature end-to-end |
+
+---
+
+## Tutorials (for learning/onboarding)
+
+19 tutorial files covering all source files (10 server + 9 client). See
+[`../tutorials/README.md`](../tutorials/README.md) for the full list.
+
+Key ones for AI context:
+- [`../tutorials/server/10-validators-types.md`](../tutorials/server/10-validators-types.md) — validators, TypeScript types, transform, lodash.merge
+- [`../tutorials/client/08-pages.md`](../tutorials/client/08-pages.md) — all page components and Apollo patterns
+- [`../tutorials/client/09-components.md`](../tutorials/client/09-components.md) — all UI components, hooks, utils, types.ts
 
 ---
 
