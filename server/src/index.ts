@@ -104,14 +104,48 @@ async function startServer(): Promise<void> {
     })
   );
 
-  // Connect to MongoDB
-  try {
-    await mongoose.connect(config.dbUrl);
-    console.log('📦 Database connected successfully');
-  } catch (err) {
-    console.error('❌ Database connection error:', err);
-    process.exit(1);
-  }
+  // MongoDB connection with retry logic
+  const connectDB = async (maxRetries = 5) => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`🔌 Connecting to MongoDB (attempt ${attempt}/${maxRetries})...`);
+        await mongoose.connect(config.dbUrl, {
+          serverSelectionTimeoutMS: 15000, // 15 seconds timeout
+          connectTimeoutMS: 15000,
+          socketTimeoutMS: 45000,
+          family: 4, // IPv4
+        });
+        console.log('✅ Database connected successfully');
+        return;
+      } catch (err: any) {
+        console.error(`❌ Connection attempt ${attempt} failed:`, err.message);
+        if (attempt < maxRetries) {
+          const delay = 2000 * attempt; // Exponential backoff
+          console.log(`⏳ Retrying in ${delay}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        } else {
+          console.error('❌ Failed to connect to MongoDB after maximum retries');
+          // Don't exit - server can still run in degraded mode
+          console.warn('⚠️  Server starting in degraded mode without database');
+        }
+      }
+    }
+  };
+
+  // Start MongoDB connection in background
+  connectDB().catch((err) => {
+    console.error('Unexpected error during DB connection:', err);
+  });
+
+  // Health check endpoint (for Heroku)
+  app.get('/health', (_req, res) => {
+    const status = mongoose.connection.readyState === 1 ? 'ok' : 'degraded';
+    res.status(status === 'ok' ? 200 : 503).json({
+      status,
+      timestamp: new Date().toISOString(),
+      database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    });
+  });
 
   // Start listening
   await new Promise<void>((resolve) => httpServer.listen({ port: config.port }, resolve));

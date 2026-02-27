@@ -129,12 +129,25 @@ npm install
 
 أنشئ ملف `.env`:
 
+#### **للتطوير المحلي:**
 ```env
-MONGODB_URI=mongodb://localhost:27017/event-booking
-JWT_SECRET=your-super-secret-key-change-in-production
-PORT=4000
 NODE_ENV=development
+PORT=4000
+DB_URL=mongodb://localhost:27017/event-booking
+JWT_SECRET=your-super-secret-key-change-in-production
+APP_URLS=http://localhost:5173
 ```
+
+#### **للإنتاج على Heroku:**
+```env
+NODE_ENV=production
+PORT=3000
+DB_URL=mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/event-booking?retryWrites=true&w=majority
+JWT_SECRET=your-super-secret-key-change-in-production
+APP_URLS=https://your-frontend-domain.com
+```
+
+**⚠️ مهم:** استخدم [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) للإنتاج وليس MongoDB محلياً.
 
 ### 3. إعداد العميل
 

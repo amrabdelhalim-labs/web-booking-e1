@@ -206,6 +206,87 @@ NODE_ENV=production
 
 ---
 
+## 7️⃣ **Heroku H10 Error - App Crashed (MongoDB Connection Timeout)**
+
+**الخطأ في Heroku Logs:**
+```
+heroku[web.1]: Process exited with status 1
+heroku[web.1]: State changed from starting to crashed
+heroku[router]: at=error code=H10 desc="App crashed"
+```
+
+**السبب:**  
+اتصال MongoDB يستغرق وقت طويل أو يفشل أثناء بدء التطبيق على Heroku.
+
+**الحل:**
+
+### 1. **تحقق من MongoDB URI على Heroku:**
+```bash
+heroku config:get DB_URL
+```
+
+يجب أن يكون كاملاً مثل:
+```
+mongodb+srv://username:password@cluster.mongodb.net/database-name?retryWrites=true&w=majority
+```
+
+### 2. **أضف IP Whitelist في MongoDB Atlas:**
+1. اذهب إلى [MongoDB Atlas](https://cloud.mongodb.com)
+2. Select Cluster → Network Access
+3. أضف IP Address:
+   - للـ development: `0.0.0.0/0` (مؤقتاً للاختبار)
+   - للـ production: أضف IP الخاص بـ Heroku
+4. أو استخدم `Allow access from anywhere` مؤقتاً
+
+### 3. **بدّل من `localhost` إلى MongoDB Atlas:**
+في `server/.env`:
+```env
+# ❌ لا تشتغل على Heroku (محلي فقط)
+DB_URL=mongodb://127.0.0.1:27017/event-booking
+
+# ✅ استخدم MongoDB Atlas
+DB_URL=mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/event-booking?retryWrites=true&w=majority
+```
+
+### 4. **الخادم الآن يحاول الاتصال مع Retry Logic:**
+- محاولات الاتصال: حتى 5 مرات
+- timeout: 15 ثانية لكل محاولة
+- exponential backoff: تأخير متزايد بين المحاولات
+- **المهم:** السيرفر لا ينتظر MongoDB - يبدأ ويحاول الاتصال في الخلفية
+
+### 5. **Health Check Endpoint:**
+تحقق من حالة التطبيق:
+```bash
+curl https://your-app.herokuapp.com/health
+```
+
+**الرد الناجح:**
+```json
+{
+  "status": "ok",
+  "database": "connected",
+  "timestamp": "2026-02-27T12:00:00.000Z"
+}
+```
+
+**الرد في الحالة المتدهورة (بدون قاعدة بيانات):**
+```json
+{
+  "status": "degraded",
+  "database": "disconnected",
+  "timestamp": "2026-02-27T12:00:00.000Z"
+}
+```
+
+### 6. **Restart التطبيق على Heroku:**
+```bash
+heroku restart -a your-app-name
+```
+
+أو من Heroku Dashboard → More → Restart all dynos
+
+---
+
 ## مازلت تواجه مشاكل؟
 
 1. افحص **Network tab** في DevTools → هل الطلبات تصل للسيرفر؟
