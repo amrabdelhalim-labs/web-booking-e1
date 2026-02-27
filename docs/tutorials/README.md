@@ -35,6 +35,7 @@
 | 7 | [07-event-resolver.md](./server/07-event-resolver.md) | محلّل المناسبات — CRUD + Real-Time |
 | 8 | [08-booking-resolver.md](./server/08-booking-resolver.md) | محلّل الحجوزات |
 | 9 | [09-testing.md](./server/09-testing.md) | اختبارات الخادم — E2E والمستودعات |
+| 10 | [10-validators-types.md](./server/10-validators-types.md) | المدققات والأنواع والتحويلات |
 
 ### العميل (Client)
 
@@ -47,6 +48,8 @@
 | 5 | [05-login-page.md](./client/05-login-page.md) | صفحة تسجيل الدخول |
 | 6 | [06-private-route.md](./client/06-private-route.md) | حارس المسار الخاص |
 | 7 | [07-testing.md](./client/07-testing.md) | اختبارات العميل — Vitest |
+| 8 | [08-pages.md](./client/08-pages.md) | صفحات التطبيق — Events، Bookings، SignUp، UserEvents |
+| 9 | [09-components.md](./client/09-components.md) | المكوّنات والأنواع والأدوات المساعدة |
 
 ### المراجع
 
@@ -71,6 +74,12 @@
 
 لفهم Real-Time:
   server/07 → server/08 → client/03 → client/04
+
+لفهم التحقق والأنواع:
+  server/10 → server/06 → server/04
+
+لفهم مكوّنات الواجهة كاملاً:
+  client/01 → client/08 → client/09
 ```
 
 ---

@@ -124,7 +124,9 @@ subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"])
 - [ ] كيف يوجّه `splitLink` بين HTTP و WebSocket؟
 - [ ] ما الفرق بين `useQuery` و `useMutation`؟
 - [ ] لماذا نحتاج حماية في العميل **و** الخادم معاً؟
-
+- [ ] كيف يعمل Debounced Search مع Apollo في `Events.tsx`؟
+- [ ] لماذا `useAuth` بدلاً من `useContext` مباشرة؟
+- [ ] كيف تخدم `UserEventsPage` مسارين مختلفين؟
 ---
 
 ## الاختصارات المفيدة
@@ -155,6 +157,7 @@ subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"])
 - [07 - محلّل المناسبات](./server/07-event-resolver.md)
 - [08 - محلّل الحجوزات](./server/08-booking-resolver.md)
 - [09 - الاختبارات](./server/09-testing.md)
+- [10 - المدققات والأنواع والتحويلات](./server/10-validators-types.md)
 
 ### العميل (Client):
 - [01 - هيكل التطبيق](./client/01-app-structure.md)
@@ -164,6 +167,8 @@ subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"])
 - [05 - صفحة الدخول](./client/05-login-page.md)
 - [06 - حارس المسار](./client/06-private-route.md)
 - [07 - الاختبارات](./client/07-testing.md)
+- [08 - صفحات التطبيق](./client/08-pages.md)
+- [09 - المكوّنات والأدوات المساعدة](./client/09-components.md)
 
 ### المراجع:
 - [دليل المفاهيم](./concepts-guide.md)
