@@ -1,129 +1,129 @@
-````markdown
-# Ø§Ù„Ø¯Ø±Ø³ Ø§Ù„Ø¹Ø§Ø´Ø±: Ø§Ù„Ù…Ø¯Ù‚Ù‚Ø§Øª ÙˆØ§Ù„Ø£Ù†ÙˆØ§Ø¹ ÙˆØ§Ù„ØªØ­ÙˆÙŠÙ„Ø§Øª ğŸ”
+markdown
+# ÇáÏÑÓ ÇáÚÇÔÑ: ÇáãÏŞŞÇÊ æÇáÃäæÇÚ æÇáÊÍæíáÇÊ ??
 
-> **Ù‡Ø¯Ù Ø§Ù„Ø¯Ø±Ø³:** ÙÙ‡Ù… Ø·Ø¨Ù‚Ø© Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ù…Ø¯Ø®Ù„Ø§ØªØŒ Ø§Ù„Ø£Ù†ÙˆØ§Ø¹ Ø§Ù„Ù…Ø´ØªØ±ÙƒØ© TypeScriptØŒ Ø¯ÙˆØ§Ù„ ØªØ­ÙˆÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§ØªØŒ ÙˆØ¯Ù…Ø¬ Ø§Ù„Ù…Ø­Ù„Ù‘Ù„Ø§Øª
+> **åÏİ ÇáÏÑÓ:** İåã ØÈŞÉ ÇáÊÍŞŞ ãä ÇáãÏÎáÇÊ, ÇáÃäæÇÚ ÇáãÔÊÑßÉ TypeScript, ÏæÇá ÊÍæíá ÇáÈíÇäÇÊ, æÏãÌ ÇáãÍáøáÇÊ
 
 ---
 
-## 1. Ù„Ù…Ø§Ø°Ø§ Ù‡Ø°Ù‡ Ø§Ù„Ù…Ù„ÙØ§Øª Ù…Ù‡Ù…Ø©ØŸ
+## 1. áãÇĞÇ åĞå ÇáãáİÇÊ ãåãÉ¿
 
-| Ø§Ù„Ù…Ù„Ù | Ø¯ÙˆØ±Ù‡ |
+| Çáãáİ | ÏæÑå |
 |-------|------|
-| `validators/index.ts` | ÙŠØªØ­Ù‚Ù‚ Ù…Ù† ØµØ­Ø© Ø§Ù„Ù…Ø¯Ø®Ù„Ø§Øª Ù‚Ø¨Ù„ Ø£ÙŠ Ø¹Ù…Ù„ÙŠØ© Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª |
-| `types/index.ts` | ÙŠÙØ¹Ø±Ù‘Ù Ø¹Ù‚ÙˆØ¯ TypeScript Ø§Ù„Ù…Ø´ØªØ±ÙƒØ© Ø¨ÙŠÙ† Ø¬Ù…ÙŠØ¹ Ø·Ø¨Ù‚Ø§Øª Ø§Ù„Ø®Ø§Ø¯Ù… |
-| `resolvers/transform.ts` | ÙŠÙØ­ÙˆÙ‘Ù„ Ù…Ø³ØªÙ†Ø¯Ø§Øª Mongoose Ø¥Ù„Ù‰ Ø´ÙƒÙ„ ØµØ§Ù„Ø­ Ù„Ù€ GraphQL |
-| `resolvers/index.ts` | ÙŠØ¯Ù…Ø¬ Ø¬Ù…ÙŠØ¹ Ø§Ù„Ù…Ø­Ù„Ù‘Ù„Ø§Øª ÙÙŠ ÙƒØ§Ø¦Ù† ÙˆØ§Ø­Ø¯ |
+| `validators/index.ts` | íÊÍŞŞ ãä ÕÍÉ ÇáãÏÎáÇÊ ŞÈá Ãí ÚãáíÉ ŞÇÚÏÉ ÈíÇäÇÊ |
+| `types/index.ts` | íõÚÑøİ ÚŞæÏ TypeScript ÇáãÔÊÑßÉ Èíä ÌãíÚ ØÈŞÇÊ ÇáÎÇÏã |
+| `resolvers/transform.ts` | íõÍæøá ãÓÊäÏÇÊ Mongoose Åáì Ôßá ÕÇáÍ áÜ GraphQL |
+| `resolvers/index.ts` | íÏãÌ ÌãíÚ ÇáãÍáøáÇÊ İí ßÇÆä æÇÍÏ |
 
 ---
 
-## 2. `validators/index.ts` â€” Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ù…Ø¯Ø®Ù„Ø§Øª
+## 2. `validators/index.ts` — ÇáÊÍŞŞ ãä ÇáãÏÎáÇÊ
 
-### Ø§Ù„Ù…Ø¨Ø¯Ø£ Ø§Ù„Ø¹Ø§Ù…
+### ÇáãÈÏÃ ÇáÚÇã
 
-```typescript
-// Ù†Ù…Ø· Ù…ÙˆØ­Ù‘Ø¯ Ù„ÙƒÙ„ Ø¯Ø§Ù„Ø© ØªØ­Ù‚Ù‚:
+`typescript
+// äãØ ãæÍøÏ áßá ÏÇáÉ ÊÍŞŞ:
 export function validateUserInput(input: UserInput): void {
   const errors: string[] = [];
 
-  // 1. Ø§Ø¬Ù…Ø¹ ÙƒÙ„ Ø§Ù„Ø£Ø®Ø·Ø§Ø¡ ÙÙŠ Ù…ØµÙÙˆÙØ©
+  // 1. ÇÌãÚ ßá ÇáÃÎØÇÁ İí ãÕİæİÉ
   if (!input.username || input.username.trim().length < 3) {
-    errors.push('Ø§Ø³Ù… Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† 3 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„');
+    errors.push('ÇÓã ÇáãÓÊÎÏã íÌÈ Ãä íßæä 3 ÃÍÑİ Úáì ÇáÃŞá');
   }
   if (!input.email || !input.email.includes('@')) {
-    errors.push('Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø§Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ØºÙŠØ± ØµØ­ÙŠØ­');
+    errors.push('ÇáÈÑíÏ ÇáÇáßÊÑæäí ÛíÑ ÕÍíÍ');
   }
   if (!input.password || input.password.trim().length < 6) {
-    errors.push('ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ÙŠØ¬Ø¨ Ø£Ù† ØªÙƒÙˆÙ† 6 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„');
+    errors.push('ßáãÉ ÇáãÑæÑ íÌÈ Ãä Êßæä 6 ÃÍÑİ Úáì ÇáÃŞá');
   }
 
-  // 2. Ø¥Ø°Ø§ ÙˆÙØ¬Ø¯ Ø®Ø·Ø£ØŒ Ø§Ø±Ù…Ù GraphQLError ÙˆØ§Ø­Ø¯Ø§Ù‹ Ø¨ÙƒÙ„ Ø§Ù„Ø£Ø®Ø·Ø§Ø¡
+  // 2. ÅĞÇ æõÌÏ ÎØÃ, ÇÑãö GraphQLError æÇÍÏÇğ Èßá ÇáÃÎØÇÁ
   if (errors.length > 0) {
-    throw new GraphQLError(errors.join('ØŒ '), {
+    throw new GraphQLError(errors.join(', '), {
       extensions: { code: 'BAD_USER_INPUT', errors },
     });
   }
 }
-```
+`text
 
-### Ù„Ù…Ø§Ø°Ø§ `GraphQLError` Ù„Ø§ `throw new Error`ØŸ
+### áãÇĞÇ `GraphQLError` áÇ `throw new Error`¿
 
-| `Error` Ø§Ù„Ø¹Ø§Ø¯ÙŠ | `GraphQLError` |
+| `Error` ÇáÚÇÏí | `GraphQLError` |
 |----------------|----------------|
-| ÙŠÙØ¹Ø§Ø¯ ÙƒÙ€ `500 Internal Server Error` | ÙŠÙØ¹Ø§Ø¯ Ø¶Ù…Ù† `errors[]` ÙÙŠ Ø±Ø¯ GraphQL |
-| Ù„Ø§ ÙŠØµÙ„ Ù„Ù„Ø¹Ù…ÙŠÙ„ Ø¨Ø´ÙƒÙ„ Ù†Ø¸ÙŠÙ | ÙŠØµÙ„ Ø¨Ù€ `code` Ù‚Ø§Ø¨Ù„ Ù„Ù„Ù…Ø¹Ø§Ù„Ø¬Ø© |
-| Ù„Ø§ ÙŠØ¯Ø¹Ù… Ø¨ÙŠØ§Ù†Ø§Øª Ø¥Ø¶Ø§ÙÙŠØ© | ÙŠØ¯Ø¹Ù… `extensions` Ù…Ø®ØµØµØ© |
+| íõÚÇÏ ßÜ `500 Internal Server Error` | íõÚÇÏ Öãä `errors[]` İí ÑÏ GraphQL |
+| áÇ íÕá ááÚãíá ÈÔßá äÙíİ | íÕá ÈÜ `code` ŞÇÈá ááãÚÇáÌÉ |
+| áÇ íÏÚã ÈíÇäÇÊ ÅÖÇİíÉ | íÏÚã `extensions` ãÎÕÕÉ |
 
-### Ø§Ù„Ø±Ø¯ Ø§Ù„Ø°ÙŠ ÙŠØµÙ„ Ù„Ù„Ø¹Ù…ÙŠÙ„
+### ÇáÑÏ ÇáĞí íÕá ááÚãíá
 
-```json
+`json
 {
   "errors": [
     {
-      "message": "Ø§Ø³Ù… Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† 3 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„ØŒ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ÙŠØ¬Ø¨ Ø£Ù† ØªÙƒÙˆÙ† 6 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„",
+      "message": "ÇÓã ÇáãÓÊÎÏã íÌÈ Ãä íßæä 3 ÃÍÑİ Úáì ÇáÃŞá, ßáãÉ ÇáãÑæÑ íÌÈ Ãä Êßæä 6 ÃÍÑİ Úáì ÇáÃŞá",
       "extensions": {
         "code": "BAD_USER_INPUT",
         "errors": [
-          "Ø§Ø³Ù… Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† 3 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„",
-          "ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ÙŠØ¬Ø¨ Ø£Ù† ØªÙƒÙˆÙ† 6 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„"
+          "ÇÓã ÇáãÓÊÎÏã íÌÈ Ãä íßæä 3 ÃÍÑİ Úáì ÇáÃŞá",
+          "ßáãÉ ÇáãÑæÑ íÌÈ Ãä Êßæä 6 ÃÍÑİ Úáì ÇáÃŞá"
         ]
       }
     }
   ]
 }
-```
+`text
 
-### Ø§Ù„Ø¯ÙˆØ§Ù„ Ø§Ù„Ø®Ù…Ø³ Ø§Ù„Ù…ØªØ§Ø­Ø©
+### ÇáÏæÇá ÇáÎãÓ ÇáãÊÇÍÉ
 
-```typescript
-// Ù„Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¬Ø¯ÙŠØ¯ â€” ÙŠØªØ­Ù‚Ù‚ Ù…Ù† username + email + password
+`typescript
+// ááÊÓÌíá ÇáÌÏíÏ — íÊÍŞŞ ãä username + email + password
 validateUserInput({ username, email, password })
 
-// Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… â€” ÙƒÙ„ Ø§Ù„Ø­Ù‚ÙˆÙ„ Ø§Ø®ØªÙŠØ§Ø±ÙŠØ© Ù„ÙƒÙ† ÙˆØ§Ø­Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„ Ù…Ø·Ù„ÙˆØ¨
+// áÊÍÏíË ÇáãÓÊÎÏã — ßá ÇáÍŞæá ÇÎÊíÇÑíÉ áßä æÇÍÏ Úáì ÇáÃŞá ãØáæÈ
 validateUpdateUserInput({ username?, password? })
 
-// Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ â€” ÙŠØªØ­Ù‚Ù‚ Ù…Ù† email + password ÙÙ‚Ø·
+// áÊÓÌíá ÇáÏÎæá — íÊÍŞŞ ãä email + password İŞØ
 validateLoginInput({ email, password })
 
-// Ù„Ø¥Ù†Ø´Ø§Ø¡ Ù…Ù†Ø§Ø³Ø¨Ø© Ø¬Ø¯ÙŠØ¯Ø© â€” ÙŠØªØ­Ù‚Ù‚ Ù…Ù† title + description + price + date
+// áÅäÔÇÁ ãäÇÓÈÉ ÌÏíÏÉ — íÊÍŞŞ ãä title + description + price + date
 validateEventInput({ title, description, price, date })
 
-// Ù„ØªØ­Ø¯ÙŠØ« Ù…Ù†Ø§Ø³Ø¨Ø© â€” ÙƒÙ„ Ø§Ù„Ø­Ù‚ÙˆÙ„ Ø§Ø®ØªÙŠØ§Ø±ÙŠØ©
+// áÊÍÏíË ãäÇÓÈÉ — ßá ÇáÍŞæá ÇÎÊíÇÑíÉ
 validateUpdateEventInput({ title?, description?, price?, date? })
-```
+`text
 
-### Ø§Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… ÙÙŠ Ø§Ù„Ù…Ø­Ù„Ù‘Ù„Ø§Øª
+### ÇáÇÓÊÎÏÇã İí ÇáãÍáøáÇÊ
 
-```typescript
-// ÙÙŠ resolvers/auth.ts â€” ÙŠÙØ³ØªØ¯Ø¹Ù‰ Ù‚Ø¨Ù„ Ø£ÙŠ Ø¹Ù…Ù„ÙŠØ©
+`typescript
+// İí resolvers/auth.ts — íõÓÊÏÚì ŞÈá Ãí ÚãáíÉ
 createUser: async (_parent, { userInput }) => {
-  validateUserInput(userInput);        // â† ÙŠØ±Ù…ÙŠ GraphQLError Ø¥Ø°Ø§ ÙØ´Ù„
-  // ... Ø§Ù„Ø¢Ù† Ù†ØªØ§Ø¨Ø¹ Ø¨Ø«Ù‚Ø©
+  validateUserInput(userInput);        // ? íÑãí GraphQLError ÅĞÇ İÔá
+  // ... ÇáÂä äÊÇÈÚ ÈËŞÉ
   const hashedPassword = await bcrypt.hash(userInput.password, 12);
 }
-```
+`text
 
-> **Ù…Ù„Ø§Ø­Ø¸Ø© Ø§Ù„ØªØµÙ…ÙŠÙ…:** Ø§Ù„Ù…Ø­Ù„Ù‘Ù„ ÙŠÙÙ†ÙÙÙ‘Ø° ÙÙ‚Ø· Ø¥Ø°Ø§ Ø§Ø¬ØªØ§Ø² Ø§Ù„ØªØ­Ù‚Ù‚ â€” Ù„Ø£Ù† `GraphQLError` ÙŠÙ‚Ø·Ø¹ Ø§Ù„ØªÙ†ÙÙŠØ° ÙÙˆØ±Ø§Ù‹
+> **ãáÇÍÙÉ ÇáÊÕãíã:** ÇáãÍáøá íõäİóøĞ İŞØ ÅĞÇ ÇÌÊÇÒ ÇáÊÍŞŞ — áÃä `GraphQLError` íŞØÚ ÇáÊäİíĞ İæÑÇğ
 
 ---
 
-## 3. `types/index.ts` â€” Ø§Ù„Ø£Ù†ÙˆØ§Ø¹ Ø§Ù„Ù…Ø´ØªØ±ÙƒØ©
+## 3. `types/index.ts` — ÇáÃäæÇÚ ÇáãÔÊÑßÉ
 
-### Ø·Ø¨Ù‚Ø§Øª Ø§Ù„Ø£Ù†ÙˆØ§Ø¹
+### ØÈŞÇÊ ÇáÃäæÇÚ
 
-```
+`text
 types/index.ts
-â”œâ”€â”€ Mongoose Document Interfaces  â†’ IUser, IEvent, IBooking
-â”œâ”€â”€ GraphQL Context               â†’ GraphQLContext, JwtPayload
-â”œâ”€â”€ Auth Types                    â†’ AuthData
-â””â”€â”€ Input Types                   â†’ UserInput, UpdateUserInput, EventInput, UpdateEventInput
-```
+??? Mongoose Document Interfaces  ? IUser, IEvent, IBooking
+??? GraphQL Context               ? GraphQLContext, JwtPayload
+??? Auth Types                    ? AuthData
+??? Input Types                   ? UserInput, UpdateUserInput, EventInput, UpdateEventInput
+`text
 
-### ÙˆØ§Ø¬Ù‡Ø§Øª Mongoose
+### æÇÌåÇÊ Mongoose
 
-```typescript
-// ØªÙ…ØªØ¯ Ù…Ù† Document â€” Ø£ÙŠ Ø£Ù†Ù‡Ø§ ØªØ¯Ø¹Ù… ÙƒÙ„ Ø¯ÙˆØ§Ù„ Mongoose
+`typescript
+// ÊãÊÏ ãä Document — Ãí ÃäåÇ ÊÏÚã ßá ÏæÇá Mongoose
 export interface IUser extends Document {
-  _doc?: any;        // â† Ø§Ù†ØªØ¨Ù‡: Ù…Ø·Ù„ÙˆØ¨ Ù„Ù„Ù€ transform (Ø´Ø±Ø­ Ù„Ø§Ø­Ù‚)
+  _doc?: any;        // ? ÇäÊÈå: ãØáæÈ ááÜ transform (ÔÑÍ áÇÍŞ)
   username: string;
   email: string;
   password: string;
@@ -135,65 +135,65 @@ export interface IEvent extends Document {
   description: string;
   price: number;
   date: Date;
-  creator: Types.ObjectId | IUser;  // â† Ù…Ø±ØªØ¨Ø· Ø£Ùˆ Ù…ÙÙˆÙ„ÙÙ‘Ø¬ (populated)
+  creator: Types.ObjectId | IUser;  // ? ãÑÊÈØ Ãæ ãõæáóøÌ (populated)
 }
 
 export interface IBooking extends Document {
   _doc?: any;
   event: Types.ObjectId | IEvent;
   user: Types.ObjectId | IUser;
-  createdAt: Date;   // â† ØªÙØ¶Ø§Ù ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ø¨Ù€ { timestamps: true }
+  createdAt: Date;   // ? ÊõÖÇİ ÊáŞÇÆíÇğ ÈÜ { timestamps: true }
   updatedAt: Date;
 }
-```
+`text
 
-### Ù„Ù…Ø§Ø°Ø§ `_doc?: any`ØŸ
+### áãÇĞÇ `_doc?: any`¿
 
-Ø­Ù‚Ù„ `_doc` Ø¯Ø§Ø®Ù„ÙŠ ÙÙŠ Mongoose ÙŠØ­ØªÙˆÙŠ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª "Ø§Ù„Ù†Ù‚ÙŠØ©" Ø¨Ø¯ÙˆÙ† Ø§Ù„Ø¯ÙˆØ§Ù„ Ø§Ù„Ù…Ø¶Ø§ÙØ©:
+ÍŞá `_doc` ÏÇÎáí İí Mongoose íÍÊæí ÇáÈíÇäÇÊ "ÇáäŞíÉ" ÈÏæä ÇáÏæÇá ÇáãÖÇİÉ:
 
-```typescript
-// Ø§Ù„Ù…Ø³ØªÙ†Ø¯ Ø§Ù„ÙƒØ§Ù…Ù„ (Ù…Ø¹ Ø¯ÙˆØ§Ù„ Mongoose):
+`typescript
+// ÇáãÓÊäÏ ÇáßÇãá (ãÚ ÏæÇá Mongoose):
 event = { title, price, date, save(), populate(), ... }
 
-// event._doc (Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙÙ‚Ø·):
+// event._doc (ÇáÈíÇäÇÊ İŞØ):
 event._doc = { title, price, date }
-```
+`text
 
-Ù‡Ø°Ø§ Ø¶Ø±ÙˆØ±ÙŠ ÙÙŠ `transformEvent` (Ø´Ø±Ø­ ÙÙŠ Ø§Ù„Ù‚Ø³Ù… Ø§Ù„ØªØ§Ù„ÙŠ).
+åĞÇ ÖÑæÑí İí `transformEvent` (ÔÑÍ İí ÇáŞÓã ÇáÊÇáí).
 
-### Ø³ÙŠØ§Ù‚ GraphQL
+### ÓíÇŞ GraphQL
 
-```typescript
+`typescript
 export interface JwtPayload {
-  id: string;   // â† userId Ø§Ù„Ù…Ø´ÙÙ‘Ø± ÙÙŠ Ø§Ù„Ù€ token
-  iat?: number; // â† ÙˆÙ‚Øª Ø§Ù„Ø¥ØµØ¯Ø§Ø± (issued at)
-  exp?: number; // â† ÙˆÙ‚Øª Ø§Ù„Ø§Ù†ØªÙ‡Ø§Ø¡ (expiration)
+  id: string;   // ? userId ÇáãÔİøÑ İí ÇáÜ token
+  iat?: number; // ? æŞÊ ÇáÅÕÏÇÑ (issued at)
+  exp?: number; // ? æŞÊ ÇáÇäÊåÇÁ (expiration)
 }
 
 export interface GraphQLContext {
-  user?: IUser | null;  // â† null Ø¥Ø°Ø§ Ù„Ù… ÙŠÙØ³Ø¬ÙÙ‘Ù„ Ø¯Ø®ÙˆÙ„ØŒ IUser Ø¥Ø°Ø§ Ø³ÙØ¬ÙÙ‘Ù„
+  user?: IUser | null;  // ? null ÅĞÇ áã íõÓÌóøá ÏÎæá, IUser ÅĞÇ ÓõÌöøá
 }
-```
+`text
 
-### ÙƒÙŠÙ ÙŠÙØ­Ù‚Ù† `GraphQLContext`ØŸ
+### ßíİ íõÍŞä `GraphQLContext`¿
 
-```typescript
-// ÙÙŠ server/src/index.ts:
+`typescript
+// İí server/src/index.ts:
 context: async ({ req }) => {
   const auth = req.headers.authorization || '';
   if (!auth.startsWith('jwt ')) return {};
 
-  const token = auth.slice(4);          // Ø£Ø²Ù„ "jwt "
+  const token = auth.slice(4);          // ÃÒá "jwt "
   const decoded = jwt.verify(token, config.jwtSecret) as JwtPayload;
   const user = await User.findById(decoded.id);
 
-  return { user };   // â† ÙŠÙØµØ¨Ø­ Ù…ØªØ§Ø­Ø§Ù‹ ÙÙŠ ÙƒÙ„ resolver ÙƒÙ€ context.user
+  return { user };   // ? íõÕÈÍ ãÊÇÍÇğ İí ßá resolver ßÜ context.user
 }
-```
+`text
 
-### Ø£Ù†ÙˆØ§Ø¹ Ø§Ù„Ù…Ø¯Ø®Ù„Ø§Øª
+### ÃäæÇÚ ÇáãÏÎáÇÊ
 
-```typescript
+`typescript
 export interface UserInput {
   username: string;
   email: string;
@@ -218,107 +218,107 @@ export interface UpdateEventInput {
   price?: number;
   date?: string;
 }
-```
+`text
 
-> Ù‡Ø°Ù‡ Ø§Ù„Ø£Ù†ÙˆØ§Ø¹ ØªÙØ³ØªØ®Ø¯Ù… ÙÙŠ Ø§Ù„Ù…Ø­Ù„Ù‘Ù„Ø§Øª ÙˆØ§Ù„Ù…Ø¯Ù‚Ù‚Ø§Øª Ù…Ø¹Ø§Ù‹ â€” Ù…ØµØ¯Ø± Ø­Ù‚ÙŠÙ‚Ø© ÙˆØ§Ø­Ø¯ (Single Source of Truth)
+> åĞå ÇáÃäæÇÚ ÊõÓÊÎÏã İí ÇáãÍáøáÇÊ æÇáãÏŞŞÇÊ ãÚÇğ — ãÕÏÑ ÍŞíŞÉ æÇÍÏ (Single Source of Truth)
 
 ---
 
-## 4. `resolvers/transform.ts` â€” ØªØ­ÙˆÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª
+## 4. `resolvers/transform.ts` — ÊÍæíá ÇáÈíÇäÇÊ
 
-### Ø§Ù„Ù…Ø´ÙƒÙ„Ø©: ÙØ¬ÙˆØ© Ø§Ù„Ø£Ù†ÙˆØ§Ø¹
+### ÇáãÔßáÉ: İÌæÉ ÇáÃäæÇÚ
 
-MongoDB ØªÙØ¹ÙŠØ¯ `Date` objectsØŒ Ù„ÙƒÙ† GraphQL Schema ØªØªÙˆÙ‚Ø¹ `String`:
+MongoDB ÊõÚíÏ `Date` objects, áßä GraphQL Schema ÊÊæŞÚ `String`:
 
-```graphql
-# ÙÙŠ Schema:
+`graphql
+# İí Schema:
 type Event {
-  date: String!   # â† GraphQL ÙŠØ±ÙŠØ¯ Ù†ØµØ§Ù‹
+  date: String!   # ? GraphQL íÑíÏ äÕÇğ
 }
-```
+`text
 
-```typescript
-// Ù…Ø§ ÙŠØ¹ÙŠØ¯Ù‡ Mongoose:
-event.date = Date object  // â† Ù„ÙŠØ³ Ù†ØµØ§Ù‹!
-```
+`typescript
+// ãÇ íÚíÏå Mongoose:
+event.date = Date object  // ? áíÓ äÕÇğ!
+`text
 
-### Ø§Ù„Ø­Ù„: `transformEvent`
+### ÇáÍá: `transformEvent`
 
-```typescript
+`typescript
 export const transformEvent = (event: IEvent) => ({
-  ...event._doc,                                         // [1] Ø§Ù†Ø´Ø± ÙƒÙ„ Ø­Ù‚ÙˆÙ„ Ø§Ù„Ù…Ø³ØªÙ†Ø¯
-  date: new Date(event.date).toISOString().replace(/T/, " "), // [2] Ø­ÙˆÙ‘Ù„ Ø§Ù„ØªØ§Ø±ÙŠØ®
+  ...event._doc,                                         // [1] ÇäÔÑ ßá ÍŞæá ÇáãÓÊäÏ
+  date: new Date(event.date).toISOString().replace(/T/, " "), // [2] Íæøá ÇáÊÇÑíÎ
 });
-```
+`text
 
-**ØªÙØµÙŠÙ„ ÙƒÙ„ Ø®Ø·ÙˆØ©:**
+**ÊİÕíá ßá ÎØæÉ:**
 
-```
+`text
 1. ...event._doc
-   â†“ ÙŠÙ†Ø´Ø± Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù†Ù‚ÙŠØ© (Ø¨Ø¯ÙˆÙ† Ø¯ÙˆØ§Ù„ Mongoose)
+   ? íäÔÑ ÇáÈíÇäÇÊ ÇáäŞíÉ (ÈÏæä ÏæÇá Mongoose)
    { _id, title, description, price, date, creator }
 
 2. date: new Date(event.date).toISOString().replace(/T/, " ")
-   â†“ Date object â†’ "2024-01-15T18:30:00.000Z" â†’ "2024-01-15 18:30:00.000Z"
-```
+   ? Date object ? "2024-01-15T18:30:00.000Z" ? "2024-01-15 18:30:00.000Z"
+`text
 
-> **Ù„Ù…Ø§Ø°Ø§ `_doc` ÙˆÙ„ÙŠØ³ `event` Ù…Ø¨Ø§Ø´Ø±Ø©ØŸ**
-> Ù„Ø£Ù† Ø§Ù†ØªØ´Ø§Ø± `event` ÙŠØ´Ù…Ù„ Ø¯ÙˆØ§Ù„ Mongoose Ù…Ø«Ù„ `save()` Ùˆ`populate()`. Ø£Ù…Ø§ `_doc` ÙÙŠØ­ØªÙˆÙŠ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙÙ‚Ø·.
+> **áãÇĞÇ `_doc` æáíÓ `event` ãÈÇÔÑÉ¿**
+> áÃä ÇäÊÔÇÑ `event` íÔãá ÏæÇá Mongoose ãËá `save()` æ`populate()`. ÃãÇ `_doc` İíÍÊæí ÇáÈíÇäÇÊ İŞØ.
 
 ### `transformBooking`
 
-```typescript
+`typescript
 export const transformBooking = (booking: IBooking) => ({
   ...booking._doc,
   createdAt: new Date(booking.createdAt).toISOString().replace(/T/, " "),
   updatedAt: new Date(booking.updatedAt).toISOString().replace(/T/, " "),
 });
-```
+`text
 
-`Booking` Ù„Ù‡ ØªØ§Ø±ÙŠØ®Ø§Ù† (`createdAt` Ùˆ`updatedAt`) Ù„Ø£Ù†Ù‡ ÙŠØ³ØªØ®Ø¯Ù… `{ timestamps: true }` ÙÙŠ Ø§Ù„Ù†Ù…ÙˆØ°Ø¬.
+`Booking` áå ÊÇÑíÎÇä (`createdAt` æ`updatedAt`) áÃäå íÓÊÎÏã `{ timestamps: true }` İí ÇáäãæĞÌ.
 
-### Ù…Ø«Ø§Ù„ Ø¹Ù„Ù‰ Ø§Ù„Ù…Ø®Ø±Ø¬Ø§Øª
+### ãËÇá Úáì ÇáãÎÑÌÇÊ
 
-```typescript
-// Ø§Ù„Ø¥Ø¯Ø®Ø§Ù„ (Ù…Ù† Mongoose):
+`typescript
+// ÇáÅÏÎÇá (ãä Mongoose):
 {
   _id: ObjectId("..."),
-  title: "Ø­ÙÙ„Ø© Ù…ÙˆØ³ÙŠÙ‚ÙŠØ©",
+  title: "ÍİáÉ ãæÓíŞíÉ",
   price: 150,
   date: Date("2024-06-15T18:30:00.000Z"),
-  creator: { username: "Ø£Ø­Ù…Ø¯" }
+  creator: { username: "ÃÍãÏ" }
 }
 
-// Ø§Ù„Ø¥Ø®Ø±Ø§Ø¬ (Ø¨Ø¹Ø¯ transformEvent):
+// ÇáÅÎÑÇÌ (ÈÚÏ transformEvent):
 {
   _id: "...",
-  title: "Ø­ÙÙ„Ø© Ù…ÙˆØ³ÙŠÙ‚ÙŠØ©",
+  title: "ÍİáÉ ãæÓíŞíÉ",
   price: 150,
-  date: "2024-06-15 18:30:00.000Z",  // â† Ù†Øµ Ø§Ù„Ø¢Ù†
-  creator: { username: "Ø£Ø­Ù…Ø¯" }
+  date: "2024-06-15 18:30:00.000Z",  // ? äÕ ÇáÂä
+  creator: { username: "ÃÍãÏ" }
 }
-```
+`text
 
 ---
 
-## 5. `resolvers/index.ts` â€” Ø¯Ù…Ø¬ Ø§Ù„Ù…Ø­Ù„Ù‘Ù„Ø§Øª
+## 5. `resolvers/index.ts` — ÏãÌ ÇáãÍáøáÇÊ
 
-### Ø§Ù„Ù…Ø´ÙƒÙ„Ø©: Ù…Ø­Ù„Ù‘Ù„Ø§Øª Ù…Ù†ÙØµÙ„Ø©
+### ÇáãÔßáÉ: ãÍáøáÇÊ ãäİÕáÉ
 
-ÙƒÙ„ domain Ù„Ù‡ Ù…Ù„Ù Ù…Ø­Ù„Ù‘Ù„Ø§Øª Ù…Ø³ØªÙ‚Ù„:
+ßá domain áå ãáİ ãÍáøáÇÊ ãÓÊŞá:
 
-```
+`text
 resolvers/
-â”œâ”€â”€ auth.ts      â†’ { Query: {}, Mutation: { createUser, login, updateUser, deleteUser } }
-â”œâ”€â”€ event.ts     â†’ { Query: { events, getUserEvents }, Mutation: { createEvent, ... } }
-â””â”€â”€ booking.ts   â†’ { Query: { bookings }, Mutation: { bookEvent, cancelBooking } }
-```
+??? auth.ts      ? { Query: {}, Mutation: { createUser, login, updateUser, deleteUser } }
+??? event.ts     ? { Query: { events, getUserEvents }, Mutation: { createEvent, ... } }
+??? booking.ts   ? { Query: { bookings }, Mutation: { bookEvent, cancelBooking } }
+`text
 
-Ù„ÙƒÙ† Apollo Server ÙŠØªÙˆÙ‚Ø¹ **ÙƒØ§Ø¦Ù†Ø§Ù‹ ÙˆØ§Ø­Ø¯Ø§Ù‹** Ø¨ÙƒÙ„ Ø§Ù„Ù…Ø­Ù„Ù‘Ù„Ø§Øª.
+áßä Apollo Server íÊæŞÚ **ßÇÆäÇğ æÇÍÏÇğ** Èßá ÇáãÍáøáÇÊ.
 
-### Ø§Ù„Ø­Ù„: `lodash.merge`
+### ÇáÍá: `lodash.merge`
 
-```typescript
+`typescript
 import { merge } from 'lodash';
 import authResolver from './auth';
 import bookingResolver from './booking';
@@ -326,86 +326,85 @@ import eventResolver from './event';
 
 const resolvers = merge(authResolver, bookingResolver, eventResolver);
 export default resolvers;
-```
+`text
 
-### Ù„Ù…Ø§Ø°Ø§ `merge` ÙˆÙ„ÙŠØ³ `Object.assign` Ø£Ùˆ `{...spread}`ØŸ
+### áãÇĞÇ `merge` æáíÓ `Object.assign` Ãæ `{...spread}`¿
 
-```typescript
-// Ø§Ù„Ù…Ø´ÙƒÙ„Ø© Ù…Ø¹ spread:
+`typescript
+// ÇáãÔßáÉ ãÚ spread:
 const merged = { ...authResolver, ...eventResolver };
-// Ø¥Ø°Ø§ ÙƒØ§Ù† Ù„Ø¯ÙŠÙ‡Ù…Ø§ Ù†ÙØ³ Ø§Ù„Ù…ÙØªØ§Ø­ (Ù…Ø«Ù„ Query):
-// â† eventResolver.Query Ø³ÙŠØ­Ù„ Ù…Ø­Ù„ authResolver.Query ÙƒØ§Ù…Ù„Ø§Ù‹!
+// ÅĞÇ ßÇä áÏíåãÇ äİÓ ÇáãİÊÇÍ (ãËá Query):
+// ? eventResolver.Query ÓíÍá ãÍá authResolver.Query ßÇãáÇğ!
 
-// Ø§Ù„Ø­Ù„ Ù…Ø¹ lodash.merge:
+// ÇáÍá ãÚ lodash.merge:
 const merged = merge(authResolver, eventResolver);
-// â† ÙŠØ¯Ù…Ø¬ Query Ù…Ù† Ø§Ù„Ù…Ù„ÙÙŠÙ† Ù…Ø¹Ø§Ù‹ Ø¨Ø¯Ù„Ø§Ù‹ Ù…Ù† Ø§Ø³ØªØ¨Ø¯Ø§Ù„ Ø£Ø­Ø¯Ù‡Ù…Ø§
-```
+// ? íÏãÌ Query ãä Çáãáİíä ãÚÇğ ÈÏáÇğ ãä ÇÓÊÈÏÇá ÃÍÏåãÇ
+`text
 
-**Ù…Ø«Ø§Ù„ Ø§Ù„ÙØ±Ù‚:**
+**ãËÇá ÇáİÑŞ:**
 
-```typescript
+`typescript
 // authResolver:
 { Query: { getUserEvents: fn }, Mutation: { createUser: fn } }
 
 // eventResolver:
 { Query: { events: fn }, Mutation: { createEvent: fn } }
 
-// Ø¨Ù€ merge:
+// ÈÜ merge:
 {
-  Query: { getUserEvents: fn, events: fn },     // â† Ù…Ø¯Ù…Ø¬Ø§Ù†
-  Mutation: { createUser: fn, createEvent: fn } // â† Ù…Ø¯Ù…Ø¬Ø§Ù†
+  Query: { getUserEvents: fn, events: fn },     // ? ãÏãÌÇä
+  Mutation: { createUser: fn, createEvent: fn } // ? ãÏãÌÇä
 }
 
-// Ø¨Ù€ spread (âŒ Ø®Ø·Ø£):
+// ÈÜ spread (? ÎØÃ):
 {
-  Query: { events: fn },       // â† ÙÙ‚Ø· Ù…Ù† eventResolver!
+  Query: { events: fn },       // ? İŞØ ãä eventResolver!
   Mutation: { createEvent: fn }
 }
-```
+`text
 
 ---
 
-## 6. ØªØ¯ÙÙ‚ Ø§Ù„Ø·Ù„Ø¨ Ø§Ù„ÙƒØ§Ù…Ù„ (Ù…Ø¹ Ù‡Ø°Ù‡ Ø§Ù„Ø·Ø¨Ù‚Ø§Øª)
+## 6. ÊÏİŞ ÇáØáÈ ÇáßÇãá (ãÚ åĞå ÇáØÈŞÇÊ)
 
-```
+`text
 GraphQL Request
-      â”‚
-      â–¼
-[Apollo Server] ÙŠØ³ØªÙ‚Ø¨Ù„ Ø§Ù„Ø·Ù„Ø¨
-      â”‚
-      â–¼
-[index.ts context] ÙŠØ­Ù‚Ù† user Ù…Ù† JWT
-      â”‚
-      â–¼
-[resolvers/index.ts] ÙŠÙØ­Ø¯Ø¯ Ø§Ù„Ù…Ø­Ù„Ù‘Ù„ Ø§Ù„ØµØ­ÙŠØ­
-      â”‚
-      â–¼
-[isAuthenticated] (Ø¥Ø°Ø§ ÙƒØ§Ù†Øª Ø§Ù„Ø¹Ù…Ù„ÙŠØ© Ù…Ø­Ù…ÙŠØ©)
-      â”‚
-      â–¼
-[validators/index.ts] ÙŠØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ù…Ø¯Ø®Ù„Ø§Øª
-      â”‚
-      â–¼
-[Repository] ÙŠÙÙ†ÙØ° Ø¹Ù…Ù„ÙŠØ© Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª
-      â”‚
-      â–¼
-[resolvers/transform.ts] ÙŠÙØ­ÙˆÙ‘Ù„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª
-      â”‚
-      â–¼
-[Apollo Server] ÙŠÙØ¹ÙŠØ¯ Ø§Ù„Ø±Ø¯ Ù„Ù„Ø¹Ù…ÙŠÙ„
-```
+      ?
+      ?
+[Apollo Server] íÓÊŞÈá ÇáØáÈ
+      ?
+      ?
+[index.ts context] íÍŞä user ãä JWT
+      ?
+      ?
+[resolvers/index.ts] íõÍÏÏ ÇáãÍáøá ÇáÕÍíÍ
+      ?
+      ?
+[isAuthenticated] (ÅĞÇ ßÇäÊ ÇáÚãáíÉ ãÍãíÉ)
+      ?
+      ?
+[validators/index.ts] íÊÍŞŞ ãä ÇáãÏÎáÇÊ
+      ?
+      ?
+[Repository] íõäİĞ ÚãáíÉ ŞÇÚÏÉ ÇáÈíÇäÇÊ
+      ?
+      ?
+[resolvers/transform.ts] íõÍæøá ÇáÈíÇäÇÊ
+      ?
+      ?
+[Apollo Server] íõÚíÏ ÇáÑÏ ááÚãíá
+`text
 
 ---
 
-## 7. Ø®Ù„Ø§ØµØ©
+## 7. ÎáÇÕÉ
 
-| Ø§Ù„Ù…ÙÙ‡ÙˆÙ… | Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ |
+| Çáãİåæã | ÇáÊØÈíŞ |
 |---------|---------|
-| Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ø¨ÙƒØ±Ø§Ù‹ | `validateInput()` Ø£ÙˆÙ„ Ø³Ø·Ø± ÙÙŠ ÙƒÙ„ Mutation |
-| Ø£Ø®Ø·Ø§Ø¡ ÙˆØ§Ø¶Ø­Ø© | `GraphQLError` Ù…Ø¹ `code: 'BAD_USER_INPUT'` ÙˆØ£Ø®Ø·Ø§Ø¡ Ø¹Ø±Ø¨ÙŠØ© |
-| Ø£Ù†ÙˆØ§Ø¹ Ù…Ø±ÙƒØ²ÙŠØ© | `types/index.ts` â† Ù…ØµØ¯Ø± Ø­Ù‚ÙŠÙ‚Ø© ÙˆØ§Ø­Ø¯ |
-| ØªØ­ÙˆÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª | `transform.ts` Ø¬Ø³Ø± Ø¨ÙŠÙ† Mongoose ÙˆGraphQL |
-| Ø¯Ù…Ø¬ Ø¢Ù…Ù† | `lodash.merge` ÙŠØ¬Ù…Ø¹ Ø§Ù„Ù…Ø­Ù„Ù‘Ù„Ø§Øª Ø¨Ø¯ÙˆÙ† ØªØ¹Ø§Ø±Ø¶ |
+| ÇáÊÍŞŞ ãÈßÑÇğ | `validateInput()` Ãæá ÓØÑ İí ßá Mutation |
+| ÃÎØÇÁ æÇÖÍÉ | `GraphQLError` ãÚ `code: 'BAD_USER_INPUT'` æÃÎØÇÁ ÚÑÈíÉ |
+| ÃäæÇÚ ãÑßÒíÉ | `types/index.ts` ? ãÕÏÑ ÍŞíŞÉ æÇÍÏ |
+| ÊÍæíá ÇáÈíÇäÇÊ | `transform.ts` ÌÓÑ Èíä Mongoose æGraphQL |
+| ÏãÌ Âãä | `lodash.merge` íÌãÚ ÇáãÍáøáÇÊ ÈÏæä ÊÚÇÑÖ |
 
-> **Ø£ÙØ¶Ù„ Ù…Ù…Ø§Ø±Ø³Ø©:** Ø£Ø¶Ù Ø§Ù„ØªØ­Ù‚Ù‚ Ø¯Ø§Ø¦Ù…Ø§Ù‹ ÙÙŠ Ø·Ø¨Ù‚Ø© Ø§Ù„Ù…Ø­Ù„Ù‘Ù„ØŒ Ù„Ø§ ÙÙŠ Ø§Ù„Ù…Ø³ØªÙˆØ¯Ø¹ â€” Ø§Ù„Ù…Ø³ØªÙˆØ¯Ø¹ Ù…Ø³Ø¤ÙˆÙ„ ÙÙ‚Ø· Ø¹Ù† Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª
-````
+> **ÃİÖá ããÇÑÓÉ:** ÃÖİ ÇáÊÍŞŞ ÏÇÆãÇğ İí ØÈŞÉ ÇáãÍáøá, áÇ İí ÇáãÓÊæÏÚ — ÇáãÓÊæÏÚ ãÓÄæá İŞØ Úä ŞÇÚÏÉ ÇáÈíÇäÇÊ

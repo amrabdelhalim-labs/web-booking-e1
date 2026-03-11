@@ -23,10 +23,10 @@
 | **الاستخدام** | شائع جداً مع Node.js / JavaScript |
 
 **مثال واضح:**
-```
-// بيانات مستخدم محفوظة في MongoDB
-{
+```text
   "_id": "64ab12...",
+{
+// بيانات مستخدم محفوظة في MongoDB
   "username": "أحمد",
   "email": "ahmed@example.com",
   "password": "$2b$12$..."
@@ -39,7 +39,7 @@
 
 Mongoose هو **مكتبة وسيطة** (ODM) تجعل التعامل مع MongoDB أسهل:
 
-```
+```text
 تطبيق Node.js  ─→  Mongoose  ─→  MongoDB
 ```
 
@@ -83,13 +83,13 @@ export const config = {
 ### المشكلة:
 إذا كتبت الإعدادات مباشرة في الكود:
 ```typescript
-// ❌ خطأ - لا تفعل هذا أبداً!
 const jwtSecret = "my-super-secret-key";
+// ❌ خطأ - لا تفعل هذا أبداً!
 ```
 فعند رفع الكود على GitHub، سيراه الجميع! 😱
 
 ### الحل - ملف `.env`:
-```
+```text
 # .env (لا يُرفع على GitHub أبداً)
 PORT=4000
 DB_URL=mongodb+srv://user:pass@cluster.mongodb.net/mydb
@@ -106,18 +106,18 @@ APP_URLS=https://mysite.com,https://www.mysite.com
 ## 6. الاتصال بـ MongoDB في `index.ts`
 
 ```typescript
-// من ملف server/src/index.ts
 await mongoose.connect(config.dbUrl);
+// من ملف server/src/index.ts
 ```
 
 ### ماذا يحدث هنا؟
 
-```
-1. يبدأ الخادم
-2. يتصل Apollo Server بالإنترنت (HTTP + WebSocket)
+```text
 3. mongoose.connect() يتصل بـ MongoDB
+2. يتصل Apollo Server بالإنترنت (HTTP + WebSocket)
+1. يبدأ الخادم
 4. عند نجاح الاتصال → "✅ Connected to MongoDB"
-5. إذا فشل → يظهر الخطأ ويتوقف التطبيق
+5. إذا فشل  // يظهر الخطأ ويتوقف التطبيق
 ```
 
 ### لماذا `await`؟
@@ -134,8 +134,8 @@ await mongoose.connect(config.dbUrl);
 بعد الاتصال، نستخدم النماذج للتعامل مع البيانات:
 
 ```typescript
-// مثال مبسط من models/user.ts
 const userSchema = new Schema({
+// مثال مبسط من models/user.ts
   username: { type: String, required: true },
   email:    { type: String, required: true },
   password: { type: String, required: true },
@@ -146,8 +146,8 @@ const User = model("User", userSchema);
 
 **كيف يُستخدم؟**
 ```typescript
-// إنشاء مستخدم جديد
 const user = await User.create({ username: "أحمد", email: "...", password: "..." });
+// إنشاء مستخدم جديد
 
 // بحث بالبريد الإلكتروني
 const user = await User.findOne({ email: "ahmed@example.com" });
@@ -157,10 +157,10 @@ const user = await User.findOne({ email: "ahmed@example.com" });
 
 ## 8. ملخص رحلة الاتصال
 
-```
-ملف .env
-    ↓ (متغيرات البيئة)
+```text
 config/index.ts
+    ↓ (متغيرات البيئة)
+ملف .env
     ↓ (يقرأ الإعدادات)
 server/src/index.ts
     ↓ (mongoose.connect)

@@ -55,8 +55,8 @@
 
 #### أ. إنشاء التطبيق
 ```bash
-# تسجيل الدخول
 heroku login
+# تسجيل الدخول
 
 # إنشاء تطبيق جديد (اختر اسم فريد)
 heroku create your-app-name
@@ -78,8 +78,8 @@ heroku create your-app-name
 
 **الطريقة الثانية: CLI (بديلة)**
 ```bash
-# استخدم single quotes لتجنب مشاكل PowerShell
 heroku config:set DATABASE_URL='mongodb+srv://user:pass@...' -a your-app-name
+# استخدم single quotes لتجنب مشاكل PowerShell
 heroku config:set JWT_SECRET='<strong-secret>' -a your-app-name
 heroku config:set APP_URLS='https://your-frontend-domain.com' -a your-app-name
 heroku config:set NODE_ENV='production' -a your-app-name
@@ -100,7 +100,7 @@ heroku config -a your-app-name
 ```
 
 يجب أن ترى:
-```
+```text
 DATABASE_URL: mongodb+srv://...
 JWT_SECRET:   xxxxxxxxxx
 APP_URLS:     https://...
@@ -150,8 +150,8 @@ npm run build
 
 #### ب. نشر على Heroku
 ```bash
-# إضافة Heroku Remote
 heroku git:remote -a your-app-name
+# إضافة Heroku Remote
 
 # نشر فرع server
 git push heroku server:main
@@ -170,7 +170,7 @@ heroku logs --tail -a your-app-name
 ```
 
 **يجب أن ترى:**
-```
+```text
 MongoDB connected successfully
 Server started on port 4000
 Apollo Server ready at /graphql
@@ -282,8 +282,8 @@ heroku builds:output <build-id> -a your-app-name
 
 **الحل:**
 ```bash
-# تحديث APP_URLS
 heroku config:set APP_URLS='https://your-exact-frontend-domain.com' -a your-app-name
+# تحديث APP_URLS
 
 # لأكثر من domain (مفصولة بفاصلة)
 heroku config:set APP_URLS='https://domain1.com,https://domain2.com' -a your-app-name
@@ -301,8 +301,8 @@ heroku config:set APP_URLS='https://domain1.com,https://domain2.com' -a your-app
 
 ### عبر GitHub Actions (تلقائي)
 ```bash
-# في المشروع المحلي
 git add .
+# في المشروع المحلي
 git commit -m "Update something"
 git push origin main
 # GitHub Actions يتولى الباقي
@@ -334,8 +334,8 @@ heroku restart -a your-app-name
 
 ### Scaling (للخطط المدفوعة)
 ```bash
-# زيادة عدد Dynos
 heroku ps:scale web=2 -a your-app-name
+# زيادة عدد Dynos
 
 # تحسين نوع Dyno
 heroku ps:type hobby -a your-app-name
@@ -347,8 +347,8 @@ heroku ps:type hobby -a your-app-name
 
 ### 1. تدوير JWT Secret دورياً
 ```bash
-# توليد secret جديد
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+# توليد secret جديد
 
 # تحديثه في Heroku
 heroku config:set JWT_SECRET='<new-secret>' -a your-app-name

@@ -18,8 +18,8 @@
 ### المقارنة - بدون Repository Pattern:
 
 ```typescript
-// ❌ السيء - كود مخلوط وصعب الصيانة
 import User from '../models/user';
+// ❌ السيء - كود مخلوط وصعب الصيانة
 import Event from '../models/event';
 
 const resolver = {
@@ -42,8 +42,8 @@ const resolver = {
 ### مع Repository Pattern:
 
 ```typescript
-// ✅ الجيد - فصل الاهتمامات (Separation of Concerns)
 import { getRepositoryManager } from '../repositories';
+// ✅ الجيد - فصل الاهتمامات (Separation of Concerns)
 
 const resolver = {
   createEvent: async (_: any, { eventInput }: any, context: any) => {
@@ -78,7 +78,7 @@ const resolver = {
 
 ## البنية المعمارية
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │                GraphQL Resolvers                     │
 │        (auth.ts, event.ts, booking.ts)               │
@@ -131,7 +131,7 @@ export interface IRepository<T> {
   findAll(filter?: object, sort?: object): Promise<T[]>;
   findOne(filter: object): Promise<T | null>;
   findById(id: string): Promise<T | null>;
-  findPaginated(filter: object, page: number, limit: number): Promise<T[]>;
+  findPaginated(page: number, limit: number, filter?: object): Promise<{ rows: T[]; count: number; page: number; totalPages: number }>;
   create(data: Partial<T>): Promise<T>;
   update(id: string, data: Partial<T>): Promise<T | null>;
   delete(id: string): Promise<T | null>;
@@ -238,8 +238,8 @@ const booking = await repos.booking.createAndPopulate({ user: userId, event: eve
 ### ✅ استخدم RepositoryManager
 
 ```typescript
-// ✅ صحيح - نقطة وصول واحدة
 const repos = getRepositoryManager();
+// ✅ صحيح - نقطة وصول واحدة
 const user = await repos.user.findById(id);
 const events = await repos.event.findByCreator(userId);
 ```
@@ -247,8 +247,8 @@ const events = await repos.event.findByCreator(userId);
 ### ✅ استخدم الأساليب المتخصصة
 
 ```typescript
-// ✅ صحيح - واضح ومقروء
 await repos.user.emailExists("test@example.com");
+// ✅ صحيح - واضح ومقروء
 
 // ❌ خاطئ - تكرار المنطق
 const user = await repos.user.findOne({ email: "test@example.com" });
@@ -258,8 +258,8 @@ const exists = user !== null;
 ### ✅ تحقق من المدخلات قبل Repository
 
 ```typescript
-// ✅ صحيح - الترتيب: validate → check → create
 validateUserInput(input);
+// ✅ صحيح - الترتيب: validate → check → create
 if (await repos.user.emailExists(input.email)) throw error;
 const user = await repos.user.create(input);
 ```
@@ -270,5 +270,5 @@ const user = await repos.user.create(input);
 // BaseRepository يحمي تلقائياً:
 // - الحد الأقصى: 50 عنصر لكل صفحة
 // - الصفحة الأدنى: 1
-const events = await repos.event.findPaginated({}, page, limit);
+const events = await repos.event.findPaginated(page, limit, {});
 ```

@@ -124,7 +124,7 @@ if (loading) return <Spinner />;
 ```tsx
 return (
   <form className="auth-form" onSubmit={handleSubmit}>
-    <Alert message={alert} />    {/* ← رسالة الخطأ */}
+    <Alert message={alert} />    {/*  // رسالة الخطأ */}
 
     <div className="mb-3">
       <label htmlFor="login-email">البريد الالكتروني</label>
@@ -177,12 +177,12 @@ onChange={({ target }) => setEmail(target.value)}  // ← تحديث state عن�
 
 ## 10. تدفق تسجيل الدخول الكامل
 
-```
-[1] المستخدم يكتب email و password
+```text
+[3] loginMutation({ variables: { email, password } })
     ↓
 [2] يضغط "تسجيل الدخول" → handleSubmit
     ↓
-[3] loginMutation({ variables: { email, password } })
+[1] المستخدم يكتب email و password
     ↓ (HTTP POST إلى /graphql)
 [4] الخادم: validateLoginInput → findByEmail → bcrypt.compare → jwt.sign
     ↓ (النتيجة)
@@ -193,5 +193,5 @@ onChange={({ target }) => setEmail(target.value)}  // ← تحديث state عن�
     ↓
 [7] navigate("/events", { replace: true })
     ↓
-[8] AppRoutes يرى token → يُحوّل /login إلى /events
+[8] AppRoutes يرى token  // يُحوّل /login إلى /events
 ```

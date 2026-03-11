@@ -1,4 +1,4 @@
-# الدرس الخامس: حارس المصادقة في GraphQL 🛡️
+﻿# الدرس الخامس: حارس المصادقة في GraphQL 🛡️
 
 > **هدف الدرس:** فهم كيف يُحمى الوصول للعمليات الحساسة في GraphQL
 
@@ -76,18 +76,18 @@ context: async ({ req }) => {
 
 ### الرحلة الكاملة:
 
-```
-[1] العميل يُرسل: Authorization: "jwt eyJhbGci..."
-    ↓
+```text
 [2] context function في index.ts تُفكّك الـ token
-    → JWT.verify → يحصل على { id: "64ab12..." }
-    → User.findById("64ab12...") → كائن المستخدم
+    ↓
+[1] العميل يُرسل: Authorization: "jwt eyJhbGci..."
+    → JWT.verify  // يحصل على { id: "64ab12..." }
+    → User.findById("64ab12...")  // كائن المستخدم
     ↓
 [3] { user: userObject } يُوضع في context
     ↓
 [4] isAuthenticated يفحص: هل context.user موجود؟
-    ← نعم → skip (تابع)
-    ← لا  → throw GraphQLError (ارفض)
+  // نعم → skip (تابع)
+  // لا  → throw GraphQLError (ارفض)
 ```
 
 ---
@@ -108,9 +108,9 @@ createEvent: combineResolvers(
 ```
 
 **كيف يعمل `combineResolvers`؟**
-```
-[isAuthenticated] → إذا return skip → [actualResolver]
-[isAuthenticated] → إذا throw error → توقف، أرسل الخطأ للعميل
+```text
+[isAuthenticated]  // إذا return skip → [actualResolver]
+[isAuthenticated]  // إذا throw error  // توقف, أرسل الخطأ للعميل
 ```
 
 يمكن إضافة أكثر من حارس:
@@ -139,9 +139,9 @@ combineResolvers(
 
 **الموقف:** مستخدم غير مسجّل يحاول حجز مناسبة.
 
-```
-العميل يرسل:
+```text
 mutation {
+العميل يرسل:
   bookEvent(eventId: "abc123") {
     _id
   }

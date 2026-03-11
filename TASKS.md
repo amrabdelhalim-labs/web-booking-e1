@@ -87,7 +87,7 @@ npm run dev
 
 ## 📁 Project Structure
 
-```
+```text
 web-booking-e1/
 ├── .github/
 │   └── workflows/
@@ -122,7 +122,7 @@ web-booking-e1/
 ## 🔒 Security Architecture
 
 ### Authentication Flow
-```
+```text
 1. User registers/logs in
 2. Server validates credentials
 3. JWT token created (HS256)
@@ -363,7 +363,7 @@ Contributions are welcome! Follow these steps:
 
 ## 📝 Commit Convention
 
-```
+```text
 feat:     New feature
 fix:      Bug fix
 docs:     Documentation

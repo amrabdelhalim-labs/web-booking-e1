@@ -195,7 +195,7 @@ npm run dev
 
 ## البنية الهيكلية
 
-```
+```text
 web-booking-e1/
 │
 ├── client/                          # React Frontend
@@ -290,7 +290,7 @@ web-booking-e1/
 
 الخادم يستخدم **نمط Repository** لفصل منطق الوصول للبيانات عن منطق العمل:
 
-```
+```text
 GraphQL Resolvers → Repository Manager → Specialized Repositories → Mongoose Models
 ```
 
@@ -374,8 +374,8 @@ bookings: [Booking!]
 ### التعديلات
 
 ```graphql
-# المصادقة
 createUser(userInput: UserInput): AuthData
+# المصادقة
 login(email: String, password: String): AuthData
 updateUser(updateUserInput: UpdateUserInput): User
 deleteUser: Boolean

@@ -10,7 +10,7 @@
 - **المخطط (Schema)** يقول: "هناك mutation اسمه `login`، يأخذ email وpassword ويُرجع AuthData"
 - **الـ Resolver** يقول: "وهذا هو **الكود الفعلي** الذي ينفّذ هذه العملية"
 
-```
+```text
 المخطط (Schema) = القائمة في المطعم
 الـ Resolver = الطباخ الذي ينفّذ الطلبات
 ```
@@ -63,10 +63,10 @@ login: async (_parent, { email, password }) => {
 
 ### الرحلة خطوة بخطوة:
 
-```
-العميل يرسل: { email: "x@x.com", password: "123456" }
-    ↓
+```text
 [1] validateLoginInput: هل البريد صحيح؟ هل كلمة المرور طويلة كفاية؟
+    ↓
+العميل يرسل: { email: "x@x.com", password: "123456" }
     ↓
 [2] repos.user.findByEmail: ابحث في MongoDB
     ↓ (وجد/لم يجد)
@@ -83,7 +83,7 @@ login: async (_parent, { email, password }) => {
 
 **المشكلة:** كلمات المرور لا تُحفظ كنص عادي في قاعدة البيانات.
 
-```
+```text
 ما يُحفظ في DB: "$2b$12$eImiTXuWVxfM37uY4JANjQ.../..."
 ما يُرسله المستخدم: "123456"
 ```
@@ -207,9 +207,9 @@ const token = jwt.sign({ id: user.id }, config.jwtSecret);
 JWT = **JSON Web Token**  
 هو وثيقة رقمية مشفرة تثبت هوية المستخدم.
 
-```
-شكل الـ Token:
+```text
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YWIxMiJ9.abc123
+شكل الـ Token:
 |_____ الرأس (Header) _____|.___ البيانات (Payload) ___.__|__التوقيع__|
 ```
 
@@ -220,21 +220,21 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YWIxMiJ9.abc123
 
 ## 9. خلاصة تدفق المصادقة
 
-```
-تسجيل جديد:
+```text
 Client → createUser(username, email, password)
+تسجيل جديد:
     ↓ validate → check email → hash password → save → jwt.sign
 Server → { userId, token, username }
-Client → يحفظ الـ token في localStorage ✓
+Client  // يحفظ الـ token في localStorage ✓
 
 تسجيل دخول:
 Client → login(email, password)
     ↓ validate → findByEmail → bcrypt.compare → jwt.sign
 Server → { userId, token, username }
-Client → يحفظ الـ token في localStorage ✓
+Client  // يحفظ الـ token في localStorage ✓
 
 طلب محمي (updateUser):
-Client → يُرسل token في رأس الطلب
-    ↓ isAuthenticated يتحقق → يمرر context.user
-Server → ينفّذ العملية ✓
+Client  // يُرسل token في رأس الطلب
+    ↓ isAuthenticated يتحقق  // يمرر context.user
+Server  // ينفّذ العملية ✓
 ```

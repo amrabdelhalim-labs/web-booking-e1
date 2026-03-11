@@ -6,12 +6,12 @@
 
 ## 1. المشكلة: كيف نشارك الـ Token بين المكونات؟
 
-```
+```text
 App
- ├── Navbar         ← يحتاج: هل المستخدم مسجّل؟ ما اسمه؟
- ├── EventsPage     ← يحتاج: هل نعرض زر "إنشاء مناسبة"؟
- ├── BookingsPage   ← يحتاج: token لإرساله مع الطلب
- └── PrivateRoute   ← يحتاج: هل لديه token؟
+ ├── Navbar  // يحتاج: هل المستخدم مسجّل؟ ما اسمه؟
+ ├── EventsPage  // يحتاج: هل نعرض زر "إنشاء مناسبة"؟
+ ├── BookingsPage  // يحتاج: token لإرساله مع الطلب
+ └── PrivateRoute  // يحتاج: هل لديه token؟
 ```
 
 **الحل الخاطئ:** تمرير الـ token كـ prop من App لكل مكوّن.  
@@ -23,10 +23,10 @@ App
 
 ## 2. الملفات الثلاثة:
 
-```
-auth-context.ts    ← تعريف الواجهة + إنشاء الـ Context
-AuthProvider.tsx   ← الحالة الفعلية والمنطق
-useAuth.ts         ← خطاف مريح للوصول للـ Context
+```text
+auth-context.ts  // تعريف الواجهة + إنشاء الـ Context
+AuthProvider.tsx  // الحالة الفعلية والمنطق
+useAuth.ts  // خطاف مريح للوصول للـ Context
 ```
 
 ---
@@ -109,14 +109,14 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
 ## 5. لماذا `localStorage`؟
 
-```
-بدون localStorage:
+```text
+- token يُحفظ في المتصفح
 - المستخدم يسجّل دخوله ✓
 - يضغط F5 (تحديث الصفحة) ← token يختفي!
 - يجد نفسه مسجّل خروجه 😲
 
 مع localStorage:
-- token يُحفظ في المتصفح
+بدون localStorage:
 - عند التحديث: useState يقرأ localStorage → token لا يزال موجود ✓
 ```
 
@@ -140,16 +140,16 @@ export function useAuth(): AuthContextType {
 
 **بدون `useAuth`:**
 ```tsx
-// في كل مكون يحتاج Authentication:
 const context = useContext(AuthContext);  // 3 أسطر
+// في كل مكون يحتاج Authentication:
 if (!context) throw new Error("...");
 const { token, login } = context;
 ```
 
 **مع `useAuth`:**
 ```tsx
-// سطر واحد!
 const { token, login, logout } = useAuth();
+// سطر واحد!
 ```
 
 ---
@@ -206,7 +206,7 @@ const login = useCallback((token, userId, username) => {
 
 ## 9. الرحلة الكاملة: من تسجيل الدخول للوصول
 
-```
+```text
 [1] LoginPage: useMutation(LOGIN) → GraphQL mutation
     ↓
 [2] الخادم يُرجع: { token, userId, username }
@@ -214,11 +214,11 @@ const login = useCallback((token, userId, username) => {
 [3] LoginPage تستدعي: login(token, userId, username)
     ↓
 [4] AuthProvider:
-    setToken(token) → يُحدّث الحالة
-    localStorage.setItem("token", token) → يُحفظ في المتصفح
+    setToken(token)  // يُحدّث الحالة
+    localStorage.setItem("token", token)  // يُحفظ في المتصفح
     ↓
 [5] كل المكونات التي تستخدم useAuth() تحصل على القيم الجديدة تلقائياً!
     ↓
-[6] Navbar يرى token → يُظهر اسم المستخدم
-    AppRoutes يرى token → يُعيد توجيه /login إلى /events
+[6] Navbar يرى token  // يُظهر اسم المستخدم
+    AppRoutes يرى token  // يُعيد توجيه /login إلى /events
 ```

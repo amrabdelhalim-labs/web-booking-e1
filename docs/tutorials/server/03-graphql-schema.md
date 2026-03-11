@@ -1,4 +1,4 @@
-# الدرس الثالث: مخطط GraphQL — عقد الاتفاق بين العميل والخادم 📋
+﻿# الدرس الثالث: مخطط GraphQL — عقد الاتفاق بين العميل والخادم 📋
 
 > **هدف الدرس:** فهم كيف يُعرَّف مخطط GraphQL وما هو دوره في التطبيق
 
@@ -7,24 +7,24 @@
 ## 1. ما الفرق بين REST و GraphQL؟
 
 ### REST التقليدي:
-```
-GET  /api/posts        ← كل المنشورات
-GET  /api/posts/1      ← منشور واحد
-POST /api/posts        ← إنشاء منشور
-PUT  /api/posts/1      ← تعديل منشور
-DELETE /api/posts/1    ← حذف منشور
+```http
+GET  /api/posts  // كل المنشورات
+GET  /api/posts/1  // منشور واحد
+POST /api/posts  // إنشاء منشور
+PUT  /api/posts/1  // تعديل منشور
+DELETE /api/posts/1  // حذف منشور
 ```
 لكل عملية **مسار مختلف** في الرابط.
 
 ### GraphQL (هذا المشروع):
-```
-POST /graphql   ← مسار **واحد** فقط لكل شيء!
+```http
+POST /graphql  // مسار **واحد** فقط لكل شيء!
 ```
 
 في GraphQL، بدلاً من تغيير المسار، نغيّر **نص الاستعلام**:
 ```graphql
-# اقرأ
 query { events { title price } }
+# اقرأ
 
 # أنشئ  
 mutation { createEvent(eventInput: {...}) { _id title } }
@@ -190,9 +190,9 @@ type Subscription {
 ```
 
 هذه الميزة فريدة في هذا المشروع! تعمل عبر **WebSocket**:
-```
+```text
 العميل يقول: "أخبرني عندما تُضاف مناسبة جديدة"
-الخادم: "تمام، سأرسل لك تلقائياً عند الإضافة"
+الخادم: "تمام, سأرسل لك تلقائياً عند الإضافة"
 ```
 
 ---
@@ -200,8 +200,8 @@ type Subscription {
 ## 9. كيف يتحول المخطط إلى كود؟
 
 ```typescript
-// من ملف schema/index.ts
 import gql from "graphql-tag";
+// من ملف schema/index.ts
 
 export const typeDefs = gql`
   type User { ... }
@@ -227,11 +227,11 @@ const schema = makeExecutableSchema({
 
 ## 10. خلاصة
 
-```
-المخطط (typeDefs) = دستور التطبيق
+```text
+    ├── Queries: ما الذي يمكن قراءته؟
     يحدد:
     ├── الأنواع: ما هي البيانات؟
-    ├── Queries: ما الذي يمكن قراءته؟
+المخطط (typeDefs) = دستور التطبيق
     ├── Mutations: ما الذي يمكن تغييره؟
     └── Subscriptions: ما الذي يمكن الاستماع إليه؟
 ```

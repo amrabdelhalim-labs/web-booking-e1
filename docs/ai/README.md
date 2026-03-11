@@ -57,13 +57,15 @@ Key ones for AI context:
 5. **All entity repositories are singletons** — use `get{Entity}Repository()` factory functions
 6. **Client state is managed through `AuthProvider` + `useAuth()`** — never use `useContext(AuthContext)` directly
 7. **Date utilities live in `client/src/utils/formatDate.ts`** — never inline date formatting
+8. **No Arabic characters inside code fences in documentation** — the Arabic comma `,` (U+060C) and other Arabic punctuation trigger the Unicode Bidi algorithm, causing code blocks to render right-to-left. Use only Latin punctuation inside `` ``` `` blocks. Arabic is allowed only in code **comments** (`// عربي`). See `docs/ai-patterns-reference.md §10` for the full rule.
+9. **First line of every code block must start with a Latin character** — The Unicode Bidi Algorithm sets a code block's render direction from its **first strong-directional character**. If the first non-empty line starts with Arabic text (even inside a `// comment`), the **entire block** renders right-to-left. **Rule:** always put a real code line (`import`, `const`, class declaration…) on line 1 and move Arabic label comments to line 2+. Emoji (`✅`, `❌`) and `//` are Bidi-neutral and do **not** protect against this. See `docs/ai-tutorials-guide.md §2.6`.
 
 ---
 
 ## Key File Locations
 
 ### Server
-```
+```text
 server/src/
 ├── index.ts                    ← Apollo Server + WebSocket entry point
 ├── config/index.ts             ← All env vars (jwtSecret, port, mongoUri, corsOrigins)
@@ -92,7 +94,7 @@ server/src/
 ```
 
 ### Client
-```
+```text
 client/src/
 ├── App.tsx                     ← AuthProvider wrapper + AppRoutes component
 ├── config.ts                   ← GRAPHQL_HTTP_URL, GRAPHQL_WS_URL, APP_NAME, etc.

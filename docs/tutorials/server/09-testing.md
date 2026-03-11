@@ -1,4 +1,4 @@
-# الدرس التاسع: اختبار الخادم — E2E والمستودعات 🧪
+﻿# الدرس التاسع: اختبار الخادم — E2E والمستودعات 🧪
 
 > **هدف الدرس:** فهم كيف تُكتب اختبارات الخادم وكيف تُشغَّل
 
@@ -19,8 +19,8 @@
 ## 2. كيفية تشغيل الاختبارات
 
 ```bash
-# من مجلد server/
 npm run test:api          # اختبارات E2E فقط
+# من مجلد server/
 npm run test:repositories  # اختبارات المستودعات فقط
 npm run test:comprehensive # الاختبار الشامل فقط
 npm run test:all          # جميع الاختبارات
@@ -36,7 +36,7 @@ npm run test:all          # جميع الاختبارات
 
 E2E = End-to-End = اختبار من البداية للنهاية.
 
-```
+```text
 الاختبار يُنشئ خادماً فعلياً
         ↓
 يُرسل طلبات HTTP حقيقية لـ GraphQL
@@ -49,8 +49,8 @@ E2E = End-to-End = اختبار من البداية للنهاية.
 ### بنية الملف الرئيسية
 
 ```typescript
-// دالة مساعدة ترسل طلبات GraphQL عبر HTTP
 async function graphqlRequest(query: string, token?: string) {
+// دالة مساعدة ترسل طلبات GraphQL عبر HTTP
   return new Promise((resolve) => {
     const options = {
       hostname: "localhost",
@@ -114,8 +114,8 @@ assert(dupEmail.errors?.length > 0, "بريد مكرر = خطأ");
 
 **4. اختبار تسجيل الدخول:**
 ```typescript
-// بيانات صحيحة
 const login = await graphqlRequest(`
+// بيانات صحيحة
   mutation { login(email: "amr@test.com", password: "Test123!") { token userId } }
 `);
 assert(!login.errors, "تسجيل دخول ناجح");
@@ -129,8 +129,8 @@ assert(badLogin.errors?.length > 0, "كلمة مرور خاطئة = خطأ");
 
 **5. عمليات المناسبات (CRUD):**
 ```typescript
-// إنشاء مناسبة (يحتاج token)
 const createEvent = await graphqlRequest(`
+// إنشاء مناسبة (يحتاج token)
   mutation {
     createEvent(eventInput: {
       title: "مؤتمر التقنية"
@@ -149,8 +149,8 @@ const events = await graphqlRequest(`
 
 **6. اختبار الحجوزات:**
 ```typescript
-// حجز مناسبة
 const booking = await graphqlRequest(`
+// حجز مناسبة
   mutation { bookEvent(eventId: "${eventId}") { _id event { title } } }
 `, authToken);
 
@@ -168,8 +168,8 @@ const cancel = await graphqlRequest(`
 
 **7. اختبار الأمان:**
 ```typescript
-// محاولة حجز بدون token
 const noAuth = await graphqlRequest(`
+// محاولة حجز بدون token
   mutation { bookEvent(eventId: "${eventId}") { _id } }
 `);
 assert(noAuth.errors?.length > 0, "بدون مصادقة = خطأ UNAUTHENTICATED");
@@ -183,7 +183,7 @@ assert(wrongUser.errors?.length > 0, "مستخدم آخر = خطأ FORBIDDEN");
 
 ### لماذا هذه الاختبارات مهمة؟
 
-```
+```text
 api.test.ts يختبر "السلوك الكامل" كما يراه المستخدم الحقيقي:
     ✓ هل GraphQL يستجيب صحيحاً؟
     ✓ هل المصادقة تمنع الوصول غير المصرح؟
@@ -199,7 +199,7 @@ api.test.ts يختبر "السلوك الكامل" كما يراه المستخ�
 
 اختبار طبقة Repository مباشرة مع MongoDB — بدون تشغيل خادم HTTP.
 
-```
+```text
 الاختبار يتصل بـ MongoDB
        ↓
 يستدعي دوال Repository مباشرة
@@ -237,8 +237,8 @@ assert(notExists === false, "البريد غير موجود");
 ### مثال: اختبار EventRepository
 
 ```typescript
-// إنشاء مناسبة
 const event = await repos.event.create({
+// إنشاء مناسبة
   title: "مؤتمر التقنية",
   description: "مؤتمر سنوي للتقنية",
   price: 150,
@@ -264,8 +264,8 @@ assert(page.count >= 1, "إجمالي الأعداد صحيح");
 ### مثال: اختبار BookingRepository
 
 ```typescript
-// إنشاء حجز
 const booking = await repos.booking.createAndPopulate(
+// إنشاء حجز
   userId.toString(),
   eventId.toString()
 );
@@ -284,16 +284,16 @@ assert(count === 0, "كل حجوزات المناسبة حُذفت");
 
 ### لماذا نختبر Repository بشكل مستقل؟
 
-```
+```text
 Repository Tests ↔ API Tests
 
 api.test.ts:
     ✓ يختبر "هل يعمل التطبيق ككل؟"
-    ✗ إذا فشل، قد يكون Resolver أو Schema أو Repository
+    ✗ إذا فشل, قد يكون Resolver أو Schema أو Repository
 
 repositories.test.ts:
     ✓ يختبر "هل قاعدة البيانات تتصرف صحيحاً؟"
-    ✓ إذا فشل → المشكلة محددة في Repository
+    ✓ إذا فشل  // المشكلة محددة في Repository
 ```
 
 ---
@@ -306,7 +306,7 @@ repositories.test.ts:
 
 ### المراحل الست:
 
-```
+```text
 Phase 1: User Creation (إنشاء 3 مستخدمين + تحقق من bcrypt)
     ↓
 Phase 2: Event Creation (إنشاء 3 مناسبات + تحقق من العناوين)
@@ -317,7 +317,7 @@ Phase 4: Booking Management (حجوزات + منع التكرار)
     ↓
 Phase 5: Update Operations (تعديل مناسبة + ملف شخصي)
     ↓
-Phase 6: Cascade Delete (حذف مستخدم → حجوزاته + مناسباته تُحذف تلقائياً)
+Phase 6: Cascade Delete (حذف مستخدم  // حجوزاته + مناسباته تُحذف تلقائياً)
 ```
 
 ### مثال: Phase 1 — إنشاء المستخدمين
@@ -371,8 +371,8 @@ assert(bookingsAfter === 0, "كل الحجوزات المرتبطة حُذفت")
 الاختبارات لا تستخدم framework جاهزاً (مثل Jest). بدلاً من ذلك، تستخدم دوالاً مساعدة مخصصة:
 
 ```typescript
-// أداة الفحص الأساسية
 function assert(condition: boolean, message: string) {
+// أداة الفحص الأساسية
   if (!condition) {
     console.error(`❌ FAILED: ${message}`);
     throw new Error(`Assertion failed: ${message}`);
@@ -399,7 +399,7 @@ function logError(msg: string) {
 ```
 
 **مثال على مخرجات الاختبار:**
-```
+```text
 ════════════════════════════════════════════════════════════
   API E2E Tests — Event Booking GraphQL
 ════════════════════════════════════════════════════════════
@@ -422,14 +422,14 @@ function logError(msg: string) {
 
 ### ملف `.env` (قيم الاختبار):
 ```env
-# قاعدة بيانات مستقلة للاختبارات
 TEST_MONGODB_URI=mongodb://localhost:27017/event-booking-test
+# قاعدة بيانات مستقلة للاختبارات
 ```
 
 ### تنظيف قاعدة البيانات قبل كل تشغيل:
 ```typescript
-// في بداية كل ملف اختبار
 const collections = mongoose.connection.collections;
+// في بداية كل ملف اختبار
 for (const key of Object.keys(collections)) {
   await collections[key].deleteMany({});
 }
@@ -441,10 +441,10 @@ for (const key of Object.keys(collections)) {
 
 ## 8. خلاصة
 
-```
-ثلاثة مستويات من الاختبارات:
-
+```text
 api.test.ts
+
+ثلاثة مستويات من الاختبارات:
   └── اختبر "ماذا يرى المستخدم النهائي"
   └── يُشغّل خادماً حقيقياً ويُرسل HTTP requests
 

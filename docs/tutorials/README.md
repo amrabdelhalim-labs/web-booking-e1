@@ -62,9 +62,9 @@
 
 ## مسار التعلم المقترح
 
-```
-للمبتدئ تماماً:
+```text
   concepts-guide → server/02 → server/03 → server/04 → client/01
+للمبتدئ تماماً:
 
 لفهم GraphQL بعمق:
   server/03 (Schema) → server/04 (Auth) → server/07 (Events) → client/03 (Apollo)

@@ -37,8 +37,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 ### تشغيل الاختبارات
 
 ```bash
-# من مجلد client/
 npm run test        # تشغيل كل الاختبارات
+# من مجلد client/
 npm run test:watch  # مراقبة وإعادة التشغيل عند تغيير الملفات
 npm run test:ui     # واجهة رسومية للاختبارات
 npm run coverage    # تقرير التغطية
@@ -138,7 +138,7 @@ describe("useAuth — إدارة حالة المصادقة", () => {
 
 ### لماذا نختبر useAuth؟
 
-```
+```text
 useAuth هو قلب المصادقة في العميل:
   ✓ هل يقرأ localStorage صحيحاً؟
   ✓ هل login يحفظ البيانات في الذاكرة وـ localStorage؟
@@ -299,7 +299,7 @@ describe("ثوابت URLs", () => {
 **لماذا نختبر هذا؟**
 
 دالة `normalizeWsUrl()` تحوّل HTTP URL إلى WebSocket URL تلقائياً:
-```
+```text
 "http://localhost:4000/graphql"  → "ws://localhost:4000/graphql"
 "https://api.mysite.com/graphql" → "wss://api.mysite.com/graphql"
 ```
@@ -384,10 +384,10 @@ describe("formatDateArabic — تنسيق بالعربية", () => {
 ### لماذا نختبر التواريخ؟
 
 التواريخ من GraphQL تأتي بصيغ مختلفة:
-```
+```text
 "2024-06-15T10:00:00.000Z"   ← ISO Standard
-"2024-06-15 10:00:00.000"    ← بدون Z
-"2024-06-15"                  ← بدون وقت
+"2024-06-15 10:00:00.000"  // بدون Z
+"2024-06-15"  // بدون وقت
 ```
 
 الاختبارات تضمن أن `formatDate*` تتعامل مع **جميع الصيغ** صحيحاً.
@@ -470,8 +470,8 @@ describe("نوع BookingData (بيانات الحجز)", () => {
 ### لماذا نختبر الأنواع؟
 
 ```typescript
-// بدون اختبار ← خطأ يُكتشف في وقت التشغيل فقط
 const event = data.event;
+// بدون اختبار ← خطأ يُكتشف في وقت التشغيل فقط
 console.log(event.crator.name); // خطأ إملائي في "creator" لا يُكتشف!
 
 // مع اختبار ← TypeScript يكتشف الخطأ فوراً
@@ -482,12 +482,12 @@ const mockEvent: EventData = { crator: {...} }; // ❌ خطأ TypeScript فور�
 
 ## 8. خلاصة مسار الاختبارات
 
-```
-types.test.ts        → هل البيانات بالـ Shape الصحيح؟
-config.test.ts       → هل الـ URLs مضبوطة؟
-formatDate.test.ts   → هل تنسيق التواريخ صحيح؟
-graphql.test.ts      → هل كل العمليات معرّفة؟
-useAuth.test.tsx     → هل المصادقة تعمل بشكل صحيح؟
+```text
+types.test.ts  // هل البيانات بالـ Shape الصحيح؟
+config.test.ts  // هل الـ URLs مضبوطة؟
+formatDate.test.ts  // هل تنسيق التواريخ صحيح؟
+graphql.test.ts  // هل كل العمليات معرّفة؟
+useAuth.test.tsx  // هل المصادقة تعمل بشكل صحيح؟
 ```
 
 ---

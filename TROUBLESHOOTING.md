@@ -5,7 +5,7 @@
 ### 1️⃣ **CORS Error - No 'Access-Control-Allow-Origin' header**
 
 **الخطأ:**
-```
+```text
 Access to fetch at 'https://your-server.herokuapp.com/graphql' from origin 'https://your-domain.com'
 has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present
 ```
@@ -43,7 +43,7 @@ APP_URLS=http://localhost:5173,https://your-domain.com
 ### 2️⃣ **Mixed Content - WebSocket ws:// على HTTPS**
 
 **الخطأ:**
-```
+```text
 Mixed Content: An insecure WebSocket connection may not be initiated from a page loaded over HTTPS
 ```
 
@@ -66,7 +66,7 @@ Mixed Content: An insecure WebSocket connection may not be initiated from a page
 ### 3️⃣ **404 على assets (CSS/JS) بعد refresh**
 
 **الخطأ:**
-```
+```http
 GET https://your-domain.com/assets/index-xxx.js 404 (Not Found)
 ```
 
@@ -76,19 +76,19 @@ GET https://your-domain.com/assets/index-xxx.js 404 (Not Found)
 **الحل:**
 
 #### إذا كنت تستخدم GitHub Pages (مع مسار فرعي):
-```
+```text
 VITE_BASE_PATH = /web-booking-e1/
 VITE_APP_DOMAIN = https://your-username.github.io
 ```
 
 #### إذا كنت تستخدم دومين مخصص (بدون مسار فرعي):
-```
+```text
 VITE_BASE_PATH = /
 VITE_APP_DOMAIN = https://your-custom-domain.com
 ```
 
 #### إذا كنت تستخدم دومين مخصص + مسار فرعي:
-```
+```text
 VITE_BASE_PATH = /web-booking-e1/
 VITE_APP_DOMAIN = https://preview.amrabdelhalim.me
 ```
@@ -122,7 +122,7 @@ GitHub Pages يرسل 404 للمسارات الفرعية، والـ `404.html` 
 ### 5️⃣ **vite.svg 404**
 
 **الخطأ:**
-```
+```http
 GET https://domain.com/vite.svg 404
 ```
 
@@ -138,7 +138,7 @@ GET https://domain.com/vite.svg 404
 ### 6️⃣ **أخطاء content.js (من إضافات المتصفح)**
 
 **الخطأ:**
-```
+```text
 Cannot read properties of null (reading 'runtime')
 ```
 
@@ -166,7 +166,7 @@ cd server
 npm run dev
 ```
 في الكونسول، ستشاهد:
-```
+```text
 🌐 CORS origins: http://localhost:5173
 ```
 
@@ -190,14 +190,14 @@ npm run dev
 ## المتغيرات المطلوبة - ملخص سريع
 
 ### GitHub Variables (Settings → Variables → Actions):
-```
+```text
 VITE_GRAPHQL_HTTP_URL=https://your-server.herokuapp.com/graphql
 VITE_APP_DOMAIN=https://your-domain.com
 VITE_BASE_PATH=/web-booking-e1/
 ```
 
 ### Heroku Config Vars (Settings → Config Vars):
-```
+```text
 APP_URLS=https://your-domain.com
 DB_URL=mongodb+srv://...
 JWT_SECRET=<strong-secret>
@@ -209,7 +209,7 @@ NODE_ENV=production
 ## 7️⃣ **Heroku H10 Error - App Crashed (MongoDB Connection Timeout)**
 
 **الخطأ في Heroku Logs:**
-```
+```text
 heroku[web.1]: Process exited with status 1
 heroku[web.1]: State changed from starting to crashed
 heroku[router]: at=error code=H10 desc="App crashed"
@@ -241,12 +241,12 @@ heroku config -a your-app-name
 
 **إضافة المتغير - طريقة CLI (بديلة):**
 ```bash
-# استخدم single quotes لتجنب مشاكل PowerShell
 heroku config:set DATABASE_URL='mongodb+srv://username:password@cluster.mongodb.net/database-name?retryWrites=true&w=majority' -a your-app-name
+# استخدم single quotes لتجنب مشاكل PowerShell
 ```
 
 **القيمة يجب أن تكون كاملة مثل:**
-```
+```text
 mongodb+srv://username:password@cluster.mongodb.net/database-name?retryWrites=true&w=majority&appName=Cluster0
 ```
 
@@ -266,8 +266,8 @@ mongodb+srv://username:password@cluster.mongodb.net/database-name?retryWrites=tr
 ### 3. **بدّل من `localhost` إلى MongoDB Atlas:**
 في `server/.env`:
 ```env
-# ❌ لا تشتغل على Heroku (محلي فقط)
 DB_URL=mongodb://127.0.0.1:27017/event-booking
+# ❌ لا تشتغل على Heroku (محلي فقط)
 
 # ✅ استخدم MongoDB Atlas
 DB_URL=mongodb+srv://USERNAME:PASSWORD@cluster.mongodb.net/event-booking?retryWrites=true&w=majority

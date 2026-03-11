@@ -6,21 +6,21 @@
 
 ## 1. نظرة عامة على مجلد `client/`
 
-```
+```text
 client/src/
-├── App.tsx            ← نقطة البداية + التوجيه الرئيسي
-├── main.tsx           ← نقطة دخول React والـ Apollo Client
-├── config.ts          ← إعدادات الـ URLs
+├── App.tsx  // نقطة البداية + التوجيه الرئيسي
+├── main.tsx  // نقطة دخول React والـ Apollo Client
+├── config.ts  // إعدادات الـ URLs
 ├── context/
-│   ├── auth-context.ts  ← تعريف واجهة المصادقة
-│   └── AuthProvider.tsx  ← مزوّد حالة المصادقة
+│   ├── auth-context.ts  // تعريف واجهة المصادقة
+│   └── AuthProvider.tsx  // مزوّد حالة المصادقة
 ├── hooks/
-│   └── useAuth.ts     ← خطاف الوصول للمصادقة
+│   └── useAuth.ts  // خطاف الوصول للمصادقة
 ├── graphql/
-│   ├── fragments.ts   ← حقول مشتركة
-│   └── queries.ts     ← كل الاستعلامات والطفرات
-├── components/        ← مكونات قابلة لإعادة الاستخدام
-└── pages/             ← صفحات التطبيق
+│   ├── fragments.ts  // حقول مشتركة
+│   └── queries.ts  // كل الاستعلامات والطفرات
+├── components/  // مكونات قابلة لإعادة الاستخدام
+└── pages/  // صفحات التطبيق
 ```
 
 ---
@@ -41,10 +41,10 @@ export default function App() {
 
 ### الطبقات (من الخارج للداخل):
 
-```
-<BrowserRouter>        ← يُمكّن التنقل بين الصفحات
-  <AuthProvider>       ← يوفر بيانات المصادقة لكل التطبيق
-    <AppRoutes />      ← يُحدد الصفحات والمسارات
+```text
+<BrowserRouter>  // يُمكّن التنقل بين الصفحات
+  <AuthProvider>  // يوفر بيانات المصادقة لكل التطبيق
+    <AppRoutes />  // يُحدد الصفحات والمسارات
   </AuthProvider>
 </BrowserRouter>
 ```
@@ -58,8 +58,8 @@ export default function App() {
 ## 3. لماذا `AppRoutes` مكوّن منفصل؟
 
 ```tsx
-// ❌ لن يعمل — يستخدم useAuth خارج AuthProvider
 export default function App() {
+// ❌ لن يعمل — يستخدم useAuth خارج AuthProvider
   const { token } = useAuth(); // خطأ!
   return (
     <AuthProvider>
@@ -70,8 +70,8 @@ export default function App() {
 ```
 
 ```tsx
-// ✅ يعمل — AppRoutes داخل AuthProvider يمكنه استخدام useAuth
 function AppRoutes() {
+// ✅ يعمل — AppRoutes داخل AuthProvider يمكنه استخدام useAuth
   const { token } = useAuth(); // ✓ داخل AuthProvider
   // ...
 }
@@ -79,7 +79,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppRoutes />  {/* ← داخل AuthProvider */}
+      <AppRoutes />  {/*  // داخل AuthProvider */}
     </AuthProvider>
   );
 }
@@ -163,22 +163,22 @@ function AppRoutes() {
 
 ### لمستخدم مسجّل يذهب لـ `/login`:
 
-```
+```text
 token = "eyJ..." (موجود)
     ↓
 {token && <Route path="/login" element={<Navigate to="/events" />} />}
     ↓
-هذا Route موجود → ينتقل لـ /events مباشرة!
+هذا Route موجود  // ينتقل لـ /events مباشرة!
 ```
 
 ### لمستخدم غير مسجّل يذهب لـ `/bookings`:
 
-```
+```text
 token = null (غير موجود)
     ↓
 <Route path="/bookings" element={<PrivateRoute><BookingsPage /></PrivateRoute>} />
     ↓
-PrivateRoute يفحص token → null → ينتقل لـ /login!
+PrivateRoute يفحص token → null  // ينتقل لـ /login!
 ```
 
 ---
@@ -204,7 +204,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
 ## 8. خلاصة
 
-```
+```text
 main.tsx
   └── ApolloProvider (GraphQL Client متاح لكل التطبيق)
        └── App

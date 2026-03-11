@@ -17,8 +17,8 @@
 ## 2. `transformEvent` — تحويل البيانات قبل الإرسال
 
 ```typescript
-// من resolvers/transform.ts
 export const transformEvent = (event: IEvent) => ({
+// من resolvers/transform.ts
   ...event._doc,
   date: new Date(event.date).toISOString().replace(/T/, " "),
 });
@@ -27,12 +27,12 @@ export const transformEvent = (event: IEvent) => ({
 ### لماذا نحتاج هذا التحويل؟
 
 MongoDB تحفظ التاريخ كـ:
-```
+```text
 Date object: Mon Jan 15 2024 18:30:00 GMT+0300
 ```
 
 لكن واجهة المستخدم تريده كـ:
-```
+```text
 String: "2024-01-15 18:30:00"
 ```
 
@@ -85,10 +85,10 @@ events: async (_parent, { searchTerm, skip = 0, limit = 8 }) => {
 
 ### مثال عملي للـ Pagination:
 
-```
-المستخدم في الصفحة 1: skip=0, limit=8 → المناسبات 1-8
-المستخدم في الصفحة 2: skip=8, limit=8 → المناسبات 9-16
-المستخدم في الصفحة 3: skip=16, limit=8 → المناسبات 17-24
+```text
+المستخدم في الصفحة 1: skip=0, limit=8  // المناسبات 1-8
+المستخدم في الصفحة 2: skip=8, limit=8  // المناسبات 9-16
+المستخدم في الصفحة 3: skip=16, limit=8  // المناسبات 17-24
 ```
 
 ---
@@ -153,10 +153,10 @@ pubsub.publish("EVENT_ADDED", { eventAdded: createdEvent });
 - `publish` = البث على موجة معينة
 - كل عميل "يستمع" لهذه الموجة يستقبل التحديث فوراً!
 
-```
-[مستخدم ينشئ مناسبة]
-       ↓
+```text
 pubsub.publish("EVENT_ADDED", data)
+       ↓
+[مستخدم ينشئ مناسبة]
        ↓
 [كل المتصلين بـ subscription { eventAdded }]
 يستقبلون البيانات فوراً دون إعادة تحميل!
@@ -259,13 +259,13 @@ subscription {
 
 ## 9. ملخص عمليات المناسبات
 
-```
-Query.events          → قراءة عامة (مع بحث وصفحات)
-Query.getUserEvents   → مناسبات مستخدم محدد
+```text
+Query.events  // قراءة عامة (مع بحث وصفحات)
+Query.getUserEvents  // مناسبات مستخدم محدد
                      
-Mutation.createEvent  → إنشاء + pubsub.publish (real-time)
-Mutation.updateEvent  → تعديل (المنشئ فقط)
-Mutation.deleteEvent  → حذف + حجوزاتها تلقائياً
+Mutation.createEvent  // إنشاء + pubsub.publish (real-time)
+Mutation.updateEvent  // تعديل (المنشئ فقط)
+Mutation.deleteEvent  // حذف + حجوزاتها تلقائياً
 
-Subscription.eventAdded → استقبال فوري عند الإضافة
+Subscription.eventAdded  // استقبال فوري عند الإضافة
 ```

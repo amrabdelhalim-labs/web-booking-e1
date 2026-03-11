@@ -313,7 +313,7 @@ subscription {
 
 يشير إلى أن العملية تتطلب مصادقة. أرسل JWT token في HTTP header:
 
-```
+```text
 Authorization: JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 

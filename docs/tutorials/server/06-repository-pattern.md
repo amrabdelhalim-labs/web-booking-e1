@@ -8,8 +8,8 @@
 
 عندما نضع منطق قاعدة البيانات مباشرةً في كل مكان:
 ```typescript
-// منطق مختلط في Resolver — غير مناسب!
 const event = await Event.findOne({ title });         // Mongoose مباشرة
+// منطق مختلط في Resolver — غير مناسب!
 const events = await Event.find({ creator: userId }); // Mongoose مباشرة
 ```
 
@@ -20,7 +20,7 @@ const events = await Event.find({ creator: userId }); // Mongoose مباشرة
 
 ## 2. الحل: Repository Pattern
 
-```
+```text
 Resolver → Repository → Database
      ↑           ↑
   لا يعرف    يعرف فقط
@@ -36,8 +36,8 @@ Resolver → Repository → Database
 ## 3. واجهة المستودع (IRepository Interface)
 
 ```typescript
-// من repositories/repository.interface.ts
 interface IRepository<T extends Document> {
+// من repositories/repository.interface.ts
   findAll(): Promise<T[]>;
   findOne(filter: FilterQuery<T>): Promise<T | null>;
   findById(id: string): Promise<T | null>;
@@ -117,8 +117,8 @@ findPaginated(options: {
 
 **مثال:** صفحة المناسبات (8 في الصفحة):
 ```typescript
-// الصفحة الأولى
 findPaginated({ skip: 0, limit: 8 })
+// الصفحة الأولى
 // → rows: [1..8], count: 50, page: 1, totalPages: 7
 
 // الصفحة الثانية
@@ -131,8 +131,8 @@ findPaginated({ skip: 8, limit: 8 })
 ## 6. `getRepositoryManager()` — مدير المستودعات
 
 ```typescript
-// من repositories/index.ts
 const repos = getRepositoryManager();
+// من repositories/index.ts
 
 // الآن يمكننا استخدام:
 repos.user.findByEmail("x@x.com");
@@ -142,7 +142,7 @@ repos.booking.createAndPopulate(userId, eventId);
 
 **`getRepositoryManager()`** = مصنع يُرجع لك كل المستودعات جاهزة.
 
-```
+```text
 getRepositoryManager()
     ├── repos.user    ← UserRepository
     ├── repos.event   ← EventRepository
@@ -154,8 +154,8 @@ getRepositoryManager()
 ## 7. مثال عملي من الكود
 
 ```typescript
-// في resolvers/auth.ts — الـ Resolver لا يعرف MongoDB!
 const repos = getRepositoryManager();
+// في resolvers/auth.ts — الـ Resolver لا يعرف MongoDB!
 
 // بسيط وقابل للقراءة:
 const user = await repos.user.findByEmail(email);
@@ -171,7 +171,7 @@ const newUser = await repos.user.create({ username, email, password });
 
 ## 8. خلاصة
 
-```
+```text
 الـ Interface = عقد يحدد "ماذا" بدون "كيف"
 الـ Repository = تنفيذ يحدد "كيف" يتم الوصول للبيانات
 الـ Resolver   = يستخدم الـ Repository بدون معرفة التفاصيل

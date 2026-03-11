@@ -1,4 +1,4 @@
-# Feature Development Guide — مناسباتي (web-booking-e1)
+﻿# Feature Development Guide — مناسباتي (web-booking-e1)
 
 > **Purpose:** Exact steps to follow when adding a new entity or feature to this project.
 > Every instruction maps directly to the existing codebase patterns.
@@ -141,7 +141,7 @@ export function validateReviewInput(input: ReviewInput): void {
   else if (input.rating < 1 || input.rating > 5) errors.push("التقييم يجب أن يكون بين 1 و 5");
   if (!input.eventId) errors.push("معرّف الفعالية مطلوب");
   if (errors.length > 0) {
-    throw new GraphQLError(errors.join("، "), { extensions: { code: "BAD_USER_INPUT", errors } });
+    throw new GraphQLError(errors.join(", "), { extensions: { code: "BAD_USER_INPUT", errors } });
   }
 }
 
@@ -155,7 +155,7 @@ export function validateUpdateReviewInput(input: UpdateReviewInput): void {
     errors.push("التقييم يجب أن يكون بين 1 و 5");
   }
   if (errors.length > 0) {
-    throw new GraphQLError(errors.join("، "), { extensions: { code: "BAD_USER_INPUT", errors } });
+    throw new GraphQLError(errors.join(", "), { extensions: { code: "BAD_USER_INPUT", errors } });
   }
 }
 ```
@@ -500,8 +500,8 @@ export const REVIEW_ADDED = gql`
 ### Pre-Commit Check
 
 ```bash
-# 1. اختبارات الخادم
 cd server && npm run test:all
+# 1. اختبارات الخادم
 
 # 2. اختبارات العميل
 cd client && npm test

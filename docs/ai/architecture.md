@@ -1,4 +1,4 @@
-# Architecture Reference — مناسباتي (web-booking-e1)
+﻿# Architecture Reference — مناسباتي (web-booking-e1)
 
 > Read this before touching any code. The architecture is intentional and consistent —
 > every new feature must follow the same patterns.
@@ -7,7 +7,7 @@
 
 ## 1. Layer Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    CLIENT (React/TypeScript)              │
 │  ┌──────────┐  ┌──────────────┐  ┌───────────────────┐  │
@@ -189,7 +189,7 @@ export function validateNewEntityInput(input: NewEntityInput): void {
   if (!input.name?.trim()) errors.push("الاسم مطلوب");
   else if (input.name.trim().length < 3) errors.push("الاسم يجب أن يكون 3 أحرف على الأقل");
   if (errors.length > 0) {
-    throw new GraphQLError(errors.join("، "), {
+    throw new GraphQLError(errors.join(", "), {
       extensions: { code: "BAD_USER_INPUT", errors },
     });
   }
@@ -356,7 +356,7 @@ VITE_BASE_PATH=/
 
 ### 3.2 Auth State Flow
 
-```
+```text
 localStorage (token, userId, username)
         ↓ read on mount
 AuthProvider (useState)
@@ -478,7 +478,7 @@ expect(result.current.token).toBe("token");
 
 ## 6. Data Flow for a Complete Request
 
-```
+```text
 1. Client: Apollo Client executes mutation/query
 2. Client → Server: HTTP POST /graphql (with Authorization: Bearer TOKEN)
 3. Server: Apollo context extracts token → decodes JWT → finds user → injects into context
@@ -524,7 +524,7 @@ delete p.scripts.dev;
 delete p.scripts['test'];
 delete p.scripts['test:all'];
 delete p.scripts['format'];
-delete p.devDependencies; // TypeScript، Jest، etc. لا تُثبَّت في الإنتاج
+delete p.devDependencies; // TypeScript, Jest, etc. لا تُثبَّت في الإنتاج
 ```
 
 ### فروع النشر

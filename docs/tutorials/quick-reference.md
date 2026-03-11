@@ -6,7 +6,7 @@
 
 ## خريطة المشروع
 
-```
+```text
 web-booking-e1/
 ├── server/              ← Node.js + TypeScript + GraphQL
 │   └── src/
@@ -66,8 +66,8 @@ web-booking-e1/
 
 ### ⚠️ الـ Auth Header المختلف!
 ```typescript
-// في client/src/main.tsx:
 authorization: token ? `JWT ${token}` : ""
+// في client/src/main.tsx:
 //                      ↑ "JWT " لا "Bearer "!
 
 // في server/src/index.ts:
@@ -76,8 +76,8 @@ const authToken = auth.slice(4); // يزيل "jwt " (4 أحرف)
 
 ### طريقة حماية Resolver
 ```typescript
-// دائماً هكذا لأي عملية تحتاج مصادقة:
 someAction: combineResolvers(
+// دائماً هكذا لأي عملية تحتاج مصادقة:
   isAuthenticated,    // [1] التحقق
   async (_p, args, context) => { // [2] التنفيذ
     const repos = getRepositoryManager();
@@ -97,8 +97,8 @@ const booking = await repos.booking.userHasBooked(userId, eventId);
 
 ### البث الفوري (Publish)
 ```typescript
-// في Mutation — عند تغيير البيانات:
 pubsub.publish("EVENT_ADDED", { eventAdded: createdEvent });
+// في Mutation — عند تغيير البيانات:
 
 // في Subscription — للاستماع:
 subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"])

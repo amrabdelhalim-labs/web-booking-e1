@@ -135,7 +135,7 @@ test: {
 ### تفصيل الاختبارات
 
 #### config.test.ts — ثوابت الإعدادات
-```
+```text
 ✓ اسم التطبيق معرّف
 ✓ المسار الأساسي معرّف
 ✓ نطاق التطبيق معرّف
@@ -148,7 +148,7 @@ test: {
 ```
 
 #### types.test.ts — أنواع TypeScript
-```
+```text
 ✓ Creator يحتوي على _id, username, email
 ✓ EventData يتطابق مع استجابة GraphQL
 ✓ EventData يتضمن بيانات المنشئ
@@ -158,7 +158,7 @@ test: {
 ```
 
 #### formatDate.test.ts — أدوات التاريخ
-```
+```text
 ✓ formatDateShort: ISO → YYYY/MM/DD
 ✓ formatDateShort: تاريخ بمسافة
 ✓ formatDateShort: تاريخ بدون وقت
@@ -168,16 +168,16 @@ test: {
 ```
 
 #### useAuth.test.tsx — خطاف المصادقة
-```
-✓ القيم الأولية null
-✓ قراءة token من localStorage
+```text
 ✓ login يخزّن البيانات
+✓ قراءة token من localStorage
+✓ القيم الأولية null
 ✓ logout يمسح البيانات
 ✓ login ثم logout بالتتابع
 ```
 
 #### graphql.test.ts — عمليات GraphQL
-```
+```text
 ✓ EVENT_FIELDS fragment معرّف
 ✓ EVENTS يدعم البحث والتصفح
 ✓ GET_USER_EVENTS يتطلب userId
@@ -215,7 +215,7 @@ function printSummary(): void;
 ## الناتج المتوقع
 
 ### السيرفر (npm run test:all)
-```
+```text
 ═══ Repository Tests — Event Booking ═══
   ✓ ALL 43 TESTS PASSED
 
@@ -227,7 +227,7 @@ function printSummary(): void;
 ```
 
 ### العميل (npm test)
-```
+```text
  ✓ src/tests/types.test.ts (10 tests)
  ✓ src/tests/config.test.ts (9 tests)
  ✓ src/tests/formatDate.test.ts (11 tests)
@@ -243,8 +243,8 @@ function printSummary(): void;
 ## قائمة فحص ما قبل التضمين (Pre-Commit)
 
 ```bash
-# 1. اختبارات الخادم (131 اختبار)
 cd server && npm run test:all
+# 1. اختبارات الخادم (131 اختبار)
 
 # 2. اختبارات العميل (54 اختبار)
 cd client && npm test
@@ -290,7 +290,7 @@ bدلاً من فحص rsync excludes.
 
 ### ناتج ناجح مثال
 
-```
+```text
 ── 1. YAML structure
   ✅ No hard tab characters
   ✅ Deploy commits use [skip ci] to prevent recursive triggers

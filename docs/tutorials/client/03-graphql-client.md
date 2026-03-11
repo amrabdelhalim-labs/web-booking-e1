@@ -12,9 +12,9 @@ Apollo Client = **مكتبة** تتولى:
 - حقن الـ Token في كل طلب تلقائياً
 - التعامل مع WebSocket للـ Subscriptions
 
-```
-مكوّن React
+```text
     ↓ [useQuery / useMutation]
+مكوّن React
 Apollo Client
     ├── HTTP  → queries + mutations
     └── WS    → subscriptions
@@ -26,14 +26,14 @@ Apollo Client
 
 Apollo Client يُنجز العمل عبر "روابط" (Links) متسلسلة:
 
-```
+```text
+[authLink]  // أضف Token للـ headers
+    ↓
 طلب GraphQL
     ↓
-[authLink]   ← أضف Token للـ headers
-    ↓
-[splitLink]  ← هل هو subscription؟
-    ├── نعم → [wsLink]   ← أرسل عبر WebSocket
-    └── لا  → [httpLink] ← أرسل عبر HTTP
+[splitLink]  // هل هو subscription؟
+    ├── نعم → [wsLink]  // أرسل عبر WebSocket
+    └── لا  → [httpLink]  // أرسل عبر HTTP
 ```
 
 ---
@@ -118,7 +118,7 @@ const splitLink = split(
 
 **`split`** = محوّل ذكي:
 
-```
+```text
 Subscription?
     ├── نعم → wsLink (WebSocket)
     └── لا  → authLink → httpLink (HTTP + Token)
@@ -143,8 +143,8 @@ const client = new ApolloClient({
 ## 8. إعدادات الـ URLs في `config.ts`
 
 ```typescript
-// عنوان HTTP
 export const GRAPHQL_HTTP_URL =
+// عنوان HTTP
   import.meta.env.VITE_GRAPHQL_HTTP_URL || "http://localhost:4000/graphql";
 
 // تحويل http:// إلى ws:// (و https:// إلى wss://)
@@ -157,7 +157,7 @@ export const GRAPHQL_WS_URL = normalizeWsUrl(rawWsUrl);
 ```
 
 **مثال التحويل:**
-```
+```text
 "http://localhost:4000/graphql"  → "ws://localhost:4000/graphql"
 "https://api.mysite.com/graphql" → "wss://api.mysite.com/graphql"
 ```
@@ -166,16 +166,16 @@ export const GRAPHQL_WS_URL = normalizeWsUrl(rawWsUrl);
 
 ## 9. خلاصة
 
-```
+```text
 Apollo Client = قلب الاتصال في العميل
 
     ┌─────────────────────────────┐
     │      Apollo Client           │
     │  ┌────────────────────────┐ │
-    │  │    InMemoryCache        │ │ ← تخزين النتائج
+    │  │    InMemoryCache        │ │  // تخزين النتائج
     │  └────────────────────────┘ │
     │  ┌────────────────────────┐ │
-    │  │      splitLink          │ │ ← توجيه الطلبات
+    │  │      splitLink          │ │  // توجيه الطلبات
     │  │  ┌──────────────────┐  │ │
     │  │  │ Subscription?    │  │ │
     │  │  │ نعم → wsLink     │  │ │

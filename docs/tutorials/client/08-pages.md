@@ -1,19 +1,19 @@
-````markdown
+﻿````markdown
 # الدرس الثامن (عميل): صفحات التطبيق 📄
 
-> **هدف الدرس:** فهم بناء الصفحات الرئيسية، استخدام Apollo Client في الصفحات، وأنماط الحالة (State) الشائعة
+> **هدف الدرس:** فهم بناء الصفحات الرئيسية, استخدام Apollo Client في الصفحات, وأنماط الحالة (State) الشائعة
 
 ---
 
 ## 1. خريطة الصفحات
 
-```
+```text
 pages/
-├── Events.tsx      → الصفحة الرئيسية — عرض + بحث + إنشاء مناسبة
-├── Bookings.tsx    → حجوزاتي — عرض + إلغاء
-├── SignUp.tsx       → إنشاء حساب جديد
-├── UserEvents.tsx  → مناسبات مستخدم معين (أنا أو غيري)
-└── NotFound.tsx    → صفحة 404
+├── Events.tsx  // الصفحة الرئيسية — عرض + بحث + إنشاء مناسبة
+├── Bookings.tsx  // حجوزاتي — عرض + إلغاء
+├── SignUp.tsx  // إنشاء حساب جديد
+├── UserEvents.tsx  // مناسبات مستخدم معين (أنا أو غيري)
+└── NotFound.tsx  // صفحة 404
 ```
 
 **ملاحظة:** `Login.tsx` مشروح في [درس 5](./05-login-page.md).
@@ -24,7 +24,7 @@ pages/
 
 ### الميزات الكاملة
 
-```
+```text
 Events.tsx
 ├── بحث مؤجّل (debounced 300ms) → searchTerm → Apollo query variable
 ├── تحميل تدريجي (Load More) → fetchMore (pagination)
@@ -97,11 +97,11 @@ useSubscription(EVENT_ADDED, {
 ```
 
 **التدفق الكامل:**
-```
-مستخدم آخر أنشأ مناسبة
+```text
+Server يُرسل eventAdded عبر WebSocket
       │
       ▼
-Server يُرسل eventAdded عبر WebSocket
+مستخدم آخر أنشأ مناسبة
       │
       ▼
 useSubscription يستقبل الحدث
@@ -110,14 +110,14 @@ useSubscription يستقبل الحدث
 refetchQueries(['Events']) → Apollo يُعيد تحميل القائمة
       │
       ▼
-setAlert("مناسبة جديدة...") → يظهر للمستخدم
+setAlert("مناسبة جديدة...")  // يظهر للمستخدم
 ```
 
 ### إدارة حالة الإنشاء والتفاصيل
 
 ```tsx
-// حالتان للـ modals:
 const [creating, setCreating] = useState(false);           // modal الإنشاء
+// حالتان للـ modals:
 const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null); // modal التفاصيل
 
 // حالة النموذج:
@@ -168,8 +168,8 @@ useSubscription(BOOKING_ADDED, {
 ### تفويض إلغاء الحجز للـ `BookingItem`
 
 ```tsx
-// الصفحة تمرر callback، المكوّن لا يحتاج Apollo مباشرة
 {data.bookings.map((booking: BookingData) => (
+// الصفحة تمرر callback, المكوّن لا يحتاج Apollo مباشرة
   <BookingItem
     key={booking._id}
     {...booking}
@@ -180,7 +180,7 @@ useSubscription(BOOKING_ADDED, {
 ))}
 ```
 
-> **نمط التصميم:** الصفحة تدير المنطق، المكوّن يعرض فقط — فصل المسؤوليات
+> **نمط التصميم:** الصفحة تدير المنطق, المكوّن يعرض فقط — فصل المسؤوليات
 
 ---
 
@@ -190,7 +190,7 @@ useSubscription(BOOKING_ADDED, {
 
 كلتا الصفحتين تتبعان نفس النمط:
 
-```
+```text
 useMutation → onError → setAlert
            → useEffect على data → login() → navigate('/events')
 ```
@@ -235,7 +235,7 @@ const handleSubmit = (e: FormEvent) => {
 };
 ```
 
-> **طبقتا تحقق:** العميل يتحقق أولاً (تجربة مستخدم أفضل)، ثم الخادم يتحقق ثانياً (أمان) — كلاهما ضروري
+> **طبقتا تحقق:** العميل يتحقق أولاً (تجربة مستخدم أفضل), ثم الخادم يتحقق ثانياً (أمان) — كلاهما ضروري
 
 ---
 
@@ -246,8 +246,8 @@ const handleSubmit = (e: FormEvent) => {
 `UserEvents.tsx` تخدم مسارين:
 
 ```tsx
-// في App.tsx:
 <Route path="/my-events" element={<UserEventsPage />} />          // ← مناسباتي
+// في App.tsx:
 <Route path="/events/user/:userId" element={<UserEventsPage />} /> // ← مناسبات مستخدم آخر
 ```
 
@@ -320,7 +320,7 @@ export default function NotFoundPage() {
         404
       </div>
       <h1>الصفحة غير موجودة</h1>
-      <p>عذراً، الصفحة التي تبحث عنها غير موجودة أو قد تم حذفها.</p>
+      <p>عذراً, الصفحة التي تبحث عنها غير موجودة أو قد تم حذفها.</p>
 
       {/* خيارات التنقل */}
       <Link to="/events">الصفحة الرئيسية</Link>
@@ -333,8 +333,8 @@ export default function NotFoundPage() {
 ### ربطها بـ Router
 
 ```tsx
-// في App.tsx:
 <Route path="*" element={<NotFoundPage />} />
+// في App.tsx:
 // ← `path="*"` يمسك أي مسار غير معروف
 ```
 
@@ -392,4 +392,3 @@ const [doMutation] = useMutation(SOME_MUTATION, {
 | `SignUp` | تسجيل + دخول تلقائي | useMutation + useContext + useNavigate |
 | `UserEvents` | عرض + تعديل + حذف (لصاحبها) | useQuery + useMutation × 3 + useParams |
 | `NotFound` | راحة بال 404 | React Router `path="*"` |
-````

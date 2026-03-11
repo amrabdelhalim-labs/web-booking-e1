@@ -26,8 +26,8 @@ const MY_QUERY = gql`
 ## 2. Fragments — حقول مشتركة
 
 ```typescript
-// من graphql/fragments.ts
 export const EVENT_FIELDS = gql`
+// من graphql/fragments.ts
   fragment EventFields on Event {
     _id
     title
@@ -46,11 +46,11 @@ export const EVENT_FIELDS = gql`
 بدلاً من كتابة نفس الحقول في كل استعلام، نكتبها مرة واحدة وندرجها:
 
 ```graphql
-# داخل الاستعلام:
 ${EVENT_FIELDS}
+# داخل الاستعلام:
 query Events {
   events {
-    ...EventFields    ← الاستيراد (spread)
+    ...EventFields  // الاستيراد (spread)
   }
 }
 ```
@@ -87,7 +87,7 @@ export const BOOKINGS = gql`
       _id
       createdAt
       event {
-        ...EventFields   ← بيانات المناسبة كاملة داخل الحجز
+        ...EventFields  // بيانات المناسبة كاملة داخل الحجز
       }
       user {
         username
@@ -170,7 +170,7 @@ export const UPDATE_EVENT = gql`
   ${EVENT_FIELDS}
   mutation UpdateEvent(
     $eventId: ID!
-    $title: String        ← بدون ! = اختياري
+    $title: String  // بدون ! = اختياري
     $description: String
     $price: Float
     $date: String
@@ -188,7 +188,7 @@ export const DELETE_EVENT = gql`
   ${EVENT_FIELDS}
   mutation DeleteEvent($eventId: ID!) {
     deleteEvent(eventId: $eventId) {
-      ...EventFields    ← قائمة المناسبات بعد الحذف
+      ...EventFields  // قائمة المناسبات بعد الحذف
     }
   }
 `;
@@ -216,7 +216,7 @@ export const CANCEL_BOOKING = gql`
   ${EVENT_FIELDS}
   mutation CancelBooking($bookingId: ID!) {
     cancelBooking(bookingId: $bookingId) {
-      ...EventFields   ← المناسبة المُلغى حجزها
+      ...EventFields  // المناسبة المُلغى حجزها
     }
   }
 `;
@@ -228,20 +228,20 @@ export const CANCEL_BOOKING = gql`
 
 **بدون متغيرات (مكشوف وخطير):**
 ```graphql
-# ❌ القيم مضمّنة في النص
 mutation { login(email: "x@x.com", password: "123456") { token } }
+# ❌ القيم مضمّنة في النص
 ```
 
 **مع متغيرات (الطريقة الصحيحة):**
 ```graphql
-# ✅ القيم مفصولة عن الـ query
 mutation Login($email: String!, $password: String!) {
+# ✅ القيم مفصولة عن الـ query
   login(email: $email, password: $password) { token }
 }
 ```
 ```typescript
-// القيم تُرسَل بشكل منفصل
 loginMutation({ variables: { email, password } });
+// القيم تُرسَل بشكل منفصل
 ```
 
 **الفوائد:**
@@ -253,9 +253,9 @@ loginMutation({ variables: { email, password } });
 
 ## 8. خلاصة
 
-```
+```text
 graphql/fragments.ts
-    └── EVENT_FIELDS     ← حقول Event المشتركة
+    └── EVENT_FIELDS  // حقول Event المشتركة
 
 graphql/queries.ts
     ├── Queries:

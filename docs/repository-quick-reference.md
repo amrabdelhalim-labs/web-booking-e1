@@ -14,8 +14,8 @@ const repos = getRepositoryManager();
 ## عمليات المستخدم (User)
 
 ```typescript
-// البحث
 await repos.user.findById("userId")
+// البحث
 await repos.user.findByEmail("test@example.com")
 await repos.user.findAll()
 
@@ -44,8 +44,8 @@ await repos.user.count()
 ## عمليات المناسبات (Event)
 
 ```typescript
-// البحث
 await repos.event.findAll()
+// البحث
 await repos.event.findById("eventId")
 await repos.event.findAllWithCreator(skip, limit)        // مع بيانات المنشئ + pagination
 await repos.event.findByCreator("userId")                 // مناسبات مستخدم محدد
@@ -79,8 +79,8 @@ await repos.event.count()
 ## عمليات الحجوزات (Booking)
 
 ```typescript
-// البحث
 await repos.booking.findAll()
+// البحث
 await repos.booking.findById("bookingId")
 await repos.booking.findByUser("userId")                              // حجوزات المستخدم
 await repos.booking.findByIdWithDetails("bookingId")                  // مع تفاصيل المناسبة
@@ -118,8 +118,8 @@ const health = await repos.healthCheck();
 
 ### نمط: التحقق ثم الإنشاء
 ```typescript
-// 1. تحقق من عدم التكرار
 if (await repos.user.emailExists(email)) {
+// 1. تحقق من عدم التكرار
   throw new GraphQLError("البريد مسجل مسبقاً");
 }
 
@@ -129,8 +129,8 @@ const user = await repos.user.create({ username, email, password });
 
 ### نمط: الحذف المتسلسل (Cascade Delete)
 ```typescript
-// حذف مستخدم مع جميع بياناته
 const eventIds = await repos.event.getEventIdsByCreator(userId);
+// حذف مستخدم مع جميع بياناته
 
 for (const eventId of eventIds) {
   await repos.booking.deleteByEvent(eventId);  // حذف حجوزات المناسبة

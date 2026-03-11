@@ -8,12 +8,12 @@
 
 مكوّن يعمل كـ **بوّاب** أمام الصفحات المحمية:
 
-```
-المستخدم يذهب لـ /bookings
-    ↓
+```text
 <PrivateRoute>
-    ├── لديه token؟ → أكمل وأظهر <BookingsPage />
-    └── لا token؟  → وجّهه لـ /login
+    ↓
+المستخدم يذهب لـ /bookings
+    ├── لديه token؟  // أكمل وأظهر <BookingsPage />
+    └── لا token؟  // وجّهه لـ /login
 ```
 
 ---
@@ -72,8 +72,8 @@ TypeScript يقول: "هذا المكوّن يقبل `children` فقط (أي م�
 <Route
   path="/bookings"
   element={
-    <PrivateRoute>       {/* ← الحارس */}
-      <BookingsPage />   {/* ← الصفحة المحمية */}
+    <PrivateRoute>       {/*  // الحارس */}
+      <BookingsPage />   {/*  // الصفحة المحمية */}
     </PrivateRoute>
   }
 />
@@ -95,16 +95,16 @@ TypeScript يقول: "هذا المكوّن يقبل `children` فقط (أي م�
 هذا المشروع يستخدم **حمايتين**:
 
 ### الحماية الأولى: العميل (PrivateRoute)
-```
-المستخدم → /bookings → PrivateRoute → لا token؟ → /login
+```text
+المستخدم → /bookings → PrivateRoute  // لا token؟ → /login
 ```
 سريعة، لكن يمكن تجاوزها (المستخدم قد يضع token مزيف)
 
 ### الحماية الثانية: الخادم (isAuthenticated)
-```
+```text
 طلب bookings → Resolver → isAuthenticated → context.user ؟
-    ← لا → GraphQLError: UNAUTHENTICATED
-    ← نعم → بيانات المستخدم فقط
+  // لا → GraphQLError: UNAUTHENTICATED
+  // نعم → بيانات المستخدم فقط
 ```
 لا يمكن تجاوزها — الخادم يتحقق من صحة الـ Token فعلياً
 
@@ -118,7 +118,7 @@ TypeScript يقول: "هذا المكوّن يقبل `children` فقط (أي م�
 
 ### سيناريو: مستخدم غير مسجّل يكتب `/bookings` مباشرة في المتصفح
 
-```
+```text
 [1] URL: /bookings
     ↓
 [2] React Router يطابقه مع:
@@ -136,7 +136,7 @@ TypeScript يقول: "هذا المكوّن يقبل `children` فقط (أي م�
 
 ### سيناريو: مستخدم مسجّل يذهب لـ `/bookings`
 
-```
+```text
 [1] URL: /bookings
     ↓
 [2] PrivateRoute:
@@ -150,14 +150,14 @@ TypeScript يقول: "هذا المكوّن يقبل `children` فقط (أي م�
 [5] BookingsPage تُرسل طلب BOOKINGS query
     مع Token في الـ headers (Apollo authLink تفعل هذا تلقائياً)
     ↓
-[6] الخادم: isAuthenticated يتحقق → context.user موجود → يُرجع الحجوزات ✓
+[6] الخادم: isAuthenticated يتحقق → context.user موجود  // يُرجع الحجوزات ✓
 ```
 
 ---
 
 ## 7. خلاصة
 
-```
+```text
 PrivateRoute = حارس بسيط وفعّال:
     ✓ سطر واحد للتحقق: const { token } = useAuth()
     ✓ سطر واحد للرفض: return <Navigate to="/login" />

@@ -1,4 +1,4 @@
-# دليل المساهمة — مناسباتي (web-booking-e1)
+﻿# دليل المساهمة — مناسباتي (web-booking-e1)
 
 > **اقرأ هذا الملف قبل إجراء أي تغيير.**
 > هذه القواعد غير قابلة للتفاوض وتُطبَّق عند مراجعة الكود. أي انحراف يتطلب مبرراً صريحاً.
@@ -28,13 +28,13 @@
 
 ## 2. أسماء الفروع
 
-```
-main             ← كود جاهز للإنتاج فقط؛ لا تُودِع مباشرة
-feat/<topic>     ← ميزة جديدة (مثال: feat/event-ratings)
-fix/<topic>      ← إصلاح خطأ (مثال: fix/booking-date-validation)
-docs/<topic>     ← توثيق فقط (مثال: docs/update-ai-guide)
-chore/<topic>    ← أدوات، اعتماديات، إعداد (مثال: chore/update-prettier)
-refactor/<topic> ← إعادة هيكلة بدون تغيير في السلوك
+```text
+main  // كود جاهز للإنتاج فقط؛ لا تُودِع مباشرة
+feat/<topic>  // ميزة جديدة (مثال: feat/event-ratings)
+fix/<topic>  // إصلاح خطأ (مثال: fix/booking-date-validation)
+docs/<topic>  // توثيق فقط (مثال: docs/update-ai-guide)
+chore/<topic>  // أدوات, اعتماديات, إعداد (مثال: chore/update-prettier)
+refactor/<topic>  // إعادة هيكلة بدون تغيير في السلوك
 ```
 
 ---
@@ -43,7 +43,7 @@ refactor/<topic> ← إعادة هيكلة بدون تغيير في السلوك
 
 **الصيغة:** [Conventional Commits](https://www.conventionalcommits.org/) — **بالإنجليزية فقط**.
 
-```
+```text
 <type>(<scope>): <short description>
 
 <body — list of changes, one per line starting with ->
@@ -85,8 +85,8 @@ refactor/<topic> ← إعادة هيكلة بدون تغيير في السلوك
 ### أمثلة
 
 ```bash
-# ✅ صحيح
 git commit -m "feat(server): add event rating repository + resolver
+# ✅ صحيح
 
 - Add Rating Mongoose model with ref to Event and User
 - Add RatingRepository extending BaseRepository
@@ -140,8 +140,8 @@ git commit -m "feat(server): added rating resolver"
 ### صيغة التاج — annotated tags حصراً
 
 ```bash
-# تاج موصوف (استخدم دائماً -a — لا lightweight tags)
 git tag -a v1.4.0 -m "v1.4.0 - Add Event Rating System
+# تاج موصوف (استخدم دائماً -a — لا lightweight tags)
 
 - Rating Mongoose model with refs to Event and User
 - RatingRepository extending BaseRepository
@@ -173,8 +173,8 @@ git push origin v1.4.0
 **جميع الكود منسّق بـ Prettier** قبل كل إيداع. لا قرارات مسافات يدوية.
 
 ```bash
-# تنسيق جميع الملفات (من جذر المشروع — يعمل على جميع الأنظمة)
 node format.mjs
+# تنسيق جميع الملفات (من جذر المشروع — يعمل على جميع الأنظمة)
 
 # التحقق بدون كتابة (CI — يخرج 1 إذا كان غير منسّق)
 node format.mjs --check
@@ -212,8 +212,8 @@ cd client && npm run format
 شغّل هذا قبل كل `git commit`:
 
 ```bash
-# 1. فحص TypeScript — الخادم
 cd server && npx tsc --noEmit
+# 1. فحص TypeScript — الخادم
 
 # 2. فحص TypeScript — العميل
 cd client && npx tsc --noEmit

@@ -1,29 +1,29 @@
-````markdown
+﻿````markdown
 # الدرس التاسع (عميل): المكوّنات والأنواع والأدوات المساعدة 🧩
 
-> **هدف الدرس:** فهم المكوّنات القابلة للإعادة، الأنواع المشتركة، ودوال التنسيق
+> **هدف الدرس:** فهم المكوّنات القابلة للإعادة, الأنواع المشتركة, ودوال التنسيق
 
 ---
 
 ## 1. خريطة الملفات
 
-```
+```text
 client/src/
 ├── components/
-│   ├── Alert.tsx          → رسائل التنبيه القابلة للصرف
-│   ├── BookingItem.tsx    → بطاقة حجز واحد
-│   ├── EventItem.tsx      → بطاقة مناسبة واحدة
-│   ├── Navbar.tsx         → شريط التنقل المتجاوب
-│   ├── PrivateRoute.tsx   → حارس المسارات المحمية (درس 6)
+│   ├── Alert.tsx  // رسائل التنبيه القابلة للصرف
+│   ├── BookingItem.tsx  // بطاقة حجز واحد
+│   ├── EventItem.tsx  // بطاقة مناسبة واحدة
+│   ├── Navbar.tsx  // شريط التنقل المتجاوب
+│   ├── PrivateRoute.tsx  // حارس المسارات المحمية (درس 6)
 │   ├── ProfileEditor.tsx  → modal تعديل البيانات الشخصية
 │   ├── SimpleModal.tsx    → modal عام قابل لإعادة الاستخدام
-│   ├── Spinner.tsx        → مؤشر التحميل
-│   └── UserDropdown.tsx   → قائمة المستخدم المنسدلة
+│   ├── Spinner.tsx  // مؤشر التحميل
+│   └── UserDropdown.tsx  // قائمة المستخدم المنسدلة
 ├── hooks/
-│   └── useAuth.ts         → خطاف المصادقة
+│   └── useAuth.ts  // خطاف المصادقة
 ├── utils/
-│   └── formatDate.ts      → دوال تنسيق التاريخ
-└── types.ts               → الأنواع المشتركة للعميل
+│   └── formatDate.ts  // دوال تنسيق التاريخ
+└── types.ts  // الأنواع المشتركة للعميل
 ```
 
 ---
@@ -33,21 +33,21 @@ client/src/
 ### لماذا ملف أنواع مستقل؟
 
 ```typescript
-// بدون types.ts — نكرر التعريف في كل ملف:
-// في Events.tsx:
 interface EventData { _id: string; title: string; ... }
+// في Events.tsx:
+// بدون types.ts — نكرر التعريف في كل ملف:
 // في EventItem.tsx:
 interface EventData { _id: string; title: string; ... } // تكرار!
 
-// مع types.ts — تعريف واحد، استيراد في كل مكان:
+// مع types.ts — تعريف واحد, استيراد في كل مكان:
 import type { EventData } from '../types';
 ```
 
 ### التعريفات المتاحة
 
 ```typescript
-// معلومات منشئ المناسبة
 export interface Creator {
+// معلومات منشئ المناسبة
   _id: string;
   username: string;
   email: string;
@@ -97,8 +97,8 @@ export function useAuth(): AuthContextType {
 ### لماذا خطاف مخصص بدلاً من `useContext` مباشرة؟
 
 ```typescript
-// بدون useAuth — في كل مكوّن:
 import { useContext } from 'react';
+// بدون useAuth — في كل مكوّن:
 import AuthContext from '../context/auth-context';
 const context = useContext(AuthContext);
 // ↑ 3 سطور + احتمال نسيان التحقق من null
@@ -112,8 +112,8 @@ const { token, userId, username, login, logout } = useAuth();
 ### الاستخدام المنتشر
 
 ```tsx
-// في Navbar، UserDropdown، EventItem، ProfileEditor، الصفحات...
 const { token } = useAuth();                        // للتحقق من المصادقة
+// في Navbar, UserDropdown, EventItem, ProfileEditor, الصفحات...
 const { token, userId } = useAuth();               // لمعرفة الهوية
 const { username, login, logout } = useAuth();     // للعمليات
 ```
@@ -130,8 +130,8 @@ const { username, login, logout } = useAuth();     // للعمليات
 ### الدوال الأربع
 
 ```typescript
-// 1. عرض مختصر (YYYY/MM/DD) — في EventItem, BookingItem
 formatDateShort("2024-06-15T10:00:00.000Z")
+// 1. عرض مختصر (YYYY/MM/DD) — في EventItem, BookingItem
 → "2024/06/15"
 
 // 2. عرض بالعربية — في BookingItem لتاريخ الحجز
@@ -150,8 +150,8 @@ formatDateFull("2024-06-15T10:00:00.000Z")
 ### الخوارزمية الداخلية
 
 ```typescript
-// كلها تبدأ بتقسيم '.' لإزالة الملي ثانية:
 dateStr.split('.')[0]
+// كلها تبدأ بتقسيم '.' لإزالة الملي ثانية:
 // "2024-06-15T10:00:00.000Z" → "2024-06-15T10:00:00"
 
 // ثم تعالج بشكل مختلف:
@@ -276,10 +276,10 @@ const { token } = useAuth();
 ### CSS-only Hover
 
 ```tsx
-// يتوسع عند hover بواسطة CSS فقط — بدون state للفتح/الإغلاق
 <div className="user-dropdown">
+// يتوسع عند hover بواسطة CSS فقط — بدون state للفتح/الإغلاق
   <span className="user-dropdown-toggle">{username}</span>
-  <ul className="user-dropdown-menu">     {/* ← يظهر عند hover بـ CSS */}
+  <ul className="user-dropdown-menu">     {/*  // يظهر عند hover بـ CSS */}
     <li>
       <button onClick={() => setShowProfile(true)}>تعديل البيانات</button>
     </li>
@@ -316,8 +316,8 @@ interface SimpleModalProps {
 ### أمثلة الاستخدام في المشروع
 
 ```tsx
-// 1. إنشاء مناسبة:
 <SimpleModal
+// 1. إنشاء مناسبة:
   title="إضافة مناسبة"
   onConfirm={handleCreate}
   confirmText={createLoading ? 'جاري الإضافة...' : 'إضافة'}
@@ -351,7 +351,7 @@ interface SimpleModalProps {
 
 ### ثلاث عمليات في مكوّن واحد
 
-```
+```text
 ProfileEditor
 ├── تعديل اسم المستخدم + كلمة المرور → useMutation(UPDATE_USER)
 ├── حذف الحساب → useMutation(DELETE_USER) + تأكيد
@@ -390,7 +390,7 @@ const [confirmDelete, setConfirmDelete] = useState(false);
 ) : (
   <>
     <span>هل أنت متأكد؟ لا يمكن التراجع</span>
-    <Button onClick={() => deleteUser()}>نعم، احذف</Button>
+    <Button onClick={() => deleteUser()}>نعم, احذف</Button>
     <Button onClick={() => setConfirmDelete(false)}>إلغاء</Button>
   </>
 )}
@@ -433,14 +433,14 @@ export default function Spinner() {
 ```tsx
 // SimpleModal + محتوى النموذج = modal إنشاء مناسبة
 // SimpleModal + محتوى التفاصيل = modal عرض التفاصيل
-// نفس المكوّن، محتوى مختلف!
+// نفس المكوّن, محتوى مختلف!
 ```
 
 ### 3. رفع الحالة (Lifting State Up)
 
 ```tsx
-// ✅ الصح: الحالة في الصفحة، المكوّن يستقبل props
 <BookingItem onCancelBooking={() => cancelBooking({...})} />
+// ✅ الصح: الحالة في الصفحة, المكوّن يستقبل props
 
 // ❌ الخطأ: كل مكوّن يُجري mutation الخاص به
 // (يُعقّد الكود ويُصعب الاختبار)
@@ -463,4 +463,3 @@ export default function Spinner() {
 | `ProfileEditor.tsx` | تعديل/حذف الحساب | UserDropdown |
 | `Navbar.tsx` | التنقل | App (مرة واحدة) |
 | `UserDropdown.tsx` | قائمة المستخدم | Navbar |
-````

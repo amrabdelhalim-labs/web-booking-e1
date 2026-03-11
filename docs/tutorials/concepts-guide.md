@@ -23,14 +23,14 @@
 | **Fragment** | حقول مشتركة قابلة لإعادة الاستخدام |
 
 ### الفرق عن REST:
-```
+```text
 REST:
-  GET  /events          ← مسار خاص لكل عملية
+  GET  /events  // مسار خاص لكل عملية
   POST /events
   PUT  /events/1
   
 GraphQL:
-  POST /graphql         ← مسار واحد لكل شيء
+  POST /graphql  // مسار واحد لكل شيء
   body: { query: "..." }
 ```
 
@@ -162,21 +162,21 @@ const user: User = { id: "1", name: "أحمد", email: "x@x.com" };
 بروتوكول اتصال **ثنائي الاتجاه** و **مستمر**.
 
 ### الفرق عن HTTP:
-```
+```text
 HTTP:
-  العميل يسأل → الخادم يُجيب → الاتصال ينتهي
+  العميل يسأل  // الخادم يُجيب  // الاتصال ينتهي
   (كل طلب = اتصال جديد)
 
 WebSocket:
-  العميل يتصل → الاتصال يبقى مفتوحاً
-  الخادم يُرسل بيانات في أي وقت ← بدون طلب!
+  العميل يتصل  // الاتصال يبقى مفتوحاً
+  الخادم يُرسل بيانات في أي وقت  // بدون طلب!
 ```
 
 ### الاستخدام هنا:
-```
+```text
 ws://localhost:4000/graphql  ← WebSocket endpoint
 العميل يشترك: subscription { eventAdded { title } }
-عند إنشاء مناسبة → الخادم يُرسل فوراً لكل المشتركين
+عند إنشاء مناسبة  // الخادم يُرسل فوراً لكل المشتركين
 ```
 
 ---
@@ -187,7 +187,7 @@ ws://localhost:4000/graphql  ← WebSocket endpoint
 وثيقة رقمية مشفرة تُثبت هوية المستخدم.
 
 ### البنية:
-```
+```text
 eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY0YWIxMiJ9.SIGNATURE
 |_____ Header _____|.|___ Payload _____|.|___ Sig ___|
 ```
@@ -198,11 +198,11 @@ eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY0YWIxMiJ9.SIGNATURE
 ```
 
 ### كيف يعمل:
-```
-[1] المستخدم يسجّل دخوله → الخادم يُنشئ JWT و يُرسله
+```text
+[1] المستخدم يسجّل دخوله  // الخادم يُنشئ JWT و يُرسله
 [2] العميل يحفظ JWT في localStorage
 [3] في كل طلب: العميل يُرسل JWT في الـ header
-[4] الخادم يُفكّك JWT → يعرف هوية المستخدم
+[4] الخادم يُفكّك JWT  // يعرف هوية المستخدم
 ```
 
 ---
@@ -213,19 +213,19 @@ eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY0YWIxMiJ9.SIGNATURE
 نمط تصميم (Design Pattern) يفصل منطق الوصول للبيانات عن منطق العمل.
 
 ### الطبقات:
-```
+```text
 Resolver (منطق العمل)
-    ↓ يستخدم
+  // يستخدم
 Repository (الوصول للبيانات)
-    ↓ يستخدم
+  // يستخدم
 Database (MongoDB)
 ```
 
 ### الفائدة:
-```
+```text
 تغيير قاعدة البيانات:
-  بدون Repository → تغيير جميع الـ Resolvers
-  مع Repository   → تغيير الـ Repository فقط ✓
+  بدون Repository  // تغيير جميع الـ Resolvers
+  مع Repository  // تغيير الـ Repository فقط ✓
 ```
 
 ---
@@ -237,8 +237,8 @@ Database (MongoDB)
 
 ### كيف يعمل:
 ```typescript
-// الخادم ينشر حدثاً:
 pubsub.publish("EVENT_ADDED", { eventAdded: newEvent });
+// الخادم ينشر حدثاً:
 
 // العميل مشترك:
 subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"])
@@ -246,12 +246,12 @@ subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"])
 ```
 
 ### في GraphQL Subscriptions:
-```
-مستخدم ينشئ مناسبة
+```text
     ↓ pubsub.publish("EVENT_ADDED")
+مستخدم ينشئ مناسبة
     ↓
 كل العملاء المشتركين بـ subscription { eventAdded }
-    ↓ يستقبلون البيانات فوراً عبر WebSocket
+  // يستقبلون البيانات فوراً عبر WebSocket
 ```
 
 ---
@@ -263,8 +263,8 @@ subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"])
 
 ### الأجزاء:
 ```typescript
-// [1] إنشاء:
 const MyContext = createContext(defaultValue);
+// [1] إنشاء:
 
 // [2] التوفير (Provider):
 <MyContext.Provider value={sharedData}>
@@ -286,8 +286,8 @@ const data = useMyHook();
 
 ### المكونات الرئيسية:
 ```tsx
-<BrowserRouter>   ← يُمكّن التوجيه
-  <Routes>        ← يحتوي Route's
+<BrowserRouter>  // يُمكّن التوجيه
+  <Routes>  // يحتوي Route's
     <Route path="/events" element={<EventsPage />} />
     <Route path="*" element={<NotFoundPage />} />
   </Routes>
@@ -310,8 +310,8 @@ const location = useLocation();          // عنوان الصفحة الحالي
 
 ### bcrypt يحل المشكلة:
 ```typescript
-// التشفير (عند التسجيل):
 const hash = await bcrypt.hash("123456", 12);
+// التشفير (عند التسجيل):
 // → "$2b$12$eImiTXuWVxfM37uY4JANjQ..."
 
 // المقارنة (عند الدخول):

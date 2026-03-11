@@ -219,8 +219,8 @@ const token = req.headers.authorization?.split(" ")[1];
 ### مثال 1: Resolver بسيط
 
 ```typescript
-// في resolvers/event.ts
 Query: {
+// في resolvers/event.ts
   getEvents: async (_, __, context) => {
     // context.userId = معرف المستخدم
     // يمكنني استخدامه هنا
@@ -252,10 +252,10 @@ Mutation: {
 
 ## 🔄 تدفق طلب GraphQL
 
-```
-1. العميل يرسل Query
-   ↓
+```text
 2. Middleware CORS و JSON
+   ↓
+1. العميل يرسل Query
    ↓
 3. استخراج التوكن من Header
    ↓
@@ -321,7 +321,7 @@ process.on("SIGINT", async () => {
 ### س2: لماذا WebSockets؟
 
 **بدون WebSocket** (HTTP العادي):
-```
+```text
 العميل: هل هناك إشعارات جديدة؟ (كل ثانية)
 الخادم: لا
 الخادم: لا
@@ -329,7 +329,7 @@ process.on("SIGINT", async () => {
 ```
 
 **مع WebSocket**:
-```
+```text
 الخادم: لديك إشعار جديد! 🔔 (فوري)
 ```
 

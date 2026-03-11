@@ -37,8 +37,8 @@ bookings: combineResolvers(
 ## 3. `transformBooking` — تحويل التواريخ
 
 ```typescript
-// من resolvers/transform.ts
 export const transformBooking = (booking: IBooking) => ({
+// من resolvers/transform.ts
   ...booking._doc,
   createdAt: booking.createdAt.toDateString(),
   updatedAt: booking.updatedAt.toDateString(),
@@ -46,12 +46,12 @@ export const transformBooking = (booking: IBooking) => ({
 ```
 
 MongoDB يُرجع:
-```
+```text
 createdAt: 2024-01-15T18:30:00.000Z  (ISO format)
 ```
 
 بعد التحويل:
-```
+```text
 createdAt: "Mon Jan 15 2024"  (نص مقروء)
 ```
 
@@ -99,20 +99,20 @@ bookEvent: combineResolvers(
 
 ### الخطوات بالتفصيل:
 
-```
-المستخدم يضغط "احجز":
+```text
+[4] pubsub.publish  // إبلاغ المشتركين فوراً
     ↓
 [1] هل سبق وحجزت؟  ← repos.booking.userHasBooked(userId, eventId)
-    ← نعم → خطأ "حجزت مسبقاً"
-    ← لا  → تابع
+  // نعم → خطأ "حجزت مسبقاً"
+  // لا  → تابع
     ↓
 [2] هل المناسبة موجودة؟ ← repos.event.findById(eventId)
-    ← لا  → خطأ "غير موجودة"
-    ← نعم → تابع
+  // لا  → خطأ "غير موجودة"
+  // نعم → تابع
     ↓
 [3] إنشاء الحجز + احضار بيانات الحدث والمستخدم
     ↓
-[4] pubsub.publish → إبلاغ المشتركين فوراً
+المستخدم يضغط "احجز":
     ↓
 [5] إرجاع الحجز للعميل
 ```
@@ -187,10 +187,10 @@ Subscription: {
 
 ## 8. خلاصة تدفق الحجز
 
-```
-العميل → mutation bookEvent(eventId)
-    ↓
+```text
 isAuthenticated تتحقق من context.user
+    ↓
+العميل → mutation bookEvent(eventId)
     ↓
 userHasBooked: هل حجزت من قبل؟
     ↓
