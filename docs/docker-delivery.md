@@ -80,6 +80,7 @@ docker compose down --remove-orphans -v
 - `deps` stage: `npm ci --ignore-scripts`
 - `build` stage: `npm run build` لإنتاج `dist`
 - `runtime` stage: `npm ci --omit=dev --ignore-scripts` + نسخ `dist` فقط
+- **HEALTHCHECK داخل الصورة:** يستدعي `fetch` على `http://127.0.0.1:4000/health` (Node مدمج) بفواصل زمنية متوافقة مع تعريف `healthcheck` في `docker-compose.yml`. الفائدة: تشغيل `docker run` أو منصات أخرى بدون Compose ما زال يعرض حالة صحّة الحاوية بشكل موحّد، وليس الاعتماد فقط على إعدادات Compose.
 
 ### client image
 

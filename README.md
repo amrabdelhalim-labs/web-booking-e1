@@ -376,6 +376,7 @@ docker compose up --build
 - الواجهة: `http://localhost:8080`
 - الخادم: `http://localhost:4000/graphql`
 - فحص صحة الخادم: `http://localhost:4000/health`
+- صورة **`server`** تتضمن `HEALTHCHECK` في `Dockerfile` (استدعاء `/health` عبر Node) بحيث تبقى مراقبة الصحة صالحة عند `docker run` دون الاعتماد فقط على تعريف Compose.
 
 ### 3) الإيقاف والتنظيف
 
