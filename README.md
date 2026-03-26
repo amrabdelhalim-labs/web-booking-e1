@@ -355,6 +355,59 @@ npm test
 
 ---
 
+## التشغيل عبر Docker
+
+يوفر المشروع إعداد Docker كامل لتشغيل `client + server + mongo` مع فحوصات صحة ومنافذ قابلة للتغيير.
+
+### 1) إعداد متغيرات Docker
+
+انسخ المثال ثم عدل القيم حسب بيئتك:
+
+```bash
+cp .env.docker.example .env
+```
+
+### 2) التشغيل المحلي
+
+```bash
+docker compose up --build
+```
+
+- الواجهة: `http://localhost:8080`
+- الخادم: `http://localhost:4000/graphql`
+- فحص صحة الخادم: `http://localhost:4000/health`
+
+### 3) الإيقاف والتنظيف
+
+```bash
+docker compose down --remove-orphans
+```
+
+### 4) التحقق والتسليم
+
+```bash
+node scripts/infra/validate-docker.mjs
+node scripts/docker/deliver.mjs build
+```
+
+- وضع `build`: بناء + فحص أمني (Trivy) بدون نشر.
+- وضع `publish`: يتطلب ضبط `DOCKER_IMAGE_REGISTRY` ثم يدفع الصور إلى السجل.
+
+### 5) تفعيل النشر من GitHub Actions
+
+لتمكين وضع `publish` في workflow `docker-delivery.yml` أضف Secrets التالية:
+
+- `DOCKER_REGISTRY_HOST` (مثال: `ghcr.io` أو `index.docker.io`)
+- `DOCKER_USERNAME`
+- `DOCKER_PASSWORD`
+- `DOCKER_IMAGE_REGISTRY` (بادئة الاسم، مثال: `ghcr.io/your-org/`)
+
+سياسة الأمان المفعلة:
+- `publish` يعمل فقط عبر `workflow_dispatch` وعلى فرع `main`.
+- إذا لم تُضبط `DOCKER_IMAGE_REGISTRY` في Secrets، سيتم استخدام `ghcr.io/<owner>/` كافتراضي.
+
+---
+
 ## واجهة GraphQL
 
 **نقطة الوصول الواحدة:** `/graphql`
@@ -499,6 +552,7 @@ npm run test:all          # جميع الاختبارات
 | الملف | الوصف |
 |-------|-------|
 | [docs/heroku-deployment.md](docs/heroku-deployment.md) | دليل شامل لنشر الخادم على Heroku |
+| [docs/docker-delivery.md](docs/docker-delivery.md) | دليل Docker الرسمي (تشغيل، تسليم، CI) |
 | [docs/database-abstraction.md](docs/database-abstraction.md) | شرح Repository Pattern |
 | [docs/repository-quick-reference.md](docs/repository-quick-reference.md) | دليل سريع مرجعي |
 | [docs/graphql-api.md](docs/graphql-api.md) | توثيق واجهة GraphQL |
@@ -506,7 +560,7 @@ npm run test:all          # جميع الاختبارات
 | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | حلول المشاكل الشائعة |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | دليل المساهمة |
 | [docs/ai/](docs/ai/) | توثيقات للذكاء الاصطناعي (Architecture, Feature Guide) |
-| [docs/tutorials/](docs/tutorials/) | شروحات تعليمية مفصلة |
+| [docs/tutorials/](docs/tutorials/) | شروحات تعليمية مفصلة (بما فيها Docker Deep Dive) |
 
 ---
 

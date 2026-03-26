@@ -23,6 +23,7 @@
 | Testing — server | Custom helpers (`ts-node --transpile-only`) |
 | Testing — client | Vitest + @testing-library/react |
 | Deployment | GitHub Pages (client) + cloud server |
+| Containerization | Docker + Docker Compose + Trivy + GitHub Actions |
 
 ---
 
@@ -32,6 +33,7 @@
 |------|-------------|
 | [`architecture.md`](./architecture.md) | Before making any change — understand the full layer structure |
 | [`feature-guide.md`](./feature-guide.md) | Adding a new entity/feature end-to-end |
+| [`../docker-delivery.md`](../docker-delivery.md) | Docker architecture, delivery modes, and CI policy |
 
 ---
 
@@ -44,6 +46,7 @@ Key ones for AI context:
 - [`../tutorials/server/10-validators-types.md`](../tutorials/server/10-validators-types.md) — validators, TypeScript types, transform, lodash.merge
 - [`../tutorials/client/08-pages.md`](../tutorials/client/08-pages.md) — all page components and Apollo patterns
 - [`../tutorials/client/09-components.md`](../tutorials/client/09-components.md) — all UI components, hooks, utils, types.ts
+- [`../tutorials/11-docker-deep-dive.md`](../tutorials/11-docker-deep-dive.md) — Docker workflow from local to CI
 
 ---
 

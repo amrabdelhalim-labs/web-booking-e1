@@ -173,6 +173,7 @@ subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"])
 ### المراجع:
 - [دليل المفاهيم](./concepts-guide.md)
 - [المرجع السريع](./quick-reference.md) ← أنت هنا
+- [11 - Docker Deep Dive](./11-docker-deep-dive.md)
 
 ---
 
@@ -183,6 +184,8 @@ subscribe: () => pubsub.asyncIterator(["EVENT_ADDED"])
 | 🎨 تنسيق الكود | `node format.mjs` | تنسيق جميع الملفات |
 | 🎨 فحص التنسيق | `node format.mjs --check` | يخرج برمز 1 إذا وجد مشاكل |
 | 🔍 فحص الورك فلو | `node validate-workflow.mjs` | يكتشف أخطاء CI محلياً قبل الرفع |
+| 🐳 فحص Docker | `node scripts/infra/validate-docker.mjs` | يتحقق من تكامل إعداد Docker |
+| 🐳 Smoke Test | `DOCKER_DELIVERY_MODE=build DOCKER_RUN_SMOKE=1 node scripts/docker/deliver.mjs` | تشغيل كامل + تنظيف إجباري |
 | 🧪 الاختبارات | `npm run test:all` / `npm test` | خادم / عميل |
 
 ---

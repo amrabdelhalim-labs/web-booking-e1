@@ -343,3 +343,50 @@ const protectedAction = combineResolvers(
   actualResolver       // [2] ينفّذ إذا نجح [1]
 );
 ```
+
+---
+
+## 15. Docker و Docker Compose
+
+### ما هو Docker؟
+تقنية لتغليف التطبيق مع بيئة تشغيله داخل Image ثابتة وقابلة للنقل.
+
+### الفرق بين Image و Container:
+
+| المصطلح | الشرح |
+|---------|-------|
+| Image | قالب جاهز للتشغيل (immutable) |
+| Container | نسخة تشغيل حية من Image |
+
+### لماذا نستخدم Docker في هذا المشروع؟
+
+- توحيد بيئة التشغيل بين المطور و CI
+- تشغيل `client + server + mongo` بأمر واحد
+- تسهيل مسار التسليم الأمني للصور
+
+### ما هو Docker Compose؟
+
+أداة لتعريف وتشغيل عدة خدمات في ملف YAML واحد:
+
+```text
+services:
+  mongo
+  server (depends on mongo)
+  client (depends on server)
+```
+
+### healthcheck
+
+يسمح للنظام بمعرفة أن الخدمة "جاهزة" وليس فقط "شغالة":
+
+- `server`: endpoint `/health`
+- `client`: endpoint `/health` من Nginx
+- `mongo`: `db.adminCommand({ ping: 1 })`
+
+### best practices مطبقة هنا
+
+- multi-stage Dockerfiles
+- runtime images خفيفة
+- environment-driven ports
+- smoke test مع cleanup إجباري
+- security scan عبر Trivy

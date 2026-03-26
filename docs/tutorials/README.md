@@ -57,6 +57,7 @@
 |-------|--------|
 | [concepts-guide.md](./concepts-guide.md) | شرح كل التقنيات والمفاهيم |
 | [quick-reference.md](./quick-reference.md) | خريطة التعلم والمرجع السريع |
+| [11-docker-deep-dive.md](./11-docker-deep-dive.md) | شرح Docker من التشغيل المحلي حتى CI |
 
 ---
 
@@ -80,6 +81,9 @@
 
 لفهم مكوّنات الواجهة كاملاً:
   client/01 → client/08 → client/09
+
+لفهم التشغيل والبنية التحتية:
+  concepts-guide (Docker basics) → 11-docker-deep-dive
 ```
 
 ---

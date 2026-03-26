@@ -2,6 +2,43 @@
 
 ## مشاكل شائعة وحلولها
 
+### 0️⃣ **مشاكل Docker/Compose (Ports or Startup)**
+
+**الأعراض:**
+```text
+Bind for 0.0.0.0:4000 failed: port is already allocated
+service "server" is unhealthy
+```
+
+**الأسباب المحتملة:**
+- تعارض منافذ محلية
+- قيمة `APP_URLS` لا تطابق منفذ الواجهة
+- MongoDB يحتاج وقت إضافي ليصبح healthy
+
+**الحل:**
+1. عدّل المنافذ في `.env`:
+   ```env
+   CLIENT_HOST_PORT=8081
+   SERVER_HOST_PORT=4001
+   MONGO_HOST_PORT=27019
+   APP_URLS=http://localhost:8081
+   ```
+2. تحقّق من صحة compose:
+   ```bash
+   docker compose config
+   ```
+3. أعد التشغيل مع تنظيف:
+   ```bash
+   docker compose down --remove-orphans -v
+   docker compose up --build
+   ```
+4. راقب الحالة:
+   ```bash
+   docker compose ps
+   ```
+
+---
+
 ### 1️⃣ **CORS Error - No 'Access-Control-Allow-Origin' header**
 
 **الخطأ:**

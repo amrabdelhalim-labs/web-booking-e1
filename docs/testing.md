@@ -254,9 +254,40 @@ node format.mjs --check
 
 # 4. فحص الورك فلو (يكتشف أخطاء النشر قبل الرفع)
 node validate-workflow.mjs
+
+# 5. فحص تكامل Docker (عند تعديل ملفات Docker/Compose/CI)
+node scripts/infra/validate-docker.mjs
 ```
 
-جميع الخطوات الأربع يجب أن تنجح قبل التضمين. راجع `CONTRIBUTING.md` للمعايير الكاملة.
+جميع الخطوات يجب أن تنجح قبل التضمين. راجع `CONTRIBUTING.md` للمعايير الكاملة.
+
+---
+
+## فحوصات Docker (Infra Tests)
+
+### فحص بنية Docker
+
+```bash
+node scripts/infra/validate-docker.mjs
+```
+
+يفحص:
+- وجود ملفات Docker الأساسية
+- وجود snippets حرجة في Dockerfiles و compose و deliver script
+- عدم وجود merge conflict markers
+
+### Smoke test للتشغيل الكامل
+
+```bash
+DOCKER_DELIVERY_MODE=build DOCKER_RUN_SMOKE=1 node scripts/docker/deliver.mjs
+```
+
+المتوقع:
+- بناء الصور بنجاح
+- فحص Trivy
+- تشغيل `client + server + mongo`
+- انتظار health checks
+- تنظيف كامل للموارد في النهاية (`down --remove-orphans -v`)
 
 ---
 
