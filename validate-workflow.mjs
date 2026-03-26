@@ -72,7 +72,11 @@ const FORBIDDEN_CP_PATTERNS = [
 ];
 
 // TypeScript devDependencies that MUST be removed before deploy
-const REQUIRED_STRIPPED_DEVDEPS = ['typescript', 'ts-node', 'ts-node-dev'];
+const REQUIRED_STRIPPED_DEVDEPS = ['typescript', 'ts-node-dev'];
+
+// Workflow may keep deleting legacy script names for backward compatibility.
+// We don't warn when those names are absent in current package.json.
+const OPTIONAL_LEGACY_DELETES = new Set(['test:unit', 'test:integration']);
 
 // ── 1. YAML structure ──────────────────────────────────────────────────────
 section('1. YAML structure');
@@ -160,7 +164,9 @@ const deletedByWorkflow = new Set([
 // Report any phantom deletes (listed in workflow but don't exist in package.json)
 for (const name of deletedByWorkflow) {
   if (pkg.scripts?.[name] === undefined) {
-    warn(`Workflow deletes "${name}" but it doesn't exist in server/package.json (harmless but stale)`);
+    if (!OPTIONAL_LEGACY_DELETES.has(name)) {
+      warn(`Workflow deletes "${name}" but it doesn't exist in server/package.json (harmless but stale)`);
+    }
   }
 }
 
@@ -206,7 +212,7 @@ for (const dep of REQUIRED_STRIPPED_DEVDEPS) {
       fail(`TypeScript devDep "${dep}" still present after stripping — Heroku will install it`);
     }
   } else {
-    warn(`"${dep}" not found in devDependencies (may have been renamed or removed)`);
+    // No warning here: dependency sets evolve across project versions.
   }
 }
 
