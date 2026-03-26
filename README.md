@@ -397,10 +397,15 @@ node scripts/docker/deliver.mjs build
 
 لتمكين وضع `publish` في workflow `docker-delivery.yml` أضف Secrets التالية:
 
-- `DOCKER_REGISTRY_HOST` (مثال: `ghcr.io` أو `index.docker.io`)
-- `DOCKER_USERNAME`
-- `DOCKER_PASSWORD`
-- `DOCKER_IMAGE_REGISTRY` (بادئة الاسم، مثال: `ghcr.io/your-org/`)
+- افتراضيًا (GHCR): لا تحتاج `DOCKER_USERNAME/DOCKER_PASSWORD`، يستخدم workflow:
+  - `github.actor`
+  - `secrets.GITHUB_TOKEN`
+- عند استخدام سجل خارجي:
+  - `DOCKER_REGISTRY_HOST` (مثال: `index.docker.io`)
+  - `DOCKER_USERNAME`
+  - `DOCKER_PASSWORD`
+- اختياريًا:
+  - `DOCKER_IMAGE_REGISTRY` (بادئة الاسم، مثال: `ghcr.io/your-org/`)
 
 سياسة الأمان المفعلة:
 - `publish` يعمل فقط عبر `workflow_dispatch` وعلى فرع `main`.

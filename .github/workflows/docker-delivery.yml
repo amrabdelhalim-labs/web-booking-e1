@@ -46,6 +46,7 @@ jobs:
       DOCKER_DELIVERY_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'build' }}
       DOCKER_RUN_SMOKE: ${{ github.event_name == 'workflow_dispatch' && inputs.run_smoke && '1' || '0' }}
       DOCKER_IMAGE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.image_tag || github.sha }}
+      DOCKER_REGISTRY_HOST: ${{ secrets.DOCKER_REGISTRY_HOST || 'ghcr.io' }}
       DOCKER_IMAGE_REGISTRY: ${{ secrets.DOCKER_IMAGE_REGISTRY || format('ghcr.io/{0}/', github.repository_owner) }}
       TRIVY_IGNORE_STATUS_FIXED: "1"
 
@@ -110,12 +111,34 @@ jobs:
             echo "Publish mode is only allowed on main branch."
             exit 1
           fi
+          if [[ "${DOCKER_IMAGE_REGISTRY}" != ${DOCKER_REGISTRY_HOST}/* ]]; then
+            echo "DOCKER_IMAGE_REGISTRY must start with DOCKER_REGISTRY_HOST."
+            echo "registry host: ${DOCKER_REGISTRY_HOST}"
+            echo "image prefix: ${DOCKER_IMAGE_REGISTRY}"
+            exit 1
+          fi
 
-      - name: Docker registry login
-        if: env.DOCKER_DELIVERY_MODE == 'publish'
+      - name: Validate external registry credentials
+        if: env.DOCKER_DELIVERY_MODE == 'publish' && env.DOCKER_REGISTRY_HOST != 'ghcr.io'
+        run: |
+          if [ -z "${{ secrets.DOCKER_USERNAME }}" ] || [ -z "${{ secrets.DOCKER_PASSWORD }}" ]; then
+            echo "DOCKER_USERNAME and DOCKER_PASSWORD are required for non-GHCR publish."
+            exit 1
+          fi
+
+      - name: Login to GHCR
+        if: env.DOCKER_DELIVERY_MODE == 'publish' && env.DOCKER_REGISTRY_HOST == 'ghcr.io'
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.DOCKER_REGISTRY_HOST || 'ghcr.io' }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to external container registry
+        if: env.DOCKER_DELIVERY_MODE == 'publish' && env.DOCKER_REGISTRY_HOST != 'ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY_HOST }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
