@@ -1,0 +1,123 @@
+name: Docker Delivery
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Delivery mode
+        type: choice
+        required: true
+        default: build
+        options:
+          - build
+          - publish
+      run_smoke:
+        description: Run smoke test after scan
+        type: boolean
+        required: true
+        default: false
+      image_tag:
+        description: Image tag
+        required: false
+        default: manual
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7-jammy
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 6
+    env:
+      DOCKER_DELIVERY_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'build' }}
+      DOCKER_RUN_SMOKE: ${{ github.event_name == 'workflow_dispatch' && inputs.run_smoke && '1' || '0' }}
+      DOCKER_IMAGE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.image_tag || github.sha }}
+      DOCKER_IMAGE_REGISTRY: ${{ secrets.DOCKER_IMAGE_REGISTRY || format('ghcr.io/{0}/', github.repository_owner) }}
+      TRIVY_IGNORE_STATUS_FIXED: "1"
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate workflow files
+        run: node validate-workflow.mjs
+
+      - name: Scan for merge markers
+        run: |
+          if rg --line-number "^(<<<<<<<|=======|>>>>>>>)" . --glob "!.git/*"; then
+            echo "Merge conflict markers found."
+            exit 1
+          fi
+
+      - name: Install server dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Run server tests
+        working-directory: server
+        run: npm run test:all
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test_jwt_secret_key_for_ci_testing_only_32chars
+          MONGODB_URI: mongodb://localhost:27017/test_events_db
+
+      - name: Build server
+        working-directory: server
+        run: npm run build
+
+      - name: Install client dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Run client tests
+        working-directory: client
+        run: npm test
+
+      - name: Build client
+        working-directory: client
+        run: npm run build
+
+      - name: Validate docker config
+        run: node scripts/infra/validate-docker.mjs
+
+      - name: Enforce publish safety
+        if: env.DOCKER_DELIVERY_MODE == 'publish'
+        run: |
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            echo "Publish mode is only allowed from workflow_dispatch."
+            exit 1
+          fi
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "Publish mode is only allowed on main branch."
+            exit 1
+          fi
+
+      - name: Docker registry login
+        if: env.DOCKER_DELIVERY_MODE == 'publish'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.DOCKER_REGISTRY_HOST || 'ghcr.io' }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker delivery
+        run: node scripts/docker/deliver.mjs
