@@ -1,28 +1,47 @@
-FROM node:22-alpine AS build
+# syntax=docker/dockerfile:1.6
+#
+# Runtime-config client image:
+# - `deps` locks node_modules + source (no npm install at container start).
+# - At `docker run`, the entrypoint runs `npm run build` using VITE_* from env.
 
+FROM node:22-alpine AS deps
 WORKDIR /app
+
+RUN npm config set fund false \
+  && npm config set audit false
+
 COPY package*.json ./
-# Keep build deterministic and avoid optional heavy binary downloads.
 RUN CYPRESS_INSTALL_BINARY=0 npm ci
 
 COPY . .
 
-ARG VITE_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
-ARG VITE_GRAPHQL_WS_URL=ws://localhost:4000/graphql
-ARG VITE_APP_DOMAIN=http://localhost:8080
-ARG VITE_BASE_PATH=/
+FROM node:22-alpine AS runner
+WORKDIR /app
 
-ENV VITE_GRAPHQL_HTTP_URL=$VITE_GRAPHQL_HTTP_URL
-ENV VITE_GRAPHQL_WS_URL=$VITE_GRAPHQL_WS_URL
-ENV VITE_APP_DOMAIN=$VITE_APP_DOMAIN
-ENV VITE_BASE_PATH=$VITE_BASE_PATH
+ARG DEFAULT_VITE_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
+ARG DEFAULT_VITE_GRAPHQL_WS_URL=ws://localhost:4000/graphql
+ARG DEFAULT_VITE_APP_DOMAIN=http://localhost:8080
+ARG DEFAULT_VITE_BASE_PATH=/
 
-RUN npm run build
+ENV DEFAULT_VITE_GRAPHQL_HTTP_URL=$DEFAULT_VITE_GRAPHQL_HTTP_URL
+ENV DEFAULT_VITE_GRAPHQL_WS_URL=$DEFAULT_VITE_GRAPHQL_WS_URL
+ENV DEFAULT_VITE_APP_DOMAIN=$DEFAULT_VITE_APP_DOMAIN
+ENV DEFAULT_VITE_BASE_PATH=$DEFAULT_VITE_BASE_PATH
 
-FROM nginx:1.27-alpine AS runtime
+RUN apk add --no-cache nginx wget \
+  && mkdir -p /var/cache/nginx /var/log/nginx /usr/share/nginx/html /etc/nginx/http.d \
+  && sed -i -e 's#/var/run/nginx.pid#/tmp/nginx.pid#g' -e 's#/run/nginx.pid#/tmp/nginx.pid#g' /etc/nginx/nginx.conf
 
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=deps /app /app
+
+COPY nginx.conf /etc/nginx/http.d/default.conf
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=120s --retries=8 \
+  CMD wget --no-verbose --spider --quiet http://127.0.0.1/health || exit 1
+
+ENTRYPOINT ["/docker-entrypoint.sh"]

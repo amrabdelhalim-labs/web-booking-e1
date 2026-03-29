@@ -2,7 +2,6 @@ FROM node:22-alpine AS deps
 
 WORKDIR /app
 COPY package*.json ./
-# Keep image lean and avoid shipping non-runtime binary artifacts.
 RUN npm ci --ignore-scripts
 
 FROM node:22-alpine AS build
@@ -10,16 +9,20 @@ FROM node:22-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN npm run build \
+  && npm prune --omit=dev --ignore-scripts
 
 FROM node:22-alpine AS runtime
 
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY package*.json ./
-RUN npm ci --omit=dev --ignore-scripts
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
+
+RUN chown -R node:node /app
+USER node
 
 EXPOSE 4000
 

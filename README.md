@@ -412,6 +412,9 @@ node scripts/docker/deliver.mjs build
 - `publish` يعمل فقط عبر `workflow_dispatch` وعلى فرع `main`.
 - إذا لم تُضبط `DOCKER_IMAGE_REGISTRY` في Secrets، سيتم استخدام `ghcr.io/<owner>/` كافتراضي.
 
+**صور GHCR بعد النشر:** `ghcr.io/<owner>/web-booking-e1-server:<tag>` و`ghcr.io/<owner>/web-booking-e1-client:<tag>`.  
+لأوامر `docker pull` / `docker run` ومتغيرات الخادم وحقن `VITE_*` وقت تشغيل صورة العميل راجع [docs/docker-delivery.md](docs/docker-delivery.md) القسم 12.
+
 ---
 
 ## واجهة GraphQL

@@ -22,7 +22,8 @@
 |------|------|
 | `docker-compose.yml` | تعريف الخدمات والاعتماديات وhealth checks |
 | `server/Dockerfile` | بناء وتشغيل الخادم كصورة runtime خفيفة |
-| `client/Dockerfile` | بناء الواجهة ثم تقديمها عبر Nginx |
+| `client/Dockerfile` | تثبيت الاعتماديات + تشغيل بناء Vite عند بدء الحاوية ثم Nginx |
+| `client/docker-entrypoint.sh` | يطبّق `VITE_*` من البيئة (أو القيم الافتراضية المخبوزة) ثم `npm run build` |
 | `client/nginx.conf` | SPA fallback + health endpoint |
 | `scripts/infra/validate-docker.mjs` | فحص تكامل إعداد Docker قبل التسليم |
 | `scripts/docker/deliver.mjs` | orchestrator للبناء/الفحص/الـ smoke/النشر |
@@ -78,16 +79,17 @@ docker compose down --remove-orphans -v
 ### server image
 
 - `deps` stage: `npm ci --ignore-scripts`
-- `build` stage: `npm run build` لإنتاج `dist`
-- `runtime` stage: `npm ci --omit=dev --ignore-scripts` + نسخ `dist` فقط
+- `build` stage: `npm run build` ثم `npm prune --omit=dev --ignore-scripts` لإزالة devDependencies من `node_modules` دون تثبيت إنتاجي ثانٍ
+- `runtime` stage: نسخ `package*.json` و`node_modules` المُقلَّصة و`dist` فقط
 - **HEALTHCHECK داخل الصورة:** يستدعي `fetch` على `http://127.0.0.1:4000/health` (Node مدمج) بفواصل زمنية متوافقة مع تعريف `healthcheck` في `docker-compose.yml`. الفائدة: تشغيل `docker run` أو منصات أخرى بدون Compose ما زال يعرض حالة صحّة الحاوية بشكل موحّد، وليس الاعتماد فقط على إعدادات Compose.
 
 ### client image
 
-- build stage عبر Node
-- `CYPRESS_INSTALL_BINARY=0 npm ci` لتقليل artifacts غير التشغيلية
-- runtime عبر `nginx:alpine`
-- `try_files ... /index.html` لدعم React Router
+- `deps` stage: `CYPRESS_INSTALL_BINARY=0 npm ci` ثم نسخ المصدر (بدون بناء Vite داخل مرحلة الصورة الأولى)
+- `runner`: Node + Nginx؛ عند **كل** `docker run` يشغّل `docker-entrypoint.sh` أمر `npm run build` باستخدام `VITE_*` من بيئة الحاوية، مع fallback إلى `DEFAULT_VITE_*` المخبوزة وقت `docker build` (عبر `ARG`/`ENV`)
+- بعد البناء: نسخ `dist` إلى `/usr/share/nginx/html` ثم `nginx`
+- `try_files ... /index.html` في `nginx.conf` لدعم React Router
+- **ملاحظة:** أول تشغيل أبطأ من صورة ثابتة جاهزة؛ راجع `start_period` في Compose (120s) ومهلة smoke في `deliver.mjs`
 
 ---
 
@@ -187,3 +189,77 @@ DOCKER_DELIVERY_MODE=build DOCKER_RUN_SMOKE=1 node scripts/docker/deliver.mjs
 - لا تنسخ سياسات Trivy من مشاريع أخرى حرفيًا
 - لا تستخدم force publish patterns خارج السياسة المحددة
 - أبقِ منطق التسليم داخل السكربتات، والـ workflow رفيعًا
+
+---
+
+## 12) سحب الصور من GHCR وتشغيلها
+
+### 12.1 أسماء الحزم على السجل
+
+بعد نشر ناجح (`publish`)، تُخزَّن صورتان بأسماء تتبع المستودع:
+
+| الصورة على GHCR | الوصف |
+|-----------------|--------|
+| `ghcr.io/<OWNER>/web-booking-e1-server:<tag>` | خادم GraphQL (Node) |
+| `ghcr.io/<OWNER>/web-booking-e1-client:<tag>` | واجهة React المبنية (Nginx) |
+
+استبدل `<OWNER>` بمالك المستودع على GitHub (أحرف صغيرة في عنوان الصورة)، و`<tag>` بوسم البناء (مثل `main` أو SHA أو وسم يدوي من `workflow_dispatch`).
+
+**تسجيل الدخول (للحزم الخاصة):**
+
+```bash
+docker login ghcr.io
+```
+
+### 12.2 متغيرات التشغيل — الخادم (`server`)
+
+يُقرأ التالي **عند التشغيل** (مرّرها بـ `-e` أو عبر منصة التنسيق):
+
+| المتغير | مطلوب | مثال | ملاحظة |
+|---------|--------|------|--------|
+| `DATABASE_URL` أو `MONGODB_URI` | نعم | `mongodb://mongo:27017/event-booking` | عنوان MongoDB |
+| `JWT_SECRET` | نعم (إنتاج) | سلسلة عشوائية قوية | لا تستخدم القيمة الافتراضية في الإنتاج |
+| `APP_URLS` | يُفضّل | `http://localhost:8080` | أصول CORS؛ يمكن فصل عدة عناوين بفاصلة |
+| `PORT` | لا | `4000` | المنفذ داخل الحاوية |
+
+### 12.3 عميل الواجهة (`client`) وملفات Vite
+
+تُقرأ `VITE_GRAPHQL_HTTP_URL` و`VITE_GRAPHQL_WS_URL` و`VITE_APP_DOMAIN` و`VITE_BASE_PATH` **عند بدء الحاوية** (قبل `npm run build` داخل الـ entrypoint). إن لم تُمرَّر، تُستخدم القيم المخبوزة في الصورة كـ `DEFAULT_VITE_*` (تُضبط عند `docker build` عبر `build.args` في Compose أو `--build-arg`).
+
+- **Compose:** `docker-compose.yml` يمرّر نفس المتغيرات في `environment` وفي `build.args` (كـ `DEFAULT_VITE_*`) حتى يتطابق السلوك المحلي مع إعادة البناء عند التشغيل.
+- **صورة من GHCR:** مرّر `-e VITE_*` عند `docker run` لتوجيه الواجهة لعنوان API/WS يصل إليه **المتصفح** (وليس بالضرورة اسم خدمة Docker داخليًا).
+
+### 12.4 مثال: تشغيل الخادم مع MongoDB على شبكة Docker
+
+```bash
+docker network create booking-net
+
+docker run -d --name booking-mongo --network booking-net -v booking_mongo:/data/db mongo:7-jammy
+
+docker run -d --name booking-server --network booking-net -p 4000:4000 \
+  -e NODE_ENV=production \
+  -e PORT=4000 \
+  -e DATABASE_URL=mongodb://booking-mongo:27017/event-booking \
+  -e JWT_SECRET=replace_with_strong_secret \
+  -e APP_URLS=http://localhost:8080 \
+  ghcr.io/<OWNER>/web-booking-e1-server:<tag>
+```
+
+التحقق: `curl -fsS http://localhost:4000/health`
+
+### 12.5 مثال: تشغيل الواجهة فقط (صورة منشورة مسبقًا)
+
+```bash
+docker run -d --name booking-client -p 8080:80 \
+  -e VITE_GRAPHQL_HTTP_URL=http://localhost:4000/graphql \
+  -e VITE_GRAPHQL_WS_URL=ws://localhost:4000/graphql \
+  -e VITE_APP_DOMAIN=http://localhost:8080 \
+  -e VITE_BASE_PATH=/ \
+  ghcr.io/<OWNER>/web-booking-e1-client:<tag>
+```
+
+أول تشغيل يُعيد بناء الواجهة داخل الحاوية؛ انتظر حتى يصبح الـ healthcheck ناجحًا. إن لم تمرّر `-e`، تُستخدم قيم `DEFAULT_VITE_*` المخبوزة عند بناء الصورة في CI.
+
+### 12.6 PowerShell (Windows)
+
+لا تستخدم `\` لاستمرار السطر؛ إمّا سطر واحد لـ `docker run`، أو backtick `` ` `` في نهاية كل سطر (ما عدا الأخير).

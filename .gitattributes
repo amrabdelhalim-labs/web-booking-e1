@@ -4,6 +4,9 @@
 
 * text=auto eol=lf
 
+# Shell entrypoints must stay LF for Alpine/Linux containers
+*.sh text eol=lf
+
 # Explicitly binary — never touch line endings
 *.png binary
 *.jpg binary

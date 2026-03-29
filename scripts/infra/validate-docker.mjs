@@ -18,13 +18,16 @@ const requiredSnippets = [
   { file: 'docker-compose.yml', regex: /services:\s*[\s\S]*server:/m },
   { file: 'docker-compose.yml', regex: /services:\s*[\s\S]*client:/m },
   { file: 'docker-compose.yml', regex: /healthcheck:/m },
-  { file: 'server/Dockerfile', regex: /npm ci --omit=dev/ },
+  { file: 'server/Dockerfile', regex: /npm prune --omit=dev/ },
+  { file: 'client/Dockerfile', regex: /docker-entrypoint\.sh/ },
   { file: 'client/Dockerfile', regex: /CYPRESS_INSTALL_BINARY=0 npm ci/ },
   {
     file: 'scripts/docker/deliver.mjs',
     regex: /compose['"]?\s*,\s*['"]build|docker compose build/m,
   },
   { file: 'scripts/docker/deliver.mjs', regex: /scanWithTrivy/ },
+  { file: 'scripts/docker/deliver.mjs', regex: /web-booking-e1-server/ },
+  { file: 'scripts/docker/deliver.mjs', regex: /web-booking-e1-client/ },
 ];
 
 const mergeMarkersPattern = /^(<{7}|={7}|>{7})/m;

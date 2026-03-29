@@ -58,21 +58,22 @@ Database ready             API ready                    UI ready
 
 ## 3) شرح Dockerfile الخاص بالعميل
 
-العميل React/Vite يحتاج build-time env vars (`VITE_*`) ثم إخراج static assets.
+العميل React/Vite يحتاج متغيرات `VITE_*` عند **تشغيل الحاوية**: الـ entrypoint ينفّذ `npm run build` ثم ينسخ `dist` إلى Nginx (نفس الفكرة العامة لصور الواجهة القابلة للتهيئة وقت التشغيل في مشاريع أخرى بالمستودع).
 
 ### المراحل
 
-1. `build` عبر Node:
-   - يثبت الحزم
-   - ينفذ `npm run build`
-2. `runtime` عبر Nginx:
-   - يخدم محتوى `dist`
-   - يوفر `/health`
-   - يطبق `try_files` لدعم SPA routing
+1. `deps` عبر Node:
+   - `npm ci` (مع تعطيل ثنائي Cypress عند الحاجة)
+   - قفل `node_modules` والمصدر في الصورة
+2. `runner`:
+   - Node + Nginx مثبتان على Alpine
+   - `ARG DEFAULT_VITE_*` → `ENV` كقيم افتراضية مخبوزة عند `docker build`
+   - عند كل `docker start`/`run`: `docker-entrypoint.sh` يضبط `VITE_*` من بيئة الحاوية أو من تلك الافتراضيات، ثم `npm run build`، ثم نسخ الملفات الثابتة و`nginx`
 
 ### نقطة مهمة
 
-`ARG -> ENV` يسمح بقيم افتراضية آمنة وقت البناء، مع إمكانية override عبر compose أو CI.
+- **حقن وقت التشغيل:** `-e VITE_GRAPHQL_HTTP_URL=...` (وغيرها) يغيّر ما يراه المتصفح دون إعادة بناء الصورة.
+- **Compose:** `build.args` تضبط `DEFAULT_VITE_*` بينما `environment` يمرّر `VITE_*` عند التشغيل — غالبًا نفس القيم من `.env` للاتساق.
 
 ---
 
@@ -107,8 +108,8 @@ Database ready             API ready                    UI ready
 ### ماذا يفعل؟
 
 1. يشغّل `validate-docker.mjs`
-2. يبني الصور
-3. يوسم الصور بالتاج المناسب
+2. يبني الصور (`web-booking-e1-server` و`web-booking-e1-client` كما في `docker-compose.yml`)
+3. يوسم الصور بالتاج المناسب ثم يدفع إلى `DOCKER_IMAGE_REGISTRY` بأسماء `web-booking-e1-server` و`web-booking-e1-client` على GHCR
 4. يفحص أمنيًا عبر Trivy
 5. (اختياري) smoke test مع cleanup دائم
 6. (عند publish) يدفع الصور

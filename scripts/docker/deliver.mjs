@@ -8,8 +8,9 @@ const imageTag = process.env.DOCKER_IMAGE_TAG || 'local';
 const registry = process.env.DOCKER_IMAGE_REGISTRY || '';
 const runSmoke = process.env.DOCKER_RUN_SMOKE === '1';
 
-const serverImage = `${registry}web-booking-server:${imageTag}`;
-const clientImage = `${registry}web-booking-client:${imageTag}`;
+// GHCR package names: <repository>-<artifact> (e.g. web-booking-e1-server)
+const serverImage = `${registry}web-booking-e1-server:${imageTag}`;
+const clientImage = `${registry}web-booking-e1-client:${imageTag}`;
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -94,7 +95,7 @@ function scanWithTrivy(imageRef) {
 function smokeTest() {
   console.log('🧪 Running smoke test');
 
-  const waitForHealthy = (serviceName, maxAttempts = 30, delayMs = 2000) => {
+  const waitForHealthy = (serviceName, maxAttempts = 90, delayMs = 3000) => {
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       const raw = runCapture('docker', ['compose', 'ps', '--format', 'json']);
       const entries = raw
