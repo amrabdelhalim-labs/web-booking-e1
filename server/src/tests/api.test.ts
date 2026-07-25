@@ -382,6 +382,7 @@ async function runTests(): Promise<void> {
         events {
           _id
           title
+          date
           creator { username }
         }
       }
@@ -496,7 +497,7 @@ async function runTests(): Promise<void> {
       query {
         bookings {
           _id
-          event { title }
+          event { title date }
           user { username }
           createdAt
         }
@@ -507,6 +508,14 @@ async function runTests(): Promise<void> {
     );
     assert(!bookings.errors, 'Bookings query succeeds');
     assert(bookings.data?.bookings?.length === 1, 'User has 1 booking');
+    assert(
+      bookings.data?.bookings?.[0]?.event?.date === queryEvents.data?.events?.[0]?.date,
+      'Nested booking event date matches the formatted public event date'
+    );
+    assert(
+      !/^\d+$/.test(bookings.data?.bookings?.[0]?.event?.date ?? ''),
+      'Nested booking event date is not raw epoch milliseconds'
+    );
 
     // Cancel booking
     logStep('Cancelling booking...');
