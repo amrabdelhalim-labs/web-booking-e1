@@ -23,6 +23,7 @@ export const transformEvent = (event: IEvent) => ({
  */
 export const transformBooking = (booking: IBooking) => ({
   ...booking._doc,
+  event: transformEvent(booking.event as IEvent),
   createdAt: booking.createdAt.toDateString(),
   updatedAt: booking.updatedAt.toDateString(),
 });
